@@ -1,0 +1,38 @@
+{
+    "name": "@flowfuse/flow-renderer",
+    "version": "1.0.0",
+    "description": "Node-RED flow renderer",
+    "main": "index.js",
+    "scripts": {
+        "demo": "npx http-server",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "node-red",
+        "FlowFuse",
+        "flow-based-programming",
+        "visual-programming",
+        "low-code"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/FlowFuse/flow-renderer.git"
+    },
+    "bugs": {
+        "url": "https://github.com/FlowFuse/flow-renderer/issues"
+    },
+    "homepage": "https://github.com/FlowFuse/flow-renderer#readme",
+    "author": {
+        "name": "FlowFuse Inc."
+    },
+    "license": "Apache-2.0",
+    "engines": {
+        "node": ">=16.x"
+    },
+    "files": [
+        "index.js",
+        "package.json",
+        "LICENSE",
+        "README.md"
+    ]
+}
