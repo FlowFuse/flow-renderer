@@ -1,0 +1,23 @@
+.DS_Store
+*.env
+*.env.local
+
+# Dependency directories
+node_modules/
+vendor/
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs and backups
+*.log
+*.bak
+*.swp
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
