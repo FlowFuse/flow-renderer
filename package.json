@@ -4,7 +4,7 @@
     "description": "Node-RED flow renderer",
     "main": "index.js",
     "scripts": {
-        "demo": "npx http-server",
+        "demo": "npx http-server -p 8080 -c-1 -o demo.html",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [
