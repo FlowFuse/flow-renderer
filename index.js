@@ -1,17 +1,44 @@
+/**
+ * @typedef {Object} FlowRendererOptions
+ * @property {boolean} [gridlines=true] - Whether to display grid lines on the flow diagram. Defaults to true.
+ * @property {boolean} [zoom=true] - Whether to enable zooming on the flow diagram. Defaults to true.
+ * @property {boolean} [images=true] - Whether to display images on the flow diagram. Defaults to true.
+ * @property {boolean} [linkLines=false] - Whether to display link lines on the flow diagram. Defaults to false.
+ * @property {boolean} [labels=true] - Whether to display labels on the flow diagram. Defaults to true.
+ * @property {Array<Object>} flowId - The specific flow(s) to render. If not provided, all flows will be rendered.
+ * @property {HTMLElement} container - The container div where the SVG diagram and controls will be rendered.
+ * @property {Document} document - The document object to use for creating SVG elements. Defaults to the global document object.
+ */
 
-; (function () {
+/**
+ * @typedef {Object} FlowNode - A node in a flow.
+ * @property {string} id - The unique identifier for the node.
+ * @property {string} type - The type of node.
+ */
 
-    if (typeof exports === 'object') {
-        module.exports = flowRenderer;
-    } else if (typeof define === 'function' && define.amd) {
-        define(function () { return flowRenderer; });
-    } else {
-        this.flowRenderer = flowRenderer;
-    }
+/**
+ * @typedef {Object} Flows - A collection of flows.
+ * @property {Array<FlowNode>} nodes - The nodes in the flow.
+ */
 
+const FlowRenderer = (function () {
+    let _this = this || {};
     // #region Constants
     const styleId = 'flow-renderer-css'
     const PORT_WIDTH = 10
+
+    /** @type {FlowRendererOptions} */
+    const defaults = {
+        arrows: false,
+        gridlines: true,
+        zoom: true,
+        images: true,
+        linkLines: false,
+        labels: true,
+        flowId: undefined,
+        container: undefined,
+        document: undefined
+    }
 
     const portDimensions = {
         width: PORT_WIDTH,
@@ -196,7 +223,7 @@
         "ff-logo.svg": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+PHNjcmlwdCB4bWxucz0iIi8+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNmZmYiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+",
     }
 
-    const clrByType = {
+    const colorByType = {
         "base64": _hshClr("#DEBD5C"),
         "batch": _hshClr("#E2D96E"),
         "catch": _hshClr("#e49191"),
@@ -398,17 +425,17 @@
     }
 
     function getNodeColor (type) {
-        let colors = clrByType[type]
+        let colors = colorByType[type]
         if (!colors) {
             if (type.startsWith("subflow:")) {
-                colors = clrByType["subflow"]
+                colors = colorByType["subflow"]
             } else if (type.startsWith("ui-")) {
-                colors = clrByType["ui-template"]
+                colors = colorByType["ui-template"]
             } else if (type.startsWith("ui_")) {
-                colors = clrByType["ui_template"]
+                colors = colorByType["ui_template"]
             }
         }
-        return colors || clrByType["_default"]
+        return colors || colorByType["_default"]
     }
 
     function _hshClr (fill, stroke) {
@@ -1125,7 +1152,7 @@
         const tabs = {}
         let sfIndex = 10000
         let fIndex = 0
-        for (node of flow) {
+        for (let node of flow) {
             if (node.type === 'subflow') {
                 tabs[node.id] = {
                     id: node.id,
@@ -1148,7 +1175,7 @@
         // if the flow contains real tabs, then update the tabs objects
         const flowTabs = flow.filter((d) => d.type === 'tab')
         let index = 0
-        for (node of flowTabs) {
+        for (let node of flowTabs) {
             // Only update if tabs[d.id] exists (i.e. there are nodes to show)
             if (tabs[node.id]) {
                 tabs[node.id].label = node.label || tabs[node.id].label
@@ -1163,6 +1190,11 @@
         return tabsArray
     }
 
+    /**
+     * Normalise the flows array
+     * @param {Flows} flow - The flows to normalise
+     * @returns {Flows}
+     */
     function normaliseFlow(flow) {
         if (!Array.isArray(flow)) {
             flow = []
@@ -1175,13 +1207,49 @@
         return flow
     }
 
+    /**
+     * Normalise the options for rendering the flows
+     * NOTE: This function will also merge defaults and any data-options from the container 
+     * NOTE: Merge occurs in this order: defaults, container data-options, provided options
+     * @param {FlowRendererOptions} [options] - The options for rendering the flows.
+     */
+    function normaliseOptions(options) {
+        const mergeItems = [defaults]
+        // see if the container has and data-options and merge those
+        // data-xxx will enable the option
+        // data-xxx="true" will enable the option
+        // data-xxx="false" will disable the option
+        if (options) {
+            if (options.container) {
+                const containerOptions = {}
+                const dataOptions = ['scope', 'grid-lines', 'arrows', 'zoom', 'images', 'link-lines', 'labels']
+                dataOptions.forEach(function (opt) {
+                    if (options.container.hasAttribute("data-" + opt)) {
+                        const optionValue = options.container.getAttribute("data-" + opt) || "true"
+                        containerOptions[opt.replace(/-/g, '')] = optionValue === "true"
+                    }
+                })
+                mergeItems.push(containerOptions)
+            }
+            mergeItems.push(options)
+        }
+        // merge the options
+        const opts = Object.assign({}, ...mergeItems)
+        return opts
+    }
+
+    /**
+     * Render a set of flows
+     * @param {Flows} flows - The flows to render
+     * @param {FlowRendererOptions} renderOpts - The options for rendering the flows
+    */
     function renderFlows(flows, renderOpts) {
-        renderOpts = renderOpts || {}
         flows = normaliseFlow(flows)
+        renderOpts = normaliseOptions(renderOpts)
         
         // SETUP
         /** @type {Document} */
-        const doc = renderOpts.document || this.document
+        const doc = getDocument(renderOpts.document, _this.document, renderOpts.container, this)
         /** @type {HTMLElement} */
         const container = renderOpts.container
 
@@ -1298,10 +1366,17 @@
         return result
     }
 
+    /**
+     * Render a single flow tab
+     * @param {Flows} flow - The flow to render
+     * @param {FlowRendererOptions} renderOpts - The options for rendering the flows
+    */
     function renderFlow(flow, renderOpts) {
         flow = normaliseFlow(flow)
+        renderOpts = normaliseOptions(renderOpts)
+
         /** @type {Document} */
-        const doc = renderOpts.document || this.document
+        const doc = getDocument(renderOpts.document, _this.document, renderOpts.container, this)
         const container = renderOpts.container
         renderOpts = renderOpts || {}
         const nodes = {}
@@ -1310,6 +1385,7 @@
         const subFlowInsOutsStatusNodes = {}
         const nodeIdsThatReceiveInput = {}
         const flowId = renderOpts.flowId
+        const junctionColor = getNodeColor('junction')
         
         /** @type {SVGSVGElement} */
         let svg = container && container.querySelector('svg')
@@ -1716,7 +1792,7 @@
                         if ((subflowObj.in && subflowObj.in.length > 0) || nodeIdsThatReceiveInput[obj.id]) {
                             if (renderOpts.arrows) {
                                 grpObj.appendChild(createSvgElement('path', {
-                                    ...clrByType["junction"],
+                                    ...junctionColor,
                                     transform: "translate(-3," + ((obj.bbox.height / 2) - 5) + ")",
                                     d: (renderOpts.arrows ? "M 0,10 9,5 0,0 Z" : "M -1,9.5 8,9.5 8,0.5 -1,0.5 Z"),
                                     class: "input-deco input-arrows",
@@ -1725,7 +1801,7 @@
                                 }))
                             } else {
                                 grpObj.appendChild(createSvgElement('rect', {
-                                    ...clrByType["junction"],
+                                    ...junctionColor,
                                     transform: "translate(-5," + ((obj.bbox.height / 2) - 5) + ")",
                                     ...portDimensions,
                                     ...portRadius,
@@ -1735,7 +1811,7 @@
                         }
 
                         const outDecoBaseAttrs = {
-                            ...clrByType["junction"],
+                            ...junctionColor,
                             ...portDimensions,
                             ...portRadius,
                             class: "output-deco"
@@ -2030,87 +2106,20 @@
 
     // #endregion
 
-    /**
-     * @param {Array<Object>} flows - The flows to render.
-     * @param {FlowRendererOptions} options - The options for rendering the flows.
-     */
-    function flowRenderer(flows, options) {
-        try {
-            options = Object.assign({}, flowRenderer.defaults, options)
-            // see if the container has and data-options and merge those
-            // data-xxx will enable the option
-            // data-xxx="true" will enable the option
-            // data-xxx="false" will disable the option
-            if (options.container) {
-                const containerOptions = {}
-                const dataOptions = ['scope', 'grid-lines', 'arrows', 'zoom', 'images', 'link-lines', 'labels']
-                dataOptions.forEach(function (opt) {
-                    if (options.container.hasAttribute("data-" + opt)) {
-                        const optionValue = options.container.getAttribute("data-" + opt) || "true"
-                        containerOptions[opt.replace(/-/g, '')] = optionValue === "true"
-                    }
-                })
-                options = Object.assign({}, options, containerOptions)
-
-                if (typeof window === 'undefined') {
-                    // if we are in a node.js environment, set global.document to the container ownerDocument
-                    options.document = options.document || options.container.ownerDocument
-                    global.__document = options.document
-                    // polyfill getBBox for SVGElement in node env
-                    if (options.document && options.document.createElementNS) {
-                        // get the prototype of the SVGElement without accessing it directly
-                        const SVGElement = options.document.createElementNS('http://www.w3.org/2000/svg', 'rect').constructor
-                        if (!SVGElement.prototype.getBBox) {
-                            SVGElement.prototype.getBBox = function () {
-                                return getBBoxPolyfill(options.document, this)
-                            }
-                        }
-                    }
-
-                }
-            }
-            const renderer = renderFlows.bind(this)
-            return renderer(flows, options)
-        } catch (e) {
-            e.message += '\nPlease report this to @flowfuse/flow-renderer.';
-            if ((options || flowRenderer.defaults).silent) {
-                return '<p>An error occured:</p><pre>'
-                    + escape(e.message + '', true)
-                    + '</pre>';
-            }
-            throw e;
-        }
+    return {
+        renderFlows: renderFlows,
+        renderFlow: renderFlow,
+        normaliseOptions: normaliseOptions,
+        getStyles: getCSS,
     }
+})
 
-    /**
-     * @typedef {Object} FlowRendererOptions
-     * @property {boolean} [gridlines=true] - Whether to display grid lines on the flow diagram. Defaults to true.
-     * @property {boolean} [zoom=true] - Whether to enable zooming on the flow diagram. Defaults to true.
-     * @property {boolean} [images=true] - Whether to display images on the flow diagram. Defaults to true.
-     * @property {boolean} [linkLines=false] - Whether to display link lines on the flow diagram. Defaults to false.
-     * @property {boolean} [labels=true] - Whether to display labels on the flow diagram. Defaults to true.
-     * @property {Array<Object>} flowId - The specific flow(s) to render. If not provided, all flows will be rendered.
-     * @property {HTMLElement} container - The container div where the SVG diagram and controls will be rendered.
-     * @property {Document} document - The document object to use for creating SVG elements. Defaults to the global document object.
-     */
+if (typeof module === 'object' && module.exports) {
+    module.exports = FlowRenderer
+} else if (typeof window === 'object') {
+    window.FlowRenderer = FlowRenderer
+} else {
+    global.FlowRenderer = FlowRenderer
+}
 
-    /** @type {FlowRendererOptions} */
-    flowRenderer.defaults = {
-        arrows: false,
-        gridlines: true,
-        zoom: true,
-        images: true,
-        linkLines: false,
-        labels: true,
-        flowId: undefined,
-        container: undefined,
-        document: this.document
-    }
-
-    flowRenderer.getStyles = getCSS;
-    flowRenderer.renderFlows = renderFlows;
-    flowRenderer.renderFlow = renderFlow;
-
-}).call(function () {
-    return this || (typeof window !== 'undefined' ? window : global);
-}());
+export default FlowRenderer
