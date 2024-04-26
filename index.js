@@ -737,6 +737,23 @@ const FlowRenderer = (function () {
             mask-position: center;
             mask-repeat: no-repeat;
         }
+        ${scope} .red-ui-tab-disabled-icon {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1536 1792' style='&%2310;'%3E%3Cscript xmlns=''/%3E%3Cpath d='M1312 893q0-161-87-295l-754 753q137 89 297 89 111 0 211.5-43.5t173.5-116.5 116-174.5 43-212.5zM313 1192l755-754q-135-91-300-91-148 0-273 73t-198 199-73 274q0 162 89 299zM1536 893q0 157-61 300t-163.5 246-245 164-298.5 61-298.5-61-245-164-163.5-246-61-300 61-299.5 163.5-245.5 245-164 298.5-61 298.5 61 245 164 163.5 245.5 61 299.5z' fill='currentColor'/%3E%3Cscript xmlns=''/%3E%3C/svg%3E");
+            display: inline-block;
+            background-color: grey;
+            margin-left: -8px;
+            margin-right: 3px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            opacity: 1;
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            mask-size: contain;
+            mask-position: center;
+            mask-repeat: no-repeat;
+            transform: translateY(-2px);
+        }
         ${scope} .red-ui-tab span {
             font-size: 0.875rem;
             font-family: Helvetica Neue, Arial, Helvetica, sans-serif;
@@ -746,12 +763,20 @@ const FlowRenderer = (function () {
             border-bottom-color: white;
             font-weight: bold;
         }
-        ${scope} .red-ui-tab:hover {
-            cursor: pointer;
-            background-color: white;
+        ${scope} .red-ui-tab.disabled {
+            border-top-style: dashed;
+            border-left-style: dashed;
+            font-style: italic;
         }
         ${scope} .red-ui-tab:last-child {
             border-right: 1px solid #bbbbbb;
+        }
+        ${scope} .red-ui-tab:last-child.disabled {
+            border-right-style: dashed;
+        }
+        ${scope} .red-ui-tab:hover {
+            cursor: pointer;
+            background-color: white;
         }
         `
         return css
@@ -1133,7 +1158,7 @@ const FlowRenderer = (function () {
     /**
      * Get an array of tabs from the flow array.
      * @param {Array<Object>} flow - Node-RED flow array
-     * @returns  {Array<{id: string, label: string, type: string}>} - Array of tabs
+     * @returns  {Array<{id: string, label: string, type: string, disabled: Boolean}>} - Array of tabs
      */
     function getFlowTabs(flow) {
         const tabs = {}
@@ -1145,7 +1170,8 @@ const FlowRenderer = (function () {
                     id: node.id,
                     label: node.name,
                     type: 'subflow',
-                    order: sfIndex++,
+                    disabled: node.disabled,
+                    order: sfIndex++
                 }
             } else if (node.type !== "tab" && node.z) {
                 if (!tabs[node.z]) {
@@ -1153,7 +1179,8 @@ const FlowRenderer = (function () {
                         id: node.z,
                         label: 'Flow ' + (fIndex + 1),
                         type: 'tab',
-                        order: fIndex++,
+                        disabled: false,
+                        order: fIndex++
                     }
                 }
             }
@@ -1162,11 +1189,12 @@ const FlowRenderer = (function () {
         // if the flow contains real tabs, then update the tabs objects
         const flowTabs = flow.filter((d) => d.type === 'tab')
         let index = 0
-        for (let node of flowTabs) {
+        for (let flowTab of flowTabs) {
             // Only update if tabs[d.id] exists (i.e. there are nodes to show)
-            if (tabs[node.id]) {
-                tabs[node.id].label = node.label || tabs[node.id].label
-                tabs[node.id].order = index++
+            if (tabs[flowTab.id]) {
+                tabs[flowTab.id].label = flowTab.label || tabs[flowTab.id].label
+                tabs[flowTab.id].disabled = !!flowTab.disabled
+                tabs[flowTab.id].order = index++
             }
         }
 
@@ -1294,7 +1322,12 @@ const FlowRenderer = (function () {
                 // add the as a data attribute
                 tabEl.setAttribute('data-flow-id', tab.id)
             }
-            if (tab.type === 'subflow') {
+            if (tab.disabled) {
+                tabEl.classList.add('disabled')
+                const img = doc.createElement('i')
+                img.classList.add('red-ui-tab-disabled-icon')
+                tabEl.appendChild(img)
+            } else if (tab.type === 'subflow') {
                 // <i class="red-ui-tab-icon" style="mask-image: url(red/images/subflow_tab.svg);"></i>
                 const img = doc.createElement('i')
                 img.classList.add('red-ui-tab-subflow-icon')
@@ -1373,7 +1406,14 @@ const FlowRenderer = (function () {
         const nodeIdsThatReceiveInput = {}
         const flowId = renderOpts.flowId
         const junctionColor = getNodeColor('junction')
-        
+        let tabDisabled = false
+
+        const tabs = getFlowTabs(flow)
+        const tab = tabs.find(tab => tab.id === flowId)
+        if (tab && tab.type === 'tab') {
+            tabDisabled = tab.disabled
+        }
+
         /** @type {SVGSVGElement} */
         let svg = container && container.querySelector('svg')
         svg = svg || createDefaultSVG(container)
@@ -1634,7 +1674,7 @@ const FlowRenderer = (function () {
                         }))
 
                         grpObj.setAttribute("transform", `translate(${obj.x - dimensions.width / 2}, ${obj.y - dimensions.height / 2})`)
-                        if (obj.d) {
+                        if (obj.d || tabDisabled) {
                             grpObj.setAttribute("class", "node-disabled")
                         }
                         obj.bbox = grpObj.getBBox()
@@ -1812,7 +1852,7 @@ const FlowRenderer = (function () {
                                 }))
                             }
                         }
-                        if (obj.d) {
+                        if (obj.d || tabDisabled) {
                             grpObj.setAttribute('class', 'node-disabled')
                         }
 
@@ -1981,7 +2021,7 @@ const FlowRenderer = (function () {
 
                     flow_wiresEl.appendChild(createSvgElement('path', {
                         d: generateLinkPath(startX, startY, endX, endY, 1),
-                        class: "link " + (otherNode.d ? "link-disabled" : "") + (" link-from-" + sfObj.id + "-to-" + otherNode.id)
+                        class: "link " + (otherNode.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + sfObj.id + "-to-" + otherNode.id)
                     }));
                 }
             }
@@ -2001,7 +2041,7 @@ const FlowRenderer = (function () {
 
                     flow_wiresEl.appendChild(createSvgElement('path', {
                         d: generateLinkPath(startX, startY, endX, endY, 1),
-                        class: "link " + (otherNode.d ? "link-disabled" : "") + (" link-from-" + sfObj.id + "-to-" + otherNode.id)
+                        class: "link " + (otherNode.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + sfObj.id + "-to-" + otherNode.id)
                     }));
                 }
             }
@@ -2027,7 +2067,7 @@ const FlowRenderer = (function () {
 
                         flow_wiresEl.appendChild(createSvgElement('path', {
                             d: generateLinkPath(startX, startY, endX, endY, 1),
-                            class: "link " + (otherNode.d || nde.d ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
+                            class: "link " + (otherNode.d || nde.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
                         }));
                     }
                 });
@@ -2050,7 +2090,7 @@ const FlowRenderer = (function () {
                         flow_wiresEl.appendChild(createSvgElement('path', {
                             d: generateLinkPath(startX, startY, endX, endY, 1),
                             "stroke-dasharray": "25,4",
-                            class: "link " + (otherNode.d || nde.d ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
+                            class: "link " + (otherNode.d || nde.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
                         }));
 
                         flow_wiresEl.appendChild(createSvgElement('circle', {
@@ -2061,7 +2101,7 @@ const FlowRenderer = (function () {
                             "stroke-width": 1,
                             stroke: 'rgb(170, 170, 170)',
                             "fill": 'rgb(238, 238, 238)',
-                            class: (otherNode.d || nde.d ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
+                            class: (otherNode.d || nde.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
                         }));
 
                         flow_wiresEl.appendChild(createSvgElement('circle', {
@@ -2072,7 +2112,7 @@ const FlowRenderer = (function () {
                             "stroke-width": 1,
                             stroke: 'rgb(170, 170, 170)',
                             "fill": 'rgb(238, 238, 238)',
-                            class: (otherNode.d || nde.d ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
+                            class: (otherNode.d || nde.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
                         }));
                     }
                 });
