@@ -596,19 +596,6 @@ const FlowRenderer = (function () {
             --red-ui-node-port-background: #d9d9d9;
             --red-ui-link-color: #999;
         }
-        ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
-        }
-        ::-webkit-scrollbar-track {
-            -webkit-border-radius: 6px;
-            border-radius: 6px;
-        }
-        ::-webkit-scrollbar-thumb {
-            -webkit-border-radius: 6px;
-            border-radius: 6px;
-            -webkit-box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.5);
-        }
 
         ${scope} .red-ui-workspace-chart {
             box-sizing: border-box;
