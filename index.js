@@ -438,6 +438,36 @@ const FlowRenderer = (function () {
         return colors || colorByType["_default"]
     }
 
+    function getNodeDimensions (node) {
+        let dimensions = widthHeightByType[node.type] || widthHeightByType["_default"];
+        // label hidden?
+        if (node.type !== 'junction') {
+            // override if l is a boolean
+            if (node.l === false) {
+                dimensions = widthHeightByType['_default_no_label']
+            } else if (node.l === true) {
+                dimensions = widthHeightByType['_default']
+            }
+        }
+        return dimensions
+    }
+
+    function showsLabel (node) {
+        let show = true // by default, most nodes show label
+        if (node.type === 'link out' || node.type === 'link in') {
+            show = false // by default, these nodes do not show label
+        }
+        if (node.type === 'junction' || node.type === 'tab' || node.type === 'subflow') {
+            return show
+        }
+        if (node.l === false) {
+            show = false
+        } else if (node.l === true) {
+            show = true
+        }
+        return show
+    }
+
     function _hshClr (fill, stroke) {
         return {
             fill: fill || "#ffffff",
@@ -1479,7 +1509,9 @@ const FlowRenderer = (function () {
             if (obj.z == flowId || obj.id == flowId /* this is a subflow or tab */) {
 
                 // get node dimensions
-                var dimensions = widthHeightByType[obj.type] || widthHeightByType["_default"];
+                var dimensions = getNodeDimensions(obj)
+                const showLabel = showsLabel(obj)
+
                 // get node color
                 var clr = getNodeColor(obj.type);
 
@@ -1655,66 +1687,6 @@ const FlowRenderer = (function () {
                         obj.bbox.y = obj.y
                         obj.bbox.width = 0
                         obj.bbox.height = 0
-
-                        break
-                    }
-                    case "link in":
-                    case "link out": {
-                        const grpId = "grp" + Math.random().toString().substring(2)
-                        const grpObj = createSvgElement('g', { id: grpId, })
-                        flow_nodesEl.appendChild(grpObj)
-
-                        grpObj.prepend(createSvgElement('rect', {
-                            ...clr,
-                            ...dimensions,
-                            rx: 5,
-                            ry: 5,
-                            fill: obj.color || clr.fill,
-                            class: "node " + (" node-" + obj.id)
-                        }))
-
-                        grpObj.setAttribute("transform", `translate(${obj.x - dimensions.width / 2}, ${obj.y - dimensions.height / 2})`)
-                        if (obj.d || tabDisabled) {
-                            grpObj.setAttribute("class", "node-disabled")
-                        }
-                        obj.bbox = grpObj.getBBox()
-                        obj.bbox.x = obj.x - dimensions.width / 2
-                        obj.bbox.y = obj.y - dimensions.height / 2
-
-                        /* add image to node */
-                        if (renderOpts.images) {
-                            grpObj.appendChild(createSvgElement('image', {
-                                "href": getNodeImage(obj.type + (obj.mode || "")),
-                                x: (obj.type == "link in" ? 0 : (obj.mode == "return" ? 1 : 2)),
-                                y: 0,
-                                width: 30,
-                                height: 30
-                            }))
-                        }
-
-                        const transAndPath = {
-                            transform: (obj.type == "link in" ? "translate(25,10)" : "translate(-4,10)"),
-                            d: "M 0.5,9.5 9.5,9.5 9.5,0.5 0.5,0.5 Z",
-                        }
-
-                        if (renderOpts.arrows && (obj.type == "link out")) {
-                            transAndPath = {
-                                transform: (obj.type == "link in" ? "translate(27,10)" : "translate(-3,10)"),
-                                d: "M 0,10 9,5 0,0 Z",
-                            }
-                        }
-
-                        /* add output decoration after computing the bounding box - the decoration extends the bounding box */
-                        grpObj.appendChild(createSvgElement('rect', {
-                            ...clr,
-                            ...portDimensions,
-                            ...portRadius,
-                            class: (obj.type == "link in" ? "output-deco" : ("input-deco" + (renderOpts.arrows ? " input-arrows" : ""))),
-                            "stroke-linecap": "round",
-                            "stroke-linejoin": "round",
-                            ...transAndPath
-                        }))
-
                         break
                     }
                     default: {
@@ -1724,30 +1696,38 @@ const FlowRenderer = (function () {
                         const subflowObj = subflows[obj.type] || {}
                         const textLabels = getLabelParts(lblFunct(obj, subflowObj, flow), "node-text-label")
 
-                        const grpText = createSvgElement('g', { id: grpTextId, "transform": "translate(38," + (textLabels.lines.length > 1 ? 18 : 16) + ")" })
+                        // add text group
+                        let grpText
+                        
+                        if (showLabel) {
+                            grpText = createSvgElement('g', { id: grpTextId, "transform": "translate(38," + (textLabels.lines.length > 1 ? 18 : 16) + ")" })
+                            var ypos = 0
 
-                        var ypos = 0
-                        textLabels.lines.forEach(function (lne) {
-                            var textElem = createSvgElement('text', {
-                                y: ypos,
-                                class: 'node-text-label'
+                            textLabels.lines.forEach(function (lne) {
+                                var textElem = createSvgElement('text', {
+                                    y: ypos,
+                                    class: 'node-text-label'
+                                })
+                                textElem.textContent = lne
+                                grpText.appendChild(textElem)
+                                ypos += 20
                             })
-                            textElem.textContent = lne
-                            grpText.appendChild(textElem)
-                            ypos += 20
-                        })
+                        }
 
-                        const grpId = "grp" + Math.random().toString().substring(2)
+                        // construct main outer group of the node
+                        const grpId = "g" + Math.random().toString().substring(2)
                         const grpObj = createSvgElement('g', { id: grpId, })
                         flow_nodesEl.appendChild(grpObj)
 
-                        grpObj.appendChild(grpText)
+                        if (showLabel && grpText) {
+                            grpObj.appendChild(grpText)
+                        }
 
-                        const txtBBox = grpText.getBBox()
+                        const txtBBox = showLabel ? grpText?.getBBox() : { width: 0, height: 0 }
                         const txtWidth = txtBBox.width + 60
                         const txtHeight = txtBBox.height + 13.5
-                        const rectWidth = (dimensions.width > txtWidth ? dimensions.width : txtWidth)
-                        let rectHeight = (dimensions.height > txtHeight ? dimensions.height : txtHeight)
+                        const rectWidth = showLabel ? (dimensions.width > txtWidth ? dimensions.width : txtWidth) : dimensions.width
+                        let rectHeight = showLabel ? (dimensions.height > txtHeight ? dimensions.height : txtHeight) : dimensions.height
 
                         if ((obj.wires || []).length > 2) {
                             /* if more than 2 outputs, the node "grows" but the node might already be bigger enough. The base
@@ -1755,12 +1735,14 @@ const FlowRenderer = (function () {
                             rectHeight = Math.max(rectHeight, 15 * obj.wires.length)
 
                             /* move the text block into the middle */
-                            if (rectHeight > txtHeight) {
-                                const offsetHeight = (rectHeight - txtHeight) / 2
-                                grpText.setAttributeNS(null, "transform", "translate(38," + ((textLabels.lines.length > 1 ? 16 : 14) + offsetHeight) + ")")
+                            if (showLabel && grpText) {
+                                if (rectHeight > txtHeight) {
+                                    const offsetHeight = (rectHeight - txtHeight) / 2
+                                    grpText.setAttributeNS(null, "transform", "translate(38," + ((textLabels.lines.length > 1 ? 16 : 14) + offsetHeight) + ")")
+                                }
                             }
                         }
-
+                        // main rect of node
                         grpObj.prepend(createSvgElement('rect', {
                             ...clr,
                             rx: 5,
@@ -1771,20 +1753,23 @@ const FlowRenderer = (function () {
                             class: "node " + (" node-" + obj.id)
                         }))
 
+                        // image overlay rect
                         grpObj.appendChild(createSvgElement('path', {
                             d: "M5 0 h25 v" + rectHeight + " h-25 a 5 5 0 0 1 -5 -5  v-" + (rectHeight - 10) + " a 5 5 0 0 1 5 -5",
                             fill: "rgb(0,0,0)",
                             "fill-opacity": 0.1,
                             "stroke": "none"
                         }))
-
-                        grpObj.appendChild(createSvgElement('path', {
-                            d: "M 29.5 0.5 l 0 " + (rectHeight - 1),
-                            fill: "none",
-                            stroke: "rgb(0,0,0)",
-                            "stroke-opacity": 0.1,
-                            "stroke-width": "1px"
-                        }))
+                        // border line separating image and text
+                        if (showLabel) {
+                            grpObj.appendChild(createSvgElement('path', {
+                                d: "M 29.5 0.5 l 0 " + (rectHeight - 1),
+                                fill: "none",
+                                stroke: "rgb(0,0,0)",
+                                "stroke-opacity": 0.1,
+                                "stroke-width": "1px"
+                            }))
+                        }
 
                         grpObj.setAttribute("transform", `translate(${obj.x - rectWidth / 2}, ${obj.y - rectHeight / 2})`)
                         obj.bbox = grpObj.getBBox()
