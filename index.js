@@ -27,6 +27,22 @@ const FlowRenderer = (function () {
     const styleId = 'flow-renderer-css'
     const PORT_WIDTH = 10
 
+    const lineCurveScale = 0.75
+    const node_height = 30
+    const node_width = 100
+    const gridSize = 20;
+    const snapGrid = true;
+    const portSpacing = 13.5
+
+    const RED = {}
+    RED.view = {}
+    RED.view.tools = {}
+    RED.utils = {}
+    RED.view.gridSize = function () { return gridSize }
+    RED.view.tools.calculateGridSnapOffsets = calculateGridSnapOffsets // defined in node-red region below
+    RED.utils.parseContextKey = parseContextKey // defined in node-red region below
+
+
     /** @type {FlowRendererOptions} */
     const defaults = {
         arrows: false,
@@ -73,7 +89,6 @@ const FlowRenderer = (function () {
         "feedparse": "parser-xml.svg",
         "file": "file.svg",
         "file in": "file-in.svg",
-        "file out": "file-out.svg",
         "function": "function.svg",
         "http response": "white-globe.svg",
         "http in": "white-globe.svg",
@@ -91,6 +106,11 @@ const FlowRenderer = (function () {
 
         "mqtt in": "bridge.svg",
         "mqtt out": "bridge.svg",
+        "tcp in": "bridge.svg",
+        "tcp out": "bridge.svg",
+        "tcp request": "bridge.svg",
+        "udp in": "bridge.svg",
+        "udp out": "bridge.svg",
         "markdown": "parser-markdown.png",
 
         "postgresql": "db.svg",
@@ -172,7 +192,6 @@ const FlowRenderer = (function () {
         "envelope.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNMjAgMzIuOTZsLTE4LTE4aDM2eiIvPjxwYXRoIGQ9Ik0yIDIwLjM2bDE4IDE4IDE4LTE4djI2LjFIMnoiLz48L2c+PC9zdmc+Cg==",
         "feed.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjYjg1YzVjIiBzdHJva2U9IiMwMDAiPjxwYXRoIGNvbG9yPSIjMDAwIiBkPSJNLS4wMS0uMDA0aDM5Ljk5OHY2MEgtLjAxeiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ1MC4yNjYgLTU4NS4zNykiPjxyZWN0IHg9IjQ2NC4yNyIgeT0iNjI1LjM3IiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ5PSIyLjQiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIiBzdHJva2U9Im5vbmUiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNCI+PHBhdGggZD0iTTQ2MS4yNyA2MTguODdsNS41LTIuNWg3bDUuNSAyLjVNNDU5LjI3IDYwOC44N2w1LjUtMi41aDExbDUuNSAyLjVNNDU3LjI3IDU5OC44N2w1LjUtMi41aDE1bDUuNSAyLjUiLz48L2c+PC9nPjwvZz48L3N2Zz4=",
         "file-in.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmg5djdIMTh2MTBoMTB2N0g1eiIvPjxwYXRoIGQ9Ik0yMiA5Ljk2bDEzIDEzSDIyeiIvPjxwYXRoIGQ9Ik0yOCAyNS45Nmg3djZsNSA2LTQuOTg3IDYtLjAxMyA2aC03bDEwLTEyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjwvc3ZnPg==",
-        "file-out.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmgxNnYyNEg1di03aDV2N2wxMC0xMi0xMC0xMnY3SDV6Ii8+PHBhdGggZD0iTTIyIDkuOTZsMTMgMTNIMjJ6Ii8+PC9nPjxwYXRoIGQ9Ik01IDMwLjk2SDB2MTRoNXYtMkgydi0xMGgzeiIgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+",
         "file.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNNSAxMGgxNHYxNmgxNnYyNEg1eiIvPjxwYXRoIGQ9Ik0yMiAxMGwxMyAxM0gyMnoiLz48L2c+PC9zdmc+Cg==",
         "function.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAuOTk5IDMxLjAwNXYtM2gtNi43NjJzLjgxMi0xMi4zOTcgMS4xNjItMTQgLjU5Ny0zLjM1IDIuNjI4LTMuMTAzIDEuOTcxIDMuMTAzIDEuOTcxIDMuMTAzbDQuODYyLS4wMTZzLS43ODMtMy45ODQtMi43ODMtNS45ODQtNy45NDYtMS43LTkuNjMzLjAzYy0xLjY4NyAxLjczLTIuMzAyIDUuMDY1LTIuNTk3IDYuNDIyLS41ODggNC41LS44NTQgOS4wMjctMS4yNDggMTMuNTQ3aC04LjZ2M0gxOC4xcy0uODEyIDEyLjM5OC0xLjE2MiAxNC0uNTk3IDMuMzUtMi42MjggMy4xMDMtMS45NzItMy4xMDItMS45NzItMy4xMDJsLTQuODYyLjAxNXMuNzgzIDMuOTg1IDIuNzgzIDUuOTg1YzIgMiA3Ljk0NiAxLjY5OSA5LjYzNC0uMDMxIDEuNjg3LTEuNzMgMi4zMDItNS4wNjUgMi41OTctNi40MjIuNTg3LTQuNS44NTQtOS4wMjcgMS4yNDgtMTMuNTQ3eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo=",
         "hash.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii44NTciPjxwYXRoIGQ9Ik0xNy45OTcgOC45OThsLTUuOTcyLjA3Mi00LjAyOCA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik02IDE2Ljk5OWwtMSA2IDMxIDEgMS02eiIvPjxwYXRoIGQ9Ik0zMS45OTYgOC45OThsLTUuOTcxLjA3Mi00LjAyOSA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik0zLjk5OCAzNy4wMDRsLTEgNiAzMSAxIDEtNnoiLz48L2c+PC9zdmc+Cg==",
@@ -252,6 +271,11 @@ const FlowRenderer = (function () {
         "link call": _hshClr("#ddd"),
         "mqtt in": _hshClr("#d8bfd8"),
         "mqtt out": _hshClr("#d8bfd8"),
+        "tcp in": _hshClr("silver"),
+        "tcp out": _hshClr("silver"),
+        "tcp request": _hshClr("silver"),
+        "udp in": _hshClr("silver"),
+        "udp out": _hshClr("silver"),
         "markdown": _hshClr("#DEBD5C"),
         "postgresql": _hshClr("#5b85a7"),
         "range": _hshClr("#E2D96E"),
@@ -713,13 +737,15 @@ const FlowRenderer = (function () {
             stroke-width: 1px;
             fill: none;
         }
-        ${scope} svg .output-deco {
-            stroke-width: 2px; 
+        ${scope} svg .red-ui-flow-port {
+            stroke-width: 1px;
             stroke-miterlimit: 4;
+            fill: var(--red-ui-node-port-background);
         }
-        ${scope} svg .input-deco {
-            stroke-width: 2px;
+        ${scope} svg .red-ui-flow-port-input {
+            stroke-width: 1px;
             stroke-miterlimit: 4;
+            fill: var(--red-ui-node-port-background);
         }
         ${scope} svg .flow-render-error {
             background-color: rgb(54, 52, 52); 
@@ -842,11 +868,6 @@ const FlowRenderer = (function () {
 
     // SRC: https://github.com/node-red/node-red/blob/29ed5b27925e51185098a7fe3180faa4c8a734d7/packages/node_modules/%40node-red/editor-client/src/js/ui/view.js#L1057-L1179
     function generateLinkPath(origX,origY, destX, destY, sc, hasStatus = false) {
-        // TODO: global?
-        const lineCurveScale = 0.75
-        const node_height = 30
-        const node_width = 100
-
         var dy = destY-origY;
         var dx = destX-origX;
         var delta = Math.sqrt(dy*dy+dx*dx);
@@ -1035,13 +1056,234 @@ const FlowRenderer = (function () {
         return textDimensionCache[className][cacheKey];
     }
 
+    /**
+     * Calculate the required offsets to snap a node
+     * @param {Object} node The node to calculate grid snap offsets for
+     * @param {Object} [options] Options: `align` can be "nearest", "left" or "right"
+     * @returns `{x:number, y:number}`  as the offsets to deduct from `x` and `y`
+     */
+    function calculateGridSnapOffsets(node, options) {
+        if (snapGrid === false) {
+            return { x: 0, y: 0 }
+        }
+        options = options || { align: "nearest" };
+        const gridOffset = { x: 0, y: 0 };
+        const gridSize = RED.view.gridSize();
+        const offsetLeft = node.x - (gridSize * Math.round((node.x - node.w / 2) / gridSize) + node.w / 2);
+        const offsetRight = node.x - (gridSize * Math.round((node.x + node.w / 2) / gridSize) - node.w / 2);
+        gridOffset.x = offsetRight;
+        if (options.align === "right") {
+            //skip - already set to right
+        } else if (options.align === "left" || Math.abs(offsetLeft) < Math.abs(offsetRight)) {
+            gridOffset.x = offsetLeft;
+        }
+        gridOffset.y = node.y - (gridSize * Math.round(node.y / gridSize));
+        return gridOffset;
+    }
+
+    function parseContextKey(key, defaultStore) {
+        var parts = {};
+        var m = /^#:\((\S+?)\)::(.*)$/.exec(key);
+        if (m) {
+            parts.store = m[1];
+            parts.key = m[2];
+        } else {
+            parts.key = key;
+            if (defaultStore) {
+                parts.store = defaultStore;
+            } /* else if (RED.settings.context) {
+                parts.store = RED.settings.context.default;
+            } */
+        }
+        return parts;
+    }
+
     // #endregion
 
     // #region "Label Functions"
+    const payloadTypeLabel = (pt) => {
+        switch (pt) {
+            case "str": return "string";
+            case "num": return "number";
+            case "bool": return "boolean";
+            case "json": return "json";
+            case "date": return "timestamp";
+            case "bin": return "binary";
+            case "env": return "environment";
+            case "flow": return "flow";
+            case "global": return "global";
+            default: return pt;
+        }
+    }
 
-    var defaultLabelFunct = (obj, subflowObj, flowdata) => {
-        return (obj.name || obj.label || obj.info || obj.text || subflowObj.name || obj.type)
+    const CORE_NODES = ['inject', 'change', 'switch', 'function', 'template', 'delay', 'trigger', 'link in', 'link out', 'link call', 'watch', 'complete', 'catch', 'status', 'comment', 'debug', 'subflow', 'range', 'filter', 'rbe', 'mqtt in', 'mqtt out', 'http in', 'http response', 'http request', 'websocket in', 'websocket out', 'tcp in', 'tcp out', 'udp in', 'udp out', 'tcp request', 'split', 'join', 'sort', 'batch', 'csv', 'json', 'xml', 'yaml', 'html', 'file in', 'file', 'exec']
+
+    var defaultLabelFunct = (node, subflowObj, flowdata) => {
+        let label = (node.name || node.label || node.info || node.text || subflowObj.name) || ""
+
+        let betterCandidate = ''
+        let temp = ''
+        let prefix = ''
+        let suffix = "";
+        switch (node.type) {
+            case 'file':
+            case 'file in':
+                var fn = node.filename;
+                if(node.filenameType != "str" && node.filenameType != "env" ) { fn = ""; }
+                if(node.filenameType === "env") { fn = "env."+fn; }
+                if (node.overwriteFile === "delete") {
+                    return node.name||"delete " + fn;
+                } else {
+                    return node.name||fn||'write file';
+                }
+                break
+            case 'html':
+                betterCandidate = node.tag
+                break
+            case 'tcp in':
+            case 'tcp out':
+            case 'tcp request':
+                prefix = 'tcp:'
+            case 'udp in':
+            case 'udp out':
+                prefix = prefix || 'udp:'
+                temp = (node.host || node.addr || node.server || '')
+                return prefix+(temp?temp+":":"")+(node.port||'')
+            case 'debug':
+                if (node.console === true || node.console === "true") { suffix = "\t⇲"; }
+                if (node.targetType === "jsonata") {
+                    return (node.name || "JSONata") + suffix;
+                }
+                if (node.complete === true || node.complete === "true") {
+                    return (node.name||"msg") + suffix;
+                } else {
+                    return (node.name || "msg." + ((!node.complete || node.complete === "false") ? "payload" : this.complete)) + suffix;
+                }
+        }
+        if (node.type && node.type.startsWith("ui-")) {
+            // dashboard 2 node
+            betterCandidate = node.type.replace(/^ui-/, "")
+        } else if (node.type && node.type.startsWith("ui_")) {
+            // dashboard 1 node
+            betterCandidate = node.type.replace(/^ui_/, "")
+        }
+        if (betterCandidate && betterCandidate.length <= 32) {
+            return betterCandidate
+        }
+        if(label) { return label }
+        if(node.topic && node.topic.length <= 32 && CORE_NODES.includes(node.type)) {
+            return node.topic;
+        } else {
+            return node.type
+        }
     };
+
+    const injectLabelFunc = (node) => {
+        var suffix = "";
+        // if fire once then add small indication
+        if (node.once) {
+            suffix = " ¹";
+        }
+        // but replace with repeat one if set to repeat
+        if ((node.repeat && node.repeat != 0) || node.crontab) {
+            suffix = "\t↻";
+        }
+        if (node.name) {
+            return node.name+suffix;
+        }
+        var payload = "";
+        var payloadType = "str";
+        var topic = "";
+        // const hasKey = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key)
+        // const hasPVPT = (obj) => hasKey(obj, 'p') && hasKey(obj, 'v')
+        const customProps = node.props // && node.props.length ? node.props.filter(hasPVPT) : null;
+        if (customProps) {
+            for (var i=0;i<customProps.length;i++) {
+                if (customProps[i].p === "payload") {
+                    payload = ((!customProps[i].vt || customProps[i].vt === "str") ? node.payload : customProps[i].v) || ""
+                    payloadType = customProps[i].vt || node.payloadType || "str"
+                }
+            }
+        } else {
+            payload = node.payload || "";
+            payloadType = node.payloadType || "str";
+        }
+        topic = node.topic || "";
+
+        if (payloadType === "string" ||
+                payloadType === "str" ||
+                payloadType === "num" ||
+                payloadType === "bool" ||
+                payloadType === "json") {
+            if ((topic !== "") && ((topic.length + payload.length) <= 32)) {
+                return topic + ":" + payload+suffix;
+            } else if (payload.length > 0 && payload.length < 24) {
+                return payload+suffix;
+            } else {
+                return 'inject'+suffix;
+            }
+        } else if (payloadType === 'date' || payloadType === 'bin' || payloadType === 'env') {
+            if ((topic !== "") && (topic.length <= 16)) {
+                return topic + ":" + payloadTypeLabel(payloadType)+suffix;
+            } else {
+                return payloadTypeLabel(payloadType)+suffix;
+            }
+        } else if (payloadType === 'flow' || payloadType === 'global') {
+            var key = RED.utils.parseContextKey(payload);
+            return payloadType+"."+key.key+suffix;
+        } else {
+            return 'inject'+suffix;
+        }
+    }
+
+    const changeLabelFunc = (node) => {
+        function prop2name(type, key) {
+            var result = RED.utils.parseContextKey(key);
+            return type +"." +result.key;
+        }
+        if (node.name) {
+            return node.name;
+        }
+        node._ = node._ || function(a,b) {
+            let template = a;
+            switch (a) {
+                case "change.label.set": template = "set {{property}}"; break;
+                case "change.label.change": template = "change {{property}}"; break;
+                case "change.label.move": template = "move {{property}}"; break;
+                case "change.label.delete": template = "delete {{property}}"; break;
+                case "change.label.changeCount": template = "change {{count}} properties"; break;
+            }
+            for (var prop in b) {
+                a = template.replace(new RegExp("\\{\\{"+prop+"\\}\\}","g"),b[prop]);
+            }
+            return a;
+        }
+        if (!node.rules) {
+            if (node.action === "replace") {
+                return node._("change.label.set",{property:"msg."+node.property});
+            } else if (node.action === "change") {
+                return node._("change.label.change",{property:"msg."+node.property});
+            } else if (node.action === "move") {
+                return node._("change.label.move",{property:"msg."+node.property});
+            } else {
+                return node._("change.label.delete",{property:"msg."+node.property});
+            }
+        } else {
+            if (node.rules.length == 1) {
+                if (node.rules[0].t === "set") {
+                    return node._("change.label.set",{property:prop2name((node.rules[0].pt||"msg"), node.rules[0].p)});
+                } else if (node.rules[0].t === "change") {
+                    return node._("change.label.change",{property:prop2name((node.rules[0].pt||"msg"), node.rules[0].p)});
+                } else if (node.rules[0].t === "move") {
+                    return node._("change.label.move",{property:prop2name((node.rules[0].pt||"msg"), node.rules[0].p)});
+                } else {
+                    return node._("change.label.delete",{property:prop2name((node.rules[0].pt||"msg"), node.rules[0].p)});
+                }
+            } else {
+                return node._("change.label.changeCount",{count:node.rules.length});
+            }
+        }
+    }
 
     var emptyLabelFunct = (obj, subflowObj, flowdata) => {
         return ""
@@ -1099,7 +1341,7 @@ const FlowRenderer = (function () {
         "base64": undefined,
         "batch": undefined,
         "catch": catchLabelFunct,
-        "change": undefined,
+        "change": changeLabelFunc,
         "comment": undefined,
         "csv": undefined,
         "debug": undefined,
@@ -1111,7 +1353,7 @@ const FlowRenderer = (function () {
         "http response": (obj, subflowObj, flowdata) => { return (obj.name || ("http" + (obj.statusCode ? " (" + obj.statusCode + ")" : ""))) },
         "http in": (obj, subflowObj, flowdata) => { return (obj.name || ("[" + obj.method + "] " + obj.url)) },
         "http request": undefined,
-        "inject": undefined,
+        "inject": injectLabelFunc,
         "join": undefined,
         "json": undefined,
         "junction": undefined,
@@ -1124,12 +1366,6 @@ const FlowRenderer = (function () {
         "sort": undefined,
         "split": undefined,
         "switch": undefined,
-        ui_button: undefined,
-        ui_list: undefined,
-        ui_svg_graphics: undefined,
-        ui_template: undefined,
-        ui_toast: undefined,
-        ui_upload: undefined,
         "yaml": undefined,
         "xml": undefined,
 
@@ -1236,7 +1472,7 @@ const FlowRenderer = (function () {
     }
 
     /**
-     * Normalise the flows array
+     * Normalise the flows array & return a new array of cloned flows
      * @param {Flows} flow - The flows to normalise
      * @returns {Flows}
      */
@@ -1244,12 +1480,15 @@ const FlowRenderer = (function () {
         if (!Array.isArray(flow)) {
             flow = []
         }
-        for (let i = 0; i < flow.length; i++) {
-            if (!flow[i].id || typeof flow[i].id !== 'string') {
-                flow[i].id = Math.random().toString(36).substring(2, 14)
+        const result = [...flow]
+        for (let i = 0; i < result.length; i++) {
+            // first clone the object and all its properties and sub properties
+            result[i] = JSON.parse(JSON.stringify(result[i]))
+            if (!result[i].id || typeof result[i].id !== 'string') {
+                result[i].id = Math.random().toString(36).substring(2, 14)
             }
         }
-        return flow
+        return result
     }
 
     /**
@@ -1564,7 +1803,7 @@ const FlowRenderer = (function () {
                                 ...clr,
                                 ...portDimensions,
                                 ...portRadius,
-                                class: "output-deco",
+                                class: "red-ui-flow-port",
                                 transform: "translate(15, -5)"
                             }))
 
@@ -1604,7 +1843,7 @@ const FlowRenderer = (function () {
                                 ...clr,
                                 ...portDimensions,
                                 ...portRadius,
-                                class: "input-deco",
+                                class: "red-ui-flow-port-input",
                                 transform: "translate(-25, -5)",
                             }))
 
@@ -1653,7 +1892,7 @@ const FlowRenderer = (function () {
                                 ...clr,
                                 ...portDimensions,
                                 ...portRadius,
-                                class: "input-deco",
+                                class: "red-ui-flow-port-input",
                                 transform: "translate(-25, -5)"
                             }))
 
@@ -1728,20 +1967,30 @@ const FlowRenderer = (function () {
                         }
 
                         const txtBBox = showLabel ? grpText?.getBBox() : { width: 0, height: 0 }
-                        const txtWidth = txtBBox.width + 60
+                        const txtWidth = txtBBox.width
                         const txtHeight = txtBBox.height + 13.5
-                        const rectWidth = showLabel ? (dimensions.width > txtWidth ? dimensions.width : txtWidth) : dimensions.width
-                        let rectHeight = showLabel ? (dimensions.height > txtHeight ? dimensions.height : txtHeight) : dimensions.height
+                        let _rectWidth = showLabel ? (dimensions.width > txtWidth ? dimensions.width : txtWidth) : dimensions.width
+                        let _rectHeight = showLabel ? (dimensions.height > txtHeight ? dimensions.height : txtHeight) : dimensions.height
 
-                        if ((obj.wires || []).length > 2) {
-                            /* if more than 2 outputs, the node "grows" but the node might already be bigger enough. The base
-                                height of 30 supports two outputs, everything else requires growth in height. */
-                            rectHeight = Math.max(rectHeight, 15 * obj.wires.length)
+                        // width logic from Node-RED
+                        const nn = { x: obj.x, y: obj.y, w: _rectWidth, h: _rectHeight, outputs: (obj.wires || []).length }
+                        const hasInput = !!nodeIdsThatReceiveInput[obj.id] 
+                        try {
+                            if (!showLabel) {
+                                nn.w = node_height;
+                                nn.h = Math.max(node_height,(nn.outputs || 0) * 15);
+                            } else {
+                                nn.w = Math.max(node_width,20*(Math.ceil((textLabels.width+48+(hasInput?7:0))/20)) );
+                                nn.h = Math.max(6+24*textLabels.lines.length,(nn.outputs || 0) * 15, 30);
+                            }
+                        } catch(err) {
+                        }
 
+                        if (nn.outputs > 2) {
                             /* move the text block into the middle */
                             if (showLabel && grpText) {
-                                if (rectHeight > txtHeight) {
-                                    const offsetHeight = (rectHeight - txtHeight) / 2
+                                if (nn.h > txtHeight) {
+                                    const offsetHeight = (nn.h - txtHeight) / 2
                                     grpText.setAttributeNS(null, "transform", "translate(38," + ((textLabels.lines.length > 1 ? 16 : 14) + offsetHeight) + ")")
                                 }
                             }
@@ -1755,14 +2004,14 @@ const FlowRenderer = (function () {
                             rx: 5,
                             ry: 5,
                             fill: subflowObj.color || clr.fill,
-                            width: rectWidth,
-                            height: rectHeight,
+                            width: nn.w,
+                            height: nn.h,
                             class: "node " + (" node-" + obj.id)
                         }))
 
                         // image overlay rect
                         grpObj.appendChild(createSvgElement('path', {
-                            d: "M5 0 h25 v" + rectHeight + " h-25 a 5 5 0 0 1 -5 -5  v-" + (rectHeight - 10) + " a 5 5 0 0 1 5 -5",
+                            d: "M5 0 h25 v" + nn.h + " h-25 a 5 5 0 0 1 -5 -5  v-" + (nn.h - 10) + " a 5 5 0 0 1 5 -5",
                             fill: "rgb(0,0,0)",
                             "fill-opacity": 0.1,
                             "stroke": "none"
@@ -1770,7 +2019,7 @@ const FlowRenderer = (function () {
                         // border line separating image and text
                         if (showLabel) {
                             grpObj.appendChild(createSvgElement('path', {
-                                d: "M 29.5 0.5 l 0 " + (rectHeight - 1),
+                                d: "M 29.5 0.5 l 0 " + (nn.h - 1),
                                 fill: "none",
                                 stroke: "rgb(0,0,0)",
                                 "stroke-opacity": 0.1,
@@ -1778,16 +2027,19 @@ const FlowRenderer = (function () {
                             }))
                         }
 
-                        grpObj.setAttribute("transform", `translate(${obj.x - rectWidth / 2}, ${obj.y - rectHeight / 2})`)
+                        const offsets = RED.view.tools.calculateGridSnapOffsets(nn)
+                        const positionX = obj.x - (nn.w / 2) - offsets.x
+                        const positionY = obj.y - (nn.h / 2) - offsets.y
+                        grpObj.setAttribute("transform", `translate(${positionX}, ${positionY})`)
                         obj.bbox = grpObj.getBBox()
-                        obj.bbox.x = obj.x - rectWidth / 2
-                        obj.bbox.y = obj.y - rectHeight / 2
+                        obj.bbox.x = positionX
+                        obj.bbox.y = positionY
 
                         /* Add image - if requested - by type - some types have no image */
                         if (renderOpts.images) {
                             const imgBaseOpts = {
-                                x: 1,
-                                y: Math.max(rectHeight / 2 - 15, 1),
+                                x: 0,
+                                y: Math.max(nn.h / 2 - 15, 0),
                                 width: 30,
                                 height: 30
                             }
@@ -1814,7 +2066,7 @@ const FlowRenderer = (function () {
                                     ...junctionColor,
                                     transform: "translate(-3," + ((obj.bbox.height / 2) - 5) + ")",
                                     d: (renderOpts.arrows ? "M 0,10 9,5 0,0 Z" : "M -1,9.5 8,9.5 8,0.5 -1,0.5 Z"),
-                                    class: "input-deco input-arrows",
+                                    class: "red-ui-flow-port-input input-arrows",
                                     "stroke-linecap": "round",
                                     "stroke-linejoin": "round",
                                 }))
@@ -1824,7 +2076,7 @@ const FlowRenderer = (function () {
                                     transform: "translate(-5," + ((obj.bbox.height / 2) - 5) + ")",
                                     ...portDimensions,
                                     ...portRadius,
-                                    class: "input-deco"
+                                    class: "red-ui-flow-port-input"
                                 }))
                             }
                         }
@@ -1833,13 +2085,13 @@ const FlowRenderer = (function () {
                             ...junctionColor,
                             ...portDimensions,
                             ...portRadius,
-                            class: "output-deco"
+                            class: "red-ui-flow-port"
                         }
                         if (obj.wires && Array.isArray(obj.wires)) {
-                            const initFactor = (obj.wires.length == 1 ? ((obj.bbox.height / 2) - 5) : ((obj.wires.length % 2 == 0) ? 5 : 8))
+                            const initFactor = (obj.wires.length == 1 ? ((obj.bbox.height / 2) - 5) : ((obj.wires.length % 2 == 0) ? 3.5 : 4.5))
                             for (let idx = 0; idx < obj.wires.length; idx++) {
                                 grpObj.appendChild(createSvgElement('rect', {
-                                    transform: "translate(" + (obj.bbox.width - 4) + "," + (initFactor + (13 * idx)) + ")",
+                                    transform: "translate(" + (obj.bbox.width - 4) + "," + (initFactor + (portSpacing * idx)) + ")",
                                     ...outDecoBaseAttrs
                                 }))
                             }
@@ -2024,10 +2276,10 @@ const FlowRenderer = (function () {
 
                 for (var wdx = 0; wdx < outObj.wires.length; wdx++) {
                     var otherNode = nodes[outObj.wires[wdx].id];
-                    const initFactor = (otherNode.wires.length == 1 ? otherNode.bbox.height / 2 : ((otherNode.wires.length % 2 == 0) ? 10 : 13));
+                    const initFactor = (otherNode.wires.length == 1 ? ((otherNode.bbox.height / 2) ) : ((otherNode.wires.length % 2 == 0) ? 3.5 : 4.5) + 5)
 
                     var startX = otherNode.bbox.x + otherNode.bbox.width;
-                    var startY = otherNode.bbox.y + (initFactor + (13 * outObj.wires[wdx].port));
+                    var startY = otherNode.bbox.y + (initFactor + (portSpacing * outObj.wires[wdx].port));
                     var endX = outObj.bbox.x;
                     var endY = outObj.bbox.y + outObj.bbox.height / 2;
 
@@ -2045,7 +2297,7 @@ const FlowRenderer = (function () {
             if (nde.type == "link out") { linkOutNodes.push(nde) }
             if ((nde.wires || []).length == 0) { continue }
 
-            const initFactor = (nde.wires.length == 1 ? nde.bbox.height / 2 : ((nde.wires.length % 2 == 0) ? 10 : 13));
+            const initFactor = (nde.wires.length == 1 ? ((nde.bbox.height / 2) ) : ((nde.wires.length % 2 == 0) ? 3.5 : 4.5) + 5)
             var wireCnt = 0;
             nde.wires.forEach(function (wires) {
                 wires.forEach(function (otherNodeId) {
@@ -2053,7 +2305,7 @@ const FlowRenderer = (function () {
 
                     if (otherNode) {
                         var startX = nde.bbox.x + nde.bbox.width;
-                        var startY = nde.bbox.y + (initFactor + (13 * wireCnt));
+                        var startY = nde.bbox.y + (initFactor + (portSpacing * wireCnt));
                         var endX = otherNode.bbox.x;
                         var endY = otherNode.bbox.y + otherNode.bbox.height / 2;
 
