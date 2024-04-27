@@ -1510,7 +1510,10 @@ const FlowRenderer = (function () {
 
                 // get node dimensions
                 var dimensions = getNodeDimensions(obj)
+                /** flag to indicate node should be full size or collapsed */
                 const showLabel = showsLabel(obj)
+                /** flag to indicate node labels should be hidden (but node size rendered as it would be with a label */
+                const hideLabels = !renderOpts.labels
 
                 // get node color
                 var clr = getNodeColor(obj.type);
@@ -1692,7 +1695,8 @@ const FlowRenderer = (function () {
                     default: {
                         /* the type of the node that represents a subflow is subflow:XXXX while the subflow has type 'subflow' */
                         const grpTextId = "grpTxt" + Math.random().toString().substring(2)
-                        const lblFunct = renderOpts.labels ? (labelByFunct[obj.type] || labelByFunct["_default"]) : emptyLabelFunct
+                        // const lblFunct = renderOpts.labels ? (labelByFunct[obj.type] || labelByFunct["_default"]) : emptyLabelFunct
+                        const lblFunct = (labelByFunct[obj.type] || labelByFunct["_default"])
                         const subflowObj = subflows[obj.type] || {}
                         const textLabels = getLabelParts(lblFunct(obj, subflowObj, flow), "node-text-label")
 
@@ -1741,6 +1745,9 @@ const FlowRenderer = (function () {
                                     grpText.setAttributeNS(null, "transform", "translate(38," + ((textLabels.lines.length > 1 ? 16 : 14) + offsetHeight) + ")")
                                 }
                             }
+                        }
+                        if (hideLabels && grpText) {
+                            grpText.style.display = "none"
                         }
                         // main rect of node
                         grpObj.prepend(createSvgElement('rect', {
