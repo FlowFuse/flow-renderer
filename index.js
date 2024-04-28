@@ -192,7 +192,7 @@ const FlowRenderer = (function () {
         "envelope.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNMjAgMzIuOTZsLTE4LTE4aDM2eiIvPjxwYXRoIGQ9Ik0yIDIwLjM2bDE4IDE4IDE4LTE4djI2LjFIMnoiLz48L2c+PC9zdmc+Cg==",
         "feed.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjYjg1YzVjIiBzdHJva2U9IiMwMDAiPjxwYXRoIGNvbG9yPSIjMDAwIiBkPSJNLS4wMS0uMDA0aDM5Ljk5OHY2MEgtLjAxeiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ1MC4yNjYgLTU4NS4zNykiPjxyZWN0IHg9IjQ2NC4yNyIgeT0iNjI1LjM3IiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ5PSIyLjQiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIiBzdHJva2U9Im5vbmUiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNCI+PHBhdGggZD0iTTQ2MS4yNyA2MTguODdsNS41LTIuNWg3bDUuNSAyLjVNNDU5LjI3IDYwOC44N2w1LjUtMi41aDExbDUuNSAyLjVNNDU3LjI3IDU5OC44N2w1LjUtMi41aDE1bDUuNSAyLjUiLz48L2c+PC9nPjwvZz48L3N2Zz4=",
         "file-in.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmg5djdIMTh2MTBoMTB2N0g1eiIvPjxwYXRoIGQ9Ik0yMiA5Ljk2bDEzIDEzSDIyeiIvPjxwYXRoIGQ9Ik0yOCAyNS45Nmg3djZsNSA2LTQuOTg3IDYtLjAxMyA2aC03bDEwLTEyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjwvc3ZnPg==",
-        "file.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNNSAxMGgxNHYxNmgxNnYyNEg1eiIvPjxwYXRoIGQ9Ik0yMiAxMGwxMyAxM0gyMnoiLz48L2c+PC9zdmc+Cg==",
+        "file.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmgxNnYyNEg1di03aDV2N2wxMC0xMi0xMC0xMnY3SDV6Ii8+PHBhdGggZD0iTTIyIDkuOTZsMTMgMTNIMjJ6Ii8+PC9nPjxwYXRoIGQ9Ik01IDMwLjk2SDB2MTRoNXYtMkgydi0xMGgzeiIgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+",
         "function.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAuOTk5IDMxLjAwNXYtM2gtNi43NjJzLjgxMi0xMi4zOTcgMS4xNjItMTQgLjU5Ny0zLjM1IDIuNjI4LTMuMTAzIDEuOTcxIDMuMTAzIDEuOTcxIDMuMTAzbDQuODYyLS4wMTZzLS43ODMtMy45ODQtMi43ODMtNS45ODQtNy45NDYtMS43LTkuNjMzLjAzYy0xLjY4NyAxLjczLTIuMzAyIDUuMDY1LTIuNTk3IDYuNDIyLS41ODggNC41LS44NTQgOS4wMjctMS4yNDggMTMuNTQ3aC04LjZ2M0gxOC4xcy0uODEyIDEyLjM5OC0xLjE2MiAxNC0uNTk3IDMuMzUtMi42MjggMy4xMDMtMS45NzItMy4xMDItMS45NzItMy4xMDJsLTQuODYyLjAxNXMuNzgzIDMuOTg1IDIuNzgzIDUuOTg1YzIgMiA3Ljk0NiAxLjY5OSA5LjYzNC0uMDMxIDEuNjg3LTEuNzMgMi4zMDItNS4wNjUgMi41OTctNi40MjIuNTg3LTQuNS44NTQtOS4wMjcgMS4yNDgtMTMuNTQ3eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo=",
         "hash.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii44NTciPjxwYXRoIGQ9Ik0xNy45OTcgOC45OThsLTUuOTcyLjA3Mi00LjAyOCA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik02IDE2Ljk5OWwtMSA2IDMxIDEgMS02eiIvPjxwYXRoIGQ9Ik0zMS45OTYgOC45OThsLTUuOTcxLjA3Mi00LjAyOSA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik0zLjk5OCAzNy4wMDRsLTEgNiAzMSAxIDEtNnoiLz48L2c+PC9zdmc+Cg==",
         "inject.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTggNXYxMkg3djloMTV2LTdsNiAxMS02IDEydi04SDd2OWgxMXYxMmwxNC0yNXoiIGZpbGw9IiNmZmYiLz48L3N2Zz4K",
@@ -1123,32 +1123,33 @@ const FlowRenderer = (function () {
 
         let betterCandidate = ''
         let temp = ''
-        let prefix = ''
+        let name = ''
         let suffix = "";
         switch (node.type) {
             case 'file':
+                name = 'write file'
             case 'file in':
-                var fn = node.filename;
-                if(node.filenameType != "str" && node.filenameType != "env" ) { fn = ""; }
-                if(node.filenameType === "env") { fn = "env."+fn; }
-                if (node.overwriteFile === "delete") {
-                    return node.name||"delete " + fn;
+                name = name || 'read file'
+                temp = node.filename;
+                if(node.filenameType != "str" && node.filenameType != "env" ) { temp = ""; }
+                if(node.filenameType === "env") { temp = "env."+temp; }
+                if (name === "write file" && node.overwriteFile === "delete") {
+                    return node.name||"delete " + temp;
                 } else {
-                    return node.name||fn||'write file';
+                    return node.name||temp||name;
                 }
-                break
             case 'html':
                 betterCandidate = node.tag
                 break
             case 'tcp in':
             case 'tcp out':
             case 'tcp request':
-                prefix = 'tcp:'
+                name = 'tcp:'
             case 'udp in':
             case 'udp out':
-                prefix = prefix || 'udp:'
+                name = name || 'udp:'
                 temp = (node.host || node.addr || node.server || '')
-                return prefix+(temp?temp+":":"")+(node.port||'')
+                return name+(temp?temp+":":"")+(node.port||'')
             case 'debug':
                 if (node.console === true || node.console === "true") { suffix = "\t⇲"; }
                 if (node.targetType === "jsonata") {
