@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/flow-renderer",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Node-RED flow renderer",
     "main": "index.js",
     "scripts": {
