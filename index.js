@@ -552,6 +552,15 @@ const FlowRenderer = (function () {
         return Math.min(Math.max(val, min), max)
     }
 
+    function hasScrollbars(container) {
+        const hasHorizontalScrollbar = container.scrollWidth > container.clientWidth
+        const hasVerticalScrollbar = container.scrollHeight > container.clientHeight
+        return {
+            hasHorizontalScrollbar,
+            hasVerticalScrollbar
+        }
+    }
+
     /**
      * 
      * @param {SVGSVGElement} svg 
@@ -582,6 +591,29 @@ const FlowRenderer = (function () {
                 svg.style.height = `${8000 * modifiedScale}px`
             }
         }
+
+        const zoomControls = createZoomControls(container)
+        zoomControls.zoomIn.onclick = function () {
+            modifiedScale = clamp(modifiedScale + 0.1, 0.20, 3, 1)
+            updateSVGScale(modifiedScale)
+        }
+
+        zoomControls.zoomOut.onclick = function () {
+            modifiedScale = clamp(modifiedScale - 0.1, 0.20, 3, 1)
+            updateSVGScale(modifiedScale)
+        }
+
+        zoomControls.zoomReset.onclick = function () {
+            modifiedScale = originalScale
+            updateSVGScale(modifiedScale)
+        }
+
+        function updateSVGScale(scale) {
+            mainSvgGroup.setAttribute('transform', `scale(${scale})`)
+            svg.style.width = `${8000 * scale}px`
+            svg.style.height = `${8000 * scale}px`
+        }
+
     }
 
 
@@ -594,6 +626,176 @@ const FlowRenderer = (function () {
         }
         container.appendChild(div)
         return div
+    }
+
+    function createToolbar(container) {
+        const doc = getDocument(container, this)
+        if (!doc) {
+            return null
+        }
+        let toolbar = container.querySelector(".toolbar")
+        if (toolbar) {
+            return toolbar
+        }
+        toolbar = doc.createElement("div")
+        toolbar.classList.add("toolbar")
+        if (container) {
+            container.appendChild(toolbar)
+        }
+        return toolbar
+    }
+
+    function createZoomControls(container) {
+        const doc = getDocument(container, this)
+        if (!doc) { return null }
+        let toolbar = container.querySelector(".toolbar")
+        if (!toolbar) {
+            toolbar = createToolbar(container)
+        }
+        let zoomControls = toolbar.querySelector(".zoom-controls")
+        if (zoomControls) {
+            return {
+                zoomIn: toolbar.querySelector(".zoom-in"),
+                zoomOut: toolbar.querySelector(".zoom-out"),
+                zoomReset: toolbar.querySelector(".zoom-reset")
+            }
+        }
+        zoomControls = doc.createElement("div")
+        zoomControls.classList.add("zoom-controls")
+        zoomControls.classList.add("button-group")
+        const zoomIn = doc.createElement("button")
+        zoomIn.classList.add("red-ui-footer-button", "zoom-in")
+        zoomIn.innerHTML = '+'
+        const zoomReset = doc.createElement("button")
+        zoomReset.classList.add("red-ui-footer-button", "zoom-reset")
+        zoomReset.innerHTML = '○'
+        const zoomOut = doc.createElement("button")
+        zoomOut.classList.add("red-ui-footer-button", "zoom-out")
+        zoomOut.innerHTML = '-'
+        
+        zoomControls.appendChild(zoomOut)
+        zoomControls.appendChild(zoomReset)
+        zoomControls.appendChild(zoomIn)
+
+        if (toolbar) {
+            toolbar.appendChild(zoomControls)
+        }
+        return {
+            zoomIn,
+            zoomOut,
+            zoomReset
+        }
+    }
+
+    function createCopyControls(container) {
+        const doc = getDocument(container, this)
+        if (!doc) { return null }
+        let toolbar = container.querySelector(".toolbar")
+        if (!toolbar) {
+            toolbar = createToolbar(container)
+        }
+        let copyControls = toolbar.querySelector(".copy-controls")
+        if (copyControls) {
+            return {
+                copy: toolbar.querySelector(".copy-flow"),
+                download: toolbar.querySelector(".download-flow"),
+            }
+        }
+        copyControls = doc.createElement("div")
+        copyControls.classList.add("copy-controls")
+        copyControls.classList.add("button-group")
+        const copyBtn = doc.createElement("button")
+        copyBtn.classList.add("red-ui-footer-button", "copy-flow")
+        copyBtn.innerHTML = 'Copy'
+        const downloadBtn = doc.createElement("button")
+        downloadBtn.classList.add("red-ui-footer-button", "download-flow")
+        downloadBtn.innerHTML = 'Download'
+        
+        copyControls.appendChild(copyBtn)
+        copyControls.appendChild(downloadBtn)
+
+        if (toolbar) {
+            toolbar.appendChild(copyControls)
+        }
+        return {
+            copy: copyBtn,
+            download: downloadBtn
+        }
+    }
+    function download(event, data, mimeType, filename, callback) {
+        // download the data as a file
+        callback = callback || function () {}
+        let dataString = data || []
+        if (typeof dataString === "object") {
+            dataString = JSON.stringify(dataString, null, 2)
+        } else if (typeof dataString !== "string") {
+            dataString = dataString.toString()
+        }
+        const theEventDoc = event && event.target && event.target.ownerDocument
+        const doc = getDocument(theEventDoc, this)
+        const blob = new Blob([dataString], {type: mimeType})
+        const url = URL.createObjectURL(blob)
+        const el = doc.createElement("a")
+        el.style.display = "none"
+        el.href = url
+        el.download = filename
+        el.style.position = "fixed"
+        el.style.top = "0"
+        el.style.left = "0"
+        try {
+            doc.body.appendChild(el)
+            el.focus()
+            el.click(event)
+            URL.revokeObjectURL(url)
+            callback(null, true)
+        } catch (error) {
+            callback(error, false)
+            console.error('failed to download', error)
+        } finally {
+            doc.body.removeChild(el)
+        }
+    }
+
+    function copyToClipboard(event, data, callback) {
+        callback = callback || function () {}
+        let dataString = data || []
+        if (typeof dataString === "object") {
+            dataString = JSON.stringify(dataString, null, 0)
+        } else if (typeof dataString !== "string") {
+            dataString = dataString.toString()
+        }
+        const theEventDoc = event && event.target && event.target.ownerDocument
+        const doc = getDocument(theEventDoc, this)
+        if (typeof navigator !== "undefined" && navigator.clipboard) {
+            navigator.clipboard.writeText(dataString)
+            .then(function() {
+                callback(null, true)
+            }).catch(function(err) {
+                callback(err, false)
+            })
+            return
+        }
+        // fallback to execCommand
+        const el = doc.createElement("textarea")
+        el.value = dataString
+        el.style.position = "fixed"
+        el.style.top = "0"
+        el.style.left = "0"
+
+        
+        try {
+            doc.body.appendChild(el)
+            el.focus()
+            el.select()
+            const result = doc.execCommand('copy')
+            callback(null, result)
+            console.log('failed to copy', result)
+        } catch (error) {
+            console.error('failed to copy', error)
+        } finally {
+            doc.body.removeChild(el)
+        }
+        return;
     }
 
     /**
@@ -649,14 +851,22 @@ const FlowRenderer = (function () {
             --red-ui-node-label-color: #333;
             --red-ui-node-port-background: #d9d9d9;
             --red-ui-link-color: #999;
+            --red-ui-workspace-button-color: #333;
+            --red-ui-workspace-button-background: #f3f3f3;
+            --red-ui-form-input-border-color: #ccc;
         }
-
+        ${scope} {
+            position: relative;
+        }
         ${scope} .red-ui-workspace-chart {
             box-sizing: border-box;
             border: var(--red-ui-view-border);
             overflow: scroll;
             height: 100%;
             width: 100%;
+        }
+        ${scope} .red-ui-workspace-chart.has-tabs {
+            height: calc(100% - 34px); // 34px is the height of the tabs
         }
         ${scope} svg {
             position: relative;
@@ -766,6 +976,7 @@ const FlowRenderer = (function () {
             border-right: none;
             background-color: #f0f0f0;
             max-width: 200px;
+            max-height: 34px; /* for calculating svg height */
             width: 14%;
             overflow: hidden;
             white-space: nowrap;
@@ -833,6 +1044,61 @@ const FlowRenderer = (function () {
         ${scope} .red-ui-tab:hover {
             cursor: pointer;
             background-color: white;
+        }
+        /* positioning of toolbar */
+        ${scope} .toolbar {
+            display: flex;
+            flex-direction: row;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            opacity: 0.7;
+        }
+        ${scope} .toolbar:hover {
+            opacity: 1;
+        }
+        ${scope}.has-scrollbars .toolbar {
+            bottom: 24px;
+            right: 24px;
+        }
+        /* styles for button groups and buttons */
+        ${scope} .button-group {
+            display: flex;
+            flex-direction: row;
+        }
+        ${scope} .button-group button {
+            user-select: none;
+            box-sizing: border-box;
+            display: inline-block;
+            text-align: center;
+            cursor: pointer;
+            line-height: 22px;
+            height: 24px;
+            color: var(--red-ui-workspace-button-color) !important;
+            background: var(--red-ui-workspace-button-background);
+            text-decoration: none;
+            border: 1px solid var(--red-ui-form-input-border-color);
+            margin: 0px;
+            padding: 0px;
+        }
+        ${scope} .button-group button:not(:first-child) {
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+            border-left: none;
+        }
+
+        /* zoom controls */
+        ${scope} .zoom-controls.button-group button {
+            font-size: 22px;
+            width: 24px;
+        }
+
+        /* copy controls */
+        ${scope} .copy-controls.button-group {
+            margin-right: 24px;
+        }
+        ${scope} .copy-controls.button-group button {
+            padding: 0px 4px;
         }
         `
         return css
@@ -1552,6 +1818,15 @@ const FlowRenderer = (function () {
         /** @type {HTMLDivElement} */
         const div = createDefaultDivContainer(container)
 
+        const copyControls = createCopyControls(container)
+        copyControls.copy.onclick = function (e) {
+            copyToClipboard(e, flows) 
+        }
+        copyControls.download.onclick = function (e) {
+            download(e, flows, 'application/json', 'flows.json')
+        }
+        
+
         // generate the SVG element
         /** @type {SVGSVGElement} */
         const svg = createDefaultSVG(div)
@@ -1626,6 +1901,10 @@ const FlowRenderer = (function () {
         tabs.forEach((tab, index) => {
             addTab(tab, index, renderOpts)
         })
+
+        if (tabs.length) {
+            div.classList.add('has-tabs') // tabs affect the available space for the flow SVG
+        }
 
         // use renderOpts.flowId (or find a suitable first tab)
         if (!renderOpts.flowId) {
@@ -2371,6 +2650,13 @@ const FlowRenderer = (function () {
             svg: svg.innerHTML,
             flowId: renderOpts.flowId,
             css: getCSS(renderOpts.scope)
+        }
+
+        const hasScrollBars = hasScrollbars(svg.parentElement)
+        if (hasScrollBars.hasHorizontalScrollbar || hasScrollBars.hasVerticalScrollbar) {
+            container.classList.add('has-scrollbars')
+        } else {
+            container.classList.remove('has-scrollbars')
         }
 
         return result
