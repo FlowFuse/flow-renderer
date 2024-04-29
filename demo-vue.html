@@ -8,12 +8,12 @@
     <style>
         div.flow-renderer {
             width: 100%;
-            height: 280px;
+            height: 320px;
         }
 
         #nr-flow-3 {
             width: 100%;
-            height: 280px;
+            height: 320px;
         }
 
         h1, h2, h3, h4, h5 {
@@ -39,21 +39,15 @@
         <button @click="render()">Render Flows</button>
         <button @click="render([])">Clear Flows</button>
         <br>
-    
+
         <!-- Demo 1 -->
         <h4>Render (grid, images, labels)</h4>
         <div ref="f1" class="flow-renderer"></div>
-    
-        <br>
-        <br>
-    
+
         <!-- Demo 2 -->
         <h4>Render (no grid, no images, labels)</h4>
-        <div ref="f2" class="different-class" style="width: auto; height: 280px;"></div>
-    
-        <br>
-        <br>
-    
+        <div ref="f2" class="different-class" style="width: auto; height: 320px;"></div>
+
         <!-- Demo 3 -->
         <h4>Render (no grid, images, no labels) using data-options</h4>
         <div ref="f3" id="nr-flow-3" data-grid-lines="false" data-labels="false" data-images></div>
