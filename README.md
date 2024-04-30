@@ -92,7 +92,7 @@ const container3 = document.getElementById('nr-flow-3');
 const flow = [{"id": "1001", "type": "inject", "x": 100, "y": 40, "wires": [["1002"]]}, {"id": "1002", "type": "debug", "x":300, "y": 40}]
 renderer.renderFlows(flow, {
     container: container3,
-    scope: 'my-scope', // scope for CSS
+    scope: 'custom-css-scope', // scope for CSS
     gridLines: true, // show gridLines
     images: true, // show images
     linkLines: false, // show link lines
