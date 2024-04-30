@@ -50,7 +50,7 @@
 
         <!-- Demo 3 -->
         <h4>Render (no grid, images, no labels, no auto layout) using data-options</h4>
-        <div ref="f3" id="nr-flow-3" data-grid-lines="false" data-labels="false" data-images data-auto-layout="false"></div>
+        <div ref="f3" id="nr-flow-3" data-grid-lines="false" data-labels="false" data-images  data-auto-zoom="false" data-auto-scroll="false"></div>
 
     </div>
 
@@ -90,7 +90,7 @@
                     const data = flows || this.demoFlow || []
                     const dataObject = typeof data === 'string' ? JSON.parse(data) : data
                     renderer.renderFlows(dataObject, { container: this.$refs.f1 })
-                    renderer.renderFlows(dataObject, { container: this.$refs.f2, gridlines: false, images: false })
+                    renderer.renderFlows(dataObject, { container: this.$refs.f2, gridLines: false, images: false })
                     renderer.renderFlows(dataObject, { container: this.$refs.f3, scope: 'nr-flow-3' })
                 },
                 clear() {

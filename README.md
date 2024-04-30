@@ -31,8 +31,8 @@ _or wherever the script is located in your project_
 Next, add a container element to your HTML file and call the `flowRenderer` function with the flow data and options.
 NOTE: flow-renderer is an ES Module and requires a modern browser to run. Script tags must have the `type="module"` attribute.
 
-By default, the flow renderer will render the flow with `gridlines`, `images`, `labels`, `zoom`, `autozoom`, and `autoscroll` enabled.
-`linklines` are disabled by default.
+By default, the flow renderer will render the flow with `gridLines`, `images`, `labels`, `zoom`, `autoZoom`, and `autoScroll` enabled.
+`linkLines` are disabled by default.
 
 To operate the zoom, use the mouse wheel + <kbd>Ctrl</kbd> or <kbd>⌘</kbd> key.
 To scroll the container vertically, use the mouse wheel without the <kbd>Shift</kbd> key.
@@ -93,13 +93,13 @@ const flow = [{"id": "1001", "type": "inject", "x": 100, "y": 40, "wires": [["10
 renderer.renderFlows(flow, {
     container: container3,
     scope: 'my-scope', // scope for CSS
-    gridlines: true, // show gridlines
+    gridLines: true, // show gridLines
     images: true, // show images
-    linklines: false, // show link lines
+    linkLines: false, // show link lines
     labels: true, // show labels
     zoom: true, // enable zoom within the container
-    autozoom: true, // auto zoom to fit the flow within the container upon rendering (best fit, limited to 20% min, 100% max zoom)
-    autoscroll: true, // auto scroll the leftmost node to the left of the container and the topmost node to the top of the container upon rendering
+    autoZoom: true, // auto zoom to fit the flow within the container upon rendering (best fit, limited to 20% min, 100% max zoom)
+    autoScroll: true, // auto scroll the leftmost node to the left of the container and the topmost node to the top of the container upon rendering
     flowId: undefined // Id of flow to display
 })
 ```

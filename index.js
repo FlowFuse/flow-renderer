@@ -1,12 +1,12 @@
 /**
  * @typedef {Object} FlowRendererOptions
- * @property {boolean} [gridlines=true] - Whether to display grid lines on the flow diagram. Defaults to true.
+ * @property {boolean} [gridLines=true] - Whether to display grid lines on the flow diagram. Defaults to true.
  * @property {boolean} [zoom=true] - Whether to enable zooming on the flow diagram. Defaults to true.
  * @property {boolean} [images=true] - Whether to display images on the flow diagram. Defaults to true.
- * @property {boolean} [linklines=false] - Whether to display link lines on the flow diagram. Defaults to false.
+ * @property {boolean} [linkLines=false] - Whether to display link lines on the flow diagram. Defaults to false.
  * @property {boolean} [labels=true] - Whether to display labels on the flow diagram. Defaults to true.
- * @property {boolean} [autozoom=true] - Whether to automatically zoom the diagram to fit the container. Depends on zoom option being true. Defaults to true.
- * @property {boolean} [autoscroll=true] - Whether to automatically scroll the diagram to the top leftmost node. Defaults to true.
+ * @property {boolean} [autoZoom=true] - Whether to automatically zoom the diagram to fit the container. Depends on zoom option being true. Defaults to true.
+ * @property {boolean} [autoScroll=true] - Whether to automatically scroll the diagram to the top leftmost node. Defaults to true.
  * @property {Array<Object>} flowId - The specific flow(s) to render. If not provided, all flows will be rendered.
  * @property {HTMLElement} container - The container div where the SVG diagram and controls will be rendered.
  * @property {Document} document - The document object to use for creating SVG elements. Defaults to the global document object.
@@ -48,13 +48,13 @@ const FlowRenderer = (function () {
     /** @type {FlowRendererOptions} */
     const defaults = {
         arrows: false,
-        gridlines: true,
+        gridLines: true,
         zoom: true,
         images: true,
-        linklines: false,
+        linkLines: false,
         labels: true,
-        autozoom: true,
-        autoscroll: true,
+        autoZoom: true,
+        autoScroll: true,
         flowId: undefined,
         container: undefined,
         document: undefined
@@ -646,13 +646,13 @@ const FlowRenderer = (function () {
     }
 
     function autoLayout(svg, flow, renderOpts) {
-        const computedAutoScaleAndScroll = (renderOpts.autozoom || renderOpts.autoscroll) ?  computeAutoLayout(flow, renderOpts) : null
+        const computedAutoScaleAndScroll = (renderOpts.autoZoom || renderOpts.autoScroll) ?  computeAutoLayout(flow, renderOpts) : null
         if (renderOpts.zoom) {
-            if (computedAutoScaleAndScroll && renderOpts.autozoom) {
+            if (computedAutoScaleAndScroll && renderOpts.autoZoom) {
                 updateScale(svg.querySelector('g.outerContainer'), computedAutoScaleAndScroll.scale, true);
             }
         }
-        if (computedAutoScaleAndScroll && renderOpts.autoscroll) {
+        if (computedAutoScaleAndScroll && renderOpts.autoScroll) {
             updateScroll(svg.parentElement, computedAutoScaleAndScroll.scrollX, computedAutoScaleAndScroll.scrollY, true);
         }
         return computedAutoScaleAndScroll
@@ -1929,10 +1929,10 @@ const FlowRenderer = (function () {
         if (options) {
             if (options.container) {
                 const containerOptions = {}
-                const dataOptions = ['scope', 'grid-lines', 'arrows', 'zoom', 'images', 'link-lines', 'labels', 'auto-zoom', 'auto-scroll']
+                const dataOptions = ['scope', 'gridLines', 'arrows', 'zoom', 'images', 'linkLines', 'labels', 'autoZoom', 'autoScroll', 'flowId']
                 dataOptions.forEach(function (opt) {
-                    if (options.container.hasAttribute("data-" + opt)) {
-                        const optionValue = options.container.getAttribute("data-" + opt) || "true"
+                    if (typeof options.container.dataset[opt] === 'string') {
+                        const optionValue = options.container.dataset[opt] || "true"
                         containerOptions[opt.replace(/-/g, '')] = optionValue === "true"
                     }
                 })
@@ -2130,7 +2130,7 @@ const FlowRenderer = (function () {
 
         /** @type {SVGGElement} */
         const flow_gridEl = svg.querySelector('.flow_grid');
-        if (renderOpts.gridlines && flow_gridEl) {
+        if (renderOpts.gridLines && flow_gridEl) {
             for (var idx = 0; idx < 250; idx++) {
                 flow_gridEl.append(createSvgElement('line', {
                     x1: 0,
@@ -2760,7 +2760,7 @@ const FlowRenderer = (function () {
         }
 
         /* draw the links between link nodes, i.e. link-in and link-out nodes */
-        if (renderOpts.linklines) {
+        if (renderOpts.linkLines) {
             linkOutNodes.forEach(function (nde) {
                 nde.links.forEach(function (ndeId) {
                     var otherNode = nodes[ndeId];
