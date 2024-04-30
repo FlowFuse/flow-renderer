@@ -41,11 +41,13 @@ To scroll the container horizontally, use the mouse wheel + <kbd>Shift</kbd> key
 <div id="nr-flow-1" class="flow-renderer" style="height: 300px"></div>
 ```
 
-```javascript
-const renderer = new FlowRenderer()
-const container1 = document.getElementById('nr-flow-1');
-const flow = [{"id": "1001", "type": "inject", "x": 100, "y": 40, "wires": [["1002"]]}, {"id": "1002", "type": "debug", "x":300, "y": 40}]
-renderer.renderFlows(flow, { container: container1 })
+```html
+<script>
+  const renderer = new FlowRenderer()
+  const container1 = document.getElementById('nr-flow-1');
+  const flow = [{"id": "1001", "type": "inject", "x": 100, "y": 40, "wires": [["1002"]]}, {"id": "1002", "type": "debug", "x":300, "y": 40}]
+  renderer.renderFlows(flow, { container: container1 })
+</script>
 ```
 
 ### Inline Options example
@@ -56,11 +58,13 @@ Options can be set by data attributes `scope`, `grid-lines`, `zoom`, `images`, `
 <div id="nr-flow-2" style="height: 300px" data-scope="my-scope" data-grid-lines="true" data-zoom="true" data-images="true" data-link-lines="false" data-labels="true"></div>
 ```
 
-```javascript
-const renderer = new FlowRenderer()
-const container2 = document.getElementById('nr-flow-2');
-const flow = [{"id": "1001", "type": "inject", "x": 100, "y": 40, "wires": [["1002"]]}, {"id": "1002", "type": "debug", "x":300, "y": 40}]
-renderer.renderFlows(flow, { container: container2 })
+```html
+<script type="module">
+  const renderer = new FlowRenderer()
+  const container2 = document.getElementById('nr-flow-2');
+  const flow = [{"id": "1001", "type": "inject", "x": 100, "y": 40, "wires": [["1002"]]}, {"id": "1002", "type": "debug", "x":300, "y": 40}]
+  renderer.renderFlows(flow, { container: container2 })
+</script>
 ```
 
 
