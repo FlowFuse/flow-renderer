@@ -3,8 +3,10 @@
  * @property {boolean} [gridlines=true] - Whether to display grid lines on the flow diagram. Defaults to true.
  * @property {boolean} [zoom=true] - Whether to enable zooming on the flow diagram. Defaults to true.
  * @property {boolean} [images=true] - Whether to display images on the flow diagram. Defaults to true.
- * @property {boolean} [linkLines=false] - Whether to display link lines on the flow diagram. Defaults to false.
+ * @property {boolean} [linklines=false] - Whether to display link lines on the flow diagram. Defaults to false.
  * @property {boolean} [labels=true] - Whether to display labels on the flow diagram. Defaults to true.
+ * @property {boolean} [autozoom=true] - Whether to automatically zoom the diagram to fit the container. Depends on zoom option being true. Defaults to true.
+ * @property {boolean} [autoscroll=true] - Whether to automatically scroll the diagram to the top leftmost node. Defaults to true.
  * @property {Array<Object>} flowId - The specific flow(s) to render. If not provided, all flows will be rendered.
  * @property {HTMLElement} container - The container div where the SVG diagram and controls will be rendered.
  * @property {Document} document - The document object to use for creating SVG elements. Defaults to the global document object.
@@ -49,8 +51,10 @@ const FlowRenderer = (function () {
         gridlines: true,
         zoom: true,
         images: true,
-        linkLines: false,
+        linklines: false,
         labels: true,
+        autozoom: true,
+        autoscroll: true,
         flowId: undefined,
         container: undefined,
         document: undefined
@@ -575,47 +579,199 @@ const FlowRenderer = (function () {
                 originalScale = clamp(parseFloat(scale[1] || 1), 0.25, 3, 1)
             }
         }
-        let modifiedScale = originalScale
+        
         // get the first child g element of the svg element
         const mainSvgGroup = svg.querySelector('g')
-        mainSvgGroup.setAttribute('transform', `scale(${modifiedScale})`);
+
+        // initialize the scale
+        updateScale(mainSvgGroup, originalScale, true)
+
         container.onwheel = function (e) {
-            if (e.ctrlKey) {
+            if (e.ctrlKey || e.metaKey) {
                 // zoom in/out
                 e.preventDefault()
-                const scale = modifiedScale - (Math.sign(e.deltaY) * 0.075)
-                modifiedScale = clamp(scale, 0.20, 3, 1)
-                mainSvgGroup.setAttribute('transform', `scale(${modifiedScale})`)
-                // recalculate the svg style height and width now that the scale has changed
-                svg.style.width = `${8000 * modifiedScale}px`
-                svg.style.height = `${8000 * modifiedScale}px`
+                let scale = getScale(mainSvgGroup)
+                scale = scale - (Math.sign(e.deltaY) * 0.075)
+                scale = clamp(scale, 0.20, 3, 1)
+                updateScale(mainSvgGroup, scale)
             }
         }
 
         const zoomControls = createZoomControls(container)
         zoomControls.zoomIn.onclick = function () {
-            modifiedScale = clamp(modifiedScale + 0.1, 0.20, 3, 1)
-            updateSVGScale(modifiedScale)
+            const scale = clamp(getScale(mainSvgGroup) + 0.1, 0.20, 3, 1)
+            updateScale(mainSvgGroup, scale)
         }
 
         zoomControls.zoomOut.onclick = function () {
-            modifiedScale = clamp(modifiedScale - 0.1, 0.20, 3, 1)
-            updateSVGScale(modifiedScale)
+            const scale = clamp(getScale(mainSvgGroup) - 0.1, 0.20, 3, 1)
+            updateScale(mainSvgGroup, scale)
         }
 
         zoomControls.zoomReset.onclick = function () {
-            modifiedScale = originalScale
-            updateSVGScale(modifiedScale)
+            resetScale(mainSvgGroup)
+            resetScroll(container.querySelector('.red-ui-workspace-chart'))
         }
-
-        function updateSVGScale(scale) {
-            mainSvgGroup.setAttribute('transform', `scale(${scale})`)
-            svg.style.width = `${8000 * scale}px`
-            svg.style.height = `${8000 * scale}px`
-        }
-
     }
 
+    function getScale(svg) {
+        return parseFloat(svg.getAttribute('_scale_current') || 1)
+    }
+    function updateScale(svg, scale, setAsDefault = false) {
+        svg.setAttribute('transform', `scale(${scale})`)
+        svg.style.width = `${8000 * scale}px`
+        svg.style.height = `${8000 * scale}px`
+        svg.setAttribute('_scale_current', scale)
+        if (setAsDefault) {
+            svg.setAttribute('_scale_original', scale)
+        }
+    }
+
+    function updateScroll(container, scrollX, scrollY, setAsDefault = false) {
+        container.scrollLeft = scrollX
+        container.scrollTop = scrollY
+        if (setAsDefault) {
+            container.setAttribute('_scroll_x', scrollX)
+            container.setAttribute('_scroll_y', scrollY)
+        }
+    }
+
+    function resetScroll(container) {
+        container.scrollLeft = container.getAttribute('_scroll_x') || 0
+        container.scrollTop = container.getAttribute('_scroll_y') || 0
+    }
+    function resetScale(svg) {
+        const scale = svg.getAttribute('_scale_original') || 1
+        updateScale(svg, scale)
+    }
+
+    function autoLayout(svg, flow, renderOpts) {
+        const computedAutoScaleAndScroll = (renderOpts.autozoom || renderOpts.autoscroll) ?  computeAutoLayout(flow, renderOpts) : null
+        if (renderOpts.zoom) {
+            if (computedAutoScaleAndScroll && renderOpts.autozoom) {
+                updateScale(svg.querySelector('g.outerContainer'), computedAutoScaleAndScroll.scale, true);
+            }
+        }
+        if (computedAutoScaleAndScroll && renderOpts.autoscroll) {
+            updateScroll(svg.parentElement, computedAutoScaleAndScroll.scrollX, computedAutoScaleAndScroll.scrollY, true);
+        }
+        return computedAutoScaleAndScroll
+    }
+
+    function saveLayout(svg, renderOpts, flowid) {
+        // save the current scroll and scale values in the container as attributes
+        const container = svg.parentElement
+        const scrollX = container.scrollLeft
+        const scrollY = container.scrollTop
+        const scale = getScale(svg.querySelector('g.outerContainer'))
+        const id = flowid || renderOpts.flowId || "default"
+        // console.log("Saving layout", { id, scrollX, scrollY, scale })
+        container.setAttribute(`_state_${id}_x`, scrollX)
+        container.setAttribute(`_state_${id}_y`, scrollY)
+        container.setAttribute(`_state_${id}_scale`, scale)
+    }
+
+    function restoreLayout(svg, renderOpts, flowid) {
+        // restore the scroll and scale values from the container attributes
+        const container = svg.parentElement
+        const id = flowid || renderOpts.flowId || "default"
+        const scrollX = container.getAttribute(`_state_${id}_x`)
+        const scrollY = container.getAttribute(`_state_${id}_y`)
+        const scale = container.getAttribute(`_state_${id}_scale`)
+        // console.log("Restoring layout", { id, scrollX, scrollY, scale })
+        if (typeof scrollX === "string" && typeof scrollY === "string") {
+            updateScroll(container, scrollX, scrollY)
+        }
+        if (typeof scale === "string") {
+            updateScale(svg.querySelector('g.outerContainer'), scale)
+        }
+    }
+
+    function clearSavedLayout(svg) {
+        // console.log("Clearing saved layout")
+        const container = svg.parentElement
+        // scan all attributes and remove the ones that match /_.state_.*/
+        const attributes = container.attributes
+        for (let i = 0; i < attributes.length; i++) {
+            const attr = attributes[i]
+            if (/^_state_.*/.test(attr.name)) {
+                container.removeAttribute(attr.name)
+            }
+        }
+    }
+
+    function computeAutoLayout(flow, renderOpts) {
+        // compute the Scale and Scroll values best suited to put the flow into view
+        // by scanning for most extreme node positions (taking into account node size)
+        const SCALE_MIN = 0.2
+        const SCALE_MAX = 1.0
+        const container = renderOpts.container.querySelector('.red-ui-workspace-chart')
+        const containerRect = container.getBoundingClientRect()
+        const containerWidth = containerRect.width - 25 // 25 is the scrollbar width
+        const containerHeight = containerRect.height - 25 // 25 is the scrollbar height
+
+        let minX = 8000
+        let minY = 8000
+        let maxX = 0
+        let maxY = 0
+        const flowId = renderOpts.flowId
+        const flowNodes = flow.filter((node) => node.type !== 'tab' && node.type !== 'subflow' && node.z == flowId)
+        if (flowNodes.length === 0) {
+            return { scale: 1, scrollX: 0, scrollY: 0 }
+        }
+        for (let node of flowNodes) {
+            if (node.type === 'tab' || node.type === 'subflow' || node.type === 'junction') {
+                continue
+            }
+            const x = node.x || 0
+            const y = node.y || 0
+            const nodeDimensions = getNodeDimensions(node)
+            const halfW = ((nodeDimensions.width || 100) / 2)
+            const halfH = ((nodeDimensions.height || 30) / 2)
+            const realX1 = x - halfW
+            const realY1 = y - halfH
+            const realX2 = x + halfW
+            const realY2 = y + halfH
+            minX = Math.min(minX, realX1)
+            minY = Math.min(minY, realY1)
+            maxX = Math.max(maxX, realX2)
+            maxY = Math.max(maxY, realY2)
+        }
+
+        // calculate the scale
+        let scale = 1
+        const dx = maxX - minX
+        const dy = maxY - minY
+        const scaleWidth = containerWidth / dx
+        const scaleHeight = containerHeight / dy
+        if (dx > containerWidth || dy > containerHeight) {
+            scale = Math.min(scaleWidth, scaleHeight)
+            // reduce the scale a bit to make sure the nodes are not at the edge
+            scale = scale * 0.95
+        }
+        scale = clamp(scale, SCALE_MIN, SCALE_MAX, 1)
+
+        // calculate the scroll
+        let scrollX = minX
+        let scrollY = minY
+
+        if (scrollX < 50) {
+            scrollX = 0
+        }
+        if (scrollY < 40) {
+            scrollY = 0
+        }
+
+        if (scrollX > 0) {
+            scrollX -= 50
+        }
+        if (scrollY > 0) {
+            scrollY -= 40
+        }
+        scrollX = clamp(scrollX * scale, 0, container.scrollWidth) // clamp to 0 - scrollWidth
+        scrollY = clamp(scrollY * scale, 0, container.scrollHeight) // clamp to 0 - scrollHeight
+        return { scale, scrollX, scrollY, minX, minY, maxX, maxY }
+    }
 
     function createDefaultDivContainer(container) {
         const doc = getDocument(container, this)
@@ -1773,7 +1929,7 @@ const FlowRenderer = (function () {
         if (options) {
             if (options.container) {
                 const containerOptions = {}
-                const dataOptions = ['scope', 'grid-lines', 'arrows', 'zoom', 'images', 'link-lines', 'labels']
+                const dataOptions = ['scope', 'grid-lines', 'arrows', 'zoom', 'images', 'link-lines', 'labels', 'auto-zoom', 'auto-scroll']
                 dataOptions.forEach(function (opt) {
                     if (options.container.hasAttribute("data-" + opt)) {
                         const optionValue = options.container.getAttribute("data-" + opt) || "true"
@@ -1831,6 +1987,7 @@ const FlowRenderer = (function () {
         /** @type {SVGSVGElement} */
         const svg = createDefaultSVG(div)
         resetSVG(svg)
+        clearSavedLayout(svg)
 
         if (!renderOpts.scope) {
             const containerClasses = container.classList
@@ -1852,7 +2009,7 @@ const FlowRenderer = (function () {
             const selectedTab = tabContainer.querySelector(`[data-flow-id="${id}"]`)
             selectedTab.classList.add('active')
             renderOpts.flowId = id
-            renderFlow(flows, renderOpts)
+            return renderFlow(flows, renderOpts)
         }
         const addTab = function (tab, index) {
             const thisId = `red-ui-tab-${index}`
@@ -1883,7 +2040,13 @@ const FlowRenderer = (function () {
             nameSpan.textContent = name
             tabEl.appendChild(nameSpan)
             tabEl.onclick = function (event) {
+                if (flows && flows.length) {
+                    saveLayout(svg, renderOpts, renderOpts.flowId)
+                }
                 openTab(tab.id)
+                if (flows && flows.length) {
+                    restoreLayout(svg, renderOpts, tab.id)
+                }
             }
         }
 
@@ -1913,26 +2076,23 @@ const FlowRenderer = (function () {
             const firstSubflow = tabs.find(tab => tab.type === 'subflow')
             renderOpts.flowId = firstTab ? firstTab.id : firstSubflow ? firstSubflow.id : null
         }
+        let renderResult = null
         if (tabs.length) {
             // select the tab (causes the flow to be rendered)
-            openTab(renderOpts.flowId, renderOpts)
+            renderResult = openTab(renderOpts.flowId, renderOpts)
         } else {
             // no tabs to render
-            renderFlow(flows, renderOpts)
+            renderResult = renderFlow(flows, renderOpts)
         }
 
-        if (renderOpts.zoom) {
-            setupZoom(svg, renderOpts.container)
-        }
+        saveLayout(svg, renderOpts, renderOpts.flowId)
 
-        const result = {
-            svg: svg.innerHTML,
-            tabs: tabs,
-            flowId: renderOpts.flowId,
-            css: getCSS(renderOpts.scope)
-        }
-
-        return result
+        renderResult = renderResult || {}
+        renderResult.tabs = tabs
+        renderResult.flowId = renderOpts.flowId
+        renderResult.css = renderResult.css || getCSS(renderOpts.scope)
+        
+        return renderResult
     }
 
     /**
@@ -2600,7 +2760,7 @@ const FlowRenderer = (function () {
         }
 
         /* draw the links between link nodes, i.e. link-in and link-out nodes */
-        if (renderOpts.linkLines) {
+        if (renderOpts.linklines) {
             linkOutNodes.forEach(function (nde) {
                 nde.links.forEach(function (ndeId) {
                     var otherNode = nodes[ndeId];
@@ -2646,18 +2806,28 @@ const FlowRenderer = (function () {
         /* finally remove our changes to the objects in the flowData array */
         flow.forEach(function (obj) { delete obj.bbox; });
 
-        const result = {
-            svg: svg.innerHTML,
-            flowId: renderOpts.flowId,
-            css: getCSS(renderOpts.scope)
-        }
-
         const hasScrollBars = hasScrollbars(svg.parentElement)
         if (hasScrollBars.hasHorizontalScrollbar || hasScrollBars.hasVerticalScrollbar) {
             container.classList.add('has-scrollbars')
         } else {
             container.classList.remove('has-scrollbars')
         }
+
+        
+
+        if (renderOpts.zoom) {
+            setupZoom(svg, renderOpts.container)
+        }
+
+        const computedAutoScaleAndScroll = autoLayout(svg, flow, renderOpts);
+
+        const result = {
+            svg: svg.innerHTML,
+            flowId: renderOpts.flowId,
+            css: getCSS(renderOpts.scope),
+            autoScaleAndScroll: computedAutoScaleAndScroll
+        }
+
 
         return result
     }

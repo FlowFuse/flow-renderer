@@ -15,21 +15,26 @@ All client-side code is in the `index.js` file for easy inclusion in a web page.
 
 Run `npm run demo` to test the flow renderer in a browser.
 
+Run `npm run build` to build a minimised version of the flow renderer. This will output the file `index.min.js`.
+
+IMPORTANT: The minified version of the flow renderer should be built before committing changes to the repository.
+
 ## Usage
 
 Add the following script tag to your HTML file:
 
 ```html
-<script type="module" src="public/flow-renderer/index.js"></script>
+<script type="module" src="public/flow-renderer/index.min.js"></script>
 ```
 _or wherever the script is located in your project_
 
 Next, add a container element to your HTML file and call the `flowRenderer` function with the flow data and options.
 NOTE: flow-renderer is an ES Module and requires a modern browser to run. Script tags must have the `type="module"` attribute.
 
-By default, the flow renderer will render the flow with `gridlines`, `images`, `labels` and `zoom` options enabled.
+By default, the flow renderer will render the flow with `gridlines`, `images`, `labels`, `zoom`, `autozoom`, and `autoscroll` enabled.
+`linklines` are disabled by default.
 
-To operate the zoom, use the mouse wheel + <kbd>Ctrl</kbd> key.
+To operate the zoom, use the mouse wheel + <kbd>Ctrl</kbd> or <kbd>⌘</kbd> key.
 To scroll the container vertically, use the mouse wheel without the <kbd>Shift</kbd> key.
 To scroll the container horizontally, use the mouse wheel + <kbd>Shift</kbd> key.
 
@@ -50,10 +55,21 @@ renderer.renderFlows(flow, { container: container1 })
 
 ### Inline Options example
 
-Options can be set by data attributes `scope`, `grid-lines`, `zoom`, `images`, `link-lines`, `labels`
+Options can be set by data attributes `scope`, `grid-lines`, `zoom`, `images`, `link-lines`, `labels`, `auto-zoom`, `auto-scroll`.
+
+NOTE: To SET and option, the data attribute can simply be present on the container element. To UNSET an option, the data attribute must be set to `false`.
 
 ```html
-<div id="nr-flow-2" style="height: 300px" data-scope="my-scope" data-grid-lines="true" data-zoom="true" data-images="true" data-link-lines="false" data-labels="true"></div>
+<div id="nr-flow-2" style="height: 300px" 
+    data-scope="custom-css-scope"
+    data-grid-lines
+    data-zoom
+    data-images
+    data-link-lines="false"
+    data-labels
+    data-auto-zoom
+    data-auto-scroll
+></div>
 ```
 
 ```javascript
@@ -79,9 +95,11 @@ renderer.renderFlows(flow, {
     scope: 'my-scope', // scope for CSS
     gridlines: true, // show gridlines
     images: true, // show images
-    linkLines: false, // show link lines
+    linklines: false, // show link lines
     labels: true, // show labels
     zoom: true, // enable zoom within the container
+    autozoom: true, // auto zoom to fit the flow within the container upon rendering (best fit, limited to 20% min, 100% max zoom)
+    autoscroll: true, // auto scroll the leftmost node to the left of the container and the topmost node to the top of the container upon rendering
     flowId: undefined // Id of flow to display
 })
 ```
