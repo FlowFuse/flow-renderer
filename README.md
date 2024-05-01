@@ -55,7 +55,7 @@ To scroll the container horizontally, use the mouse wheel + <kbd>Shift</kbd> key
 Options can be set by data attributes `scope`, `grid-lines`, `zoom`, `images`, `link-lines`, `labels`
 
 ```html
-<div id="nr-flow-2" style="height: 300px" data-scope="my-scope" data-grid-lines="true" data-zoom="true" data-images="true" data-link-lines="false" data-labels="true"></div>
+<div id="nr-flow-2" style="height: 300px" data-scope="my-scope" data-grid-lines="true" data-zoom="true" data-images="true" data-link-lines="false" data-labels="true" data-auto-zoom="true"  data-auto-scroll="true"></div>
 ```
 
 ```html
