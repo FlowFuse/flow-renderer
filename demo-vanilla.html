@@ -21,7 +21,8 @@
             margin-bottom: 4px;
         }
     </style>
-    <script type="module" src="../index.js"></script>
+    <script type="module" src="./index.js"></script>
+    <!-- <script type="module" src="./index.min.js"></script> -->
 
 </head>
 
@@ -48,8 +49,8 @@
     <div id="nr-flow-2" class="different-class" style="width: auto; height: 320px;"></div>
 
     <!-- Demo 3 -->
-    <h4>Render (no grid, images, no labels) using data-options</h4>
-    <div id="nr-flow-3" data-grid-lines="false" data-labels="false" data-images></div>
+    <h4>Render (no grid, images, no labels, no auto layout) using data-options</h4>
+    <div id="nr-flow-3" data-grid-lines="false" data-labels="false" data-images data-auto-zoom="false" data-auto-scroll="false"></div>
 
     <script type="module">
         const renderer = new FlowRenderer()
@@ -79,7 +80,7 @@
         // render the flow in all containers
         function renderAll(flow) {
             renderer.renderFlows(flow, { container: container1 })
-            renderer.renderFlows(flow, { container: container2, gridlines: false, images: false })
+            renderer.renderFlows(flow, { container: container2, gridLines: false, images: false })
             renderer.renderFlows(flow, { container: container3, scope: 'nr-flow-3' })
         }
     </script>
