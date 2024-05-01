@@ -1,10 +1,12 @@
 {
     "name": "@flowfuse/flow-renderer",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Node-RED flow renderer",
     "main": "index.js",
     "scripts": {
         "demo": "npx http-server -p 8080 -c-1 -o demo.html",
+        "build": "npx terser index.js --compress --mangle --output index.min.js",
+        "publish": "npm run build && npm publish",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [
@@ -31,6 +33,7 @@
     },
     "files": [
         "index.js",
+        "index.min.js",
         "package.json",
         "LICENSE",
         "README.md"
