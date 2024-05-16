@@ -617,13 +617,15 @@ const FlowRenderer = (function () {
     function getScale(svg) {
         return parseFloat(svg.getAttribute('_scale_current') || 1)
     }
-    function updateScale(svg, scale, setAsDefault = false) {
-        svg.setAttribute('transform', `scale(${scale})`)
-        svg.style.width = `${8000 * scale}px`
-        svg.style.height = `${8000 * scale}px`
-        svg.setAttribute('_scale_current', scale)
+
+    function updateScale(mainSvgGroup, scale, setAsDefault = false) {
+        mainSvgGroup.setAttribute('transform', `scale(${scale})`)
+        const svg = mainSvgGroup.ownerSVGElement
+        svg.style.width = `${8000 * scale}px` // cause scrollbars to size correctly
+        svg.style.height = `${8000 * scale}px` // cause scrollbars to size correctly
+        mainSvgGroup.setAttribute('_scale_current', scale)
         if (setAsDefault) {
-            svg.setAttribute('_scale_original', scale)
+            mainSvgGroup.setAttribute('_scale_original', scale)
         }
     }
 
