@@ -1218,12 +1218,20 @@ const FlowRenderer = (function () {
                         stringBuilder.push(getName(_item), "moved from ", getName(movedFrom), "to", getName(movedTo))
                         break
                     case "changed":
-                        if (wireChange) {
+                        if (prop === 'g') {
+                            if (value1 && !value2) {
+                                stringBuilder.push(tabName, getName(_item), "was removed from group", addQuotes(getName(value1)))
+                            } else if (!value1 && value2) {
+                                stringBuilder.push(tabName, getName(_item), "was added to group", addQuotes(getName(value2)))
+                            } else {
+                                stringBuilder.push(tabName, getName(_item), "moved group from", addQuotes(value1), "to", addQuotes(value2))
+                            }
+                        } else if (wireChange) {
                             stringBuilder.push(tabName, getName(_item), wireText)
                         } else if (item === 'tab') {
-                            stringBuilder.push(tabName, addQuotes(change.prop), "was", addQuotes(change.value1 || ''), "now", addQuotes(change.value2 || ''))
+                            stringBuilder.push('tab', tabName, 'property', addQuotes(change.prop), "was", addQuotes(change.value1 || '') + ", now", addQuotes(change.value2 || ''))
                         } else {
-                            stringBuilder.push(getName(_item), addQuotes(change.prop), "was", addQuotes(change.value1 || ''), "now", addQuotes(change.value2 || ''))
+                            stringBuilder.push(getName(_item), 'property', addQuotes(change.prop), "was", addQuotes(change.value1 || ''), "now", addQuotes(change.value2 || ''))
                         }
                         break
                     case "positionChanged":
@@ -2714,6 +2722,7 @@ const FlowRenderer = (function () {
         const tabMap = new Map()
         const diff = generateDiff(flows[0], flows[1])
         const comparison = diffProcessor(diff)
+
         comparison.changes.forEach(change => {
             // attach the highlight function to each change in differ
             change.highlight = (layerNo) => highlightChangeItem(layerNo, change)
@@ -2830,30 +2839,49 @@ const FlowRenderer = (function () {
     
                 // update the SVG to the rendered SVG stored in the renderings object
                 const layers = Object.values(tabOptions.layers)
+                const layersNotUpdated = { 0: true, 1: true }
                 layers.forEach(layer => {
                     /** @type {SVGGElement} */
                     const flowLayer = layer.svgLayer
                     flowLayer.setAttribute('opacity', 0) // to do use calculated opacity from the slider
                     const renderOptions = layer.renderOptions
                     renderFlow(flows[renderOptions.index] || [], renderOptions)
-                    if (hasZoom) {
-                        setupZoom(svg, renderOpts.container)
-                    }
-                    if (hasGrid) {
-                        // search children of SVG (not grandchildren) for the grid
-                        /** @type {SVGGElement} */
-                        let flow_gridEl = [...outerContainer.childNodes].find(el => el.tagName === 'g' && el.classList.contains('flow_grid'))
-                        if (!flow_gridEl) {
-                            flow_gridEl = createSvgElement('g', { class: 'flow_grid' })
-                            // insert grid as the topmost child of the SVG
-                            outerContainer.insertBefore(flow_gridEl, svg.firstChild)
-                        }
-                        if (flow_gridEl) {
-                            drawSVGGrid(flow_gridEl)
-                        }
-                    }
-                    updateOpacities()
+                    layersNotUpdated[renderOptions.index] = false
                 })
+                // if one of the layers is not updated, update it now with empty data
+                const anyLayerOpts = (layersNotUpdated[0] || layersNotUpdated[1])
+                const emptyOpts = {
+                    ...renderOpts,
+                    flowId: tabOptions.flowId,
+                    container: anyLayerOpts?.container || anyLayerOpts?.flowRenderer || container,
+                }
+                if (layersNotUpdated[0]) {
+                    emptyOpts.layer = 0
+                    emptyOpts.svgLayer = svg.querySelector('g.flow-layer-0')
+                    renderFlow(flows[0] || [], emptyOpts)
+                }
+                if (layersNotUpdated[1]) {
+                    emptyOpts.layer = 1
+                    emptyOpts.svgLayer = svg.querySelector('g.flow-layer-1')
+                    renderFlow(flows[1] || [], emptyOpts)
+                }
+                if (hasZoom) {
+                    setupZoom(svg, container)
+                }
+                if (hasGrid) {
+                    // search children of SVG (not grandchildren) for the grid
+                    /** @type {SVGGElement} */
+                    let flow_gridEl = [...outerContainer.childNodes].find(el => el.tagName === 'g' && el.classList.contains('flow_grid'))
+                    if (!flow_gridEl) {
+                        flow_gridEl = createSvgElement('g', { class: 'flow_grid' })
+                        // insert grid as the topmost child of the SVG
+                        outerContainer.insertBefore(flow_gridEl, svg.firstChild)
+                    }
+                    if (flow_gridEl) {
+                        drawSVGGrid(flow_gridEl)
+                    }
+                }
+                updateOpacities()
             })
         })
 
@@ -2922,19 +2950,39 @@ const FlowRenderer = (function () {
                 }
             }
         }
+        let nodeBlinkTimer = null
+        let tabBlinkTimer = null
+        function highlightChangeItem (layerNo = -1, changeItem) {
+            // console.log("highlightChangeItem", layerNo, changeItem)
+            clearTimeout(nodeBlinkTimer)
+            clearTimeout(tabBlinkTimer)
+            // remove class 'tab-glow' from all tabs
+            const glowingTabs = tabsContainer.querySelectorAll('.red-ui-tab')
+            glowingTabs.forEach(tab => tab.classList.remove('tab-glow'))
+            // set style.filter of any nodes in the SVG to ''
+            const glowingNodes = svg.querySelectorAll('g[data-node-id]')
+            glowingNodes.forEach(node => node.style.filter = '')
 
-        function highlightChangeItem (layerNo, changeItem) {
-            console.log("highlightChangeItem", layerNo, changeItem)
             const currentTabEl = tabsContainer.querySelector(`.red-ui-tab.active`)
             const currentTabId = currentTabEl.getAttribute('data-flow-id')
             let selectedTabId = changeItem.tab
             if (changeItem.diffType === 'moved') {
-                if (layerNo === 0) {
+                if (layerNo === -1) {
+                    layerNo = changeItem.v1
+                } else if (layerNo === 0) {
                     selectedTabId = changeItem.value1 // the new z value is where it moved to
                 } else if (layerNo === 1) {
                     selectedTabId = changeItem.value2 // the new z value is where it moved to
                 }
             }
+            if (changeItem.diffType === 'added' && layerNo === -1) {
+                layerNo = 1 // added items are always in the second layer
+            } else if (changeItem.diffType === 'deleted' && layerNo === -1) {
+                layerNo = 0 // deleted items still in the first layer
+            } else if (layerNo === -1) {
+                layerNo = 0 // default to the first layer
+            }
+
             const selectedTabEl = tabsContainer.querySelector(`.red-ui-tab[data-flow-id="${selectedTabId}"]`)
             // if the selected tab is not the tab of the change, select the tab
             const tabPropChanged = changeItem.item === 'tab' && changeItem.diffType === 'changed'
@@ -2942,27 +2990,29 @@ const FlowRenderer = (function () {
                 if (selectedTabEl) {
                     selectedTabEl.click()
                     selectedTabEl.classList.add('tab-glow')
-                    setTimeout(() => {
+                    tabBlinkTimer = setTimeout(() => {
                         selectedTabEl.classList.remove('tab-glow')
-                    }, 4000)
+                    }, 5000)
                 }
             }
 
-            // calculate ideal slider value for the layerNo (to make it more visible (75%))
-            const sliderValue = layerNo === 0 ? 10 : 90;
-            // change the slider value gradually
-            (async function(){
-                let currentValue = parseInt(slider.value)
-                const increment = sliderValue > currentValue ? 1 : -1
-                while (currentValue !== sliderValue) {
-                    currentValue += increment
-                    slider.value = currentValue
-                    //trigger the input event
-                    const event = new Event('input', { bubbles: true })
-                    slider.dispatchEvent(event)
-                    await new Promise(resolve => setTimeout(resolve, 10))
-                }
-            })()
+            if (parseInt(slider.value) < 10 || parseInt(slider.value) > 90) {
+                // calculate ideal slider value for the layerNo (to make it more visible (75%))
+                const sliderValue = layerNo === 0 ? 10 : 90;
+                // change the slider value gradually
+                (async function(){
+                    let currentValue = parseInt(slider.value)
+                    const increment = sliderValue > currentValue ? 1 : -1
+                    while (currentValue !== sliderValue) {
+                        currentValue += increment
+                        slider.value = currentValue
+                        //trigger the input event
+                        const event = new Event('input', { bubbles: true })
+                        slider.dispatchEvent(event)
+                        await new Promise(resolve => setTimeout(resolve, 10))
+                    }
+                })()
+            }
 
             const node = { 
                 id: changeItem.item, 
@@ -2970,18 +3020,27 @@ const FlowRenderer = (function () {
             }
             let nodeId = node.id
             // select node by g.flow-layer-0 > g.flow_nodes > data-node-id="8abe21f57db87496"
-            const layerNode = svg.querySelector(`g.flow-layer-${layerNo} > g.flow_nodes > g[data-node-id="${nodeId}"]`)
+            const layer1Node = svg.querySelector(`g.flow-layer-${0} g[data-node-id="${nodeId}"]`)
+            const layer2Node = svg.querySelector(`g.flow-layer-${1} g[data-node-id="${nodeId}"]`)
             
-            if (!layerNode) {
+            if (!layer1Node && !layer2Node) {
                 return
             }
-            // scroll the svg element into view by adjusting the parent div scroll
-            layerNode.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
-            // apply the filter to the node
-            layerNode.style.filter = 'url(#node-glow)'
-            setTimeout(() => {
-                try { layerNode.style.filter = '' } catch (e) { }
-            }, 4000)
+
+            // scroll the svg element into view by adjusting the parent div scroll & highlight the node(s)
+            (layer1Node || layer2Node).scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+            if (layer1Node) {
+                layer1Node.style.filter = 'url(#node-glow)'
+            }
+            if (layer2Node) {
+                layer2Node.style.filter = 'url(#node-glow)'
+            }
+            nodeBlinkTimer = setTimeout(() => {
+                try { 
+                    if (layer1Node) { layer1Node.style.filter = '' }
+                    if (layer2Node) { layer2Node.style.filter = '' }
+                } catch (e) { }
+            }, 5000)
         }
 
         function updateOpacities () {
@@ -3199,7 +3258,6 @@ const FlowRenderer = (function () {
         * For the sack of sanity, compute the top-left corner (x,y) and add it to the node. We also add the bounding-box so we have the width.
         */
         flow.forEach(function (obj) {
-            const svgMainId = `n-${obj.id}`
             if (obj.z == flowId || obj.id == flowId /* this is a subflow or tab */) {
                 // get node dimensions
                 var dimensions = getNodeDimensions(obj)
@@ -3361,7 +3419,7 @@ const FlowRenderer = (function () {
                         break;
                     }
                     case "junction": {
-                        const grpObj = createSvgElement('g', { class: 'junction' })
+                        const grpObj = createSvgElement('g', { "data-node-id": obj.id, class: 'junction' })
                         flow_nodesEl.appendChild(grpObj)
 
                         grpObj.appendChild(createSvgElement('rect', {
@@ -3610,10 +3668,7 @@ const FlowRenderer = (function () {
                 // nodes that it contains have been defined.
                 if (oneWasMissing) { continue }
 
-                var grpRectId = "grpRectId" + Math.random().toString().substring(2)
-                var grpSvgObj = createSvgElement('g', {
-                    id: grpRectId,
-                })
+                var grpSvgObj = createSvgElement('g', { "data-node-id": grpId })
 
                 grpSvgObj.setAttribute("transform", `translate(${grpObj.x}, ${grpObj.y})`)
 
