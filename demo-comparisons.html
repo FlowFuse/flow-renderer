@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>FlowFuse Flow Renderer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        div.flow-renderer {
+            width: 100%;
+            height: 620px;
+        }
+
+        #nr-flow-3 {
+            width: 100%;
+            height: 320px;
+        }
+
+        h1, h2, h3, h4, h5 {
+            margin-top: 20px;
+            margin-bottom: 4px;
+        }
+        svg .node-flash {
+            animation: flash 2s infinite;
+        }
+    </style>
+    <script type="module" src="./index.js"></script>
+    <!-- <script type="module" src="./index.min.js"></script> -->
+
+</head>
+
+<body>
+
+    <h3>FlowFuse Flow Renderer</h3>
+    <div>Vanilla client side demo</div>
+    <hr>
+
+    <!-- Add a multi-line input with mono font for the user to paste flow -->
+    <h3>Node-RED Flow</h3>
+    <div id="flow-data">
+        <textarea id="flow-input1" rows="6" style="font-family: monospace; width: 100%;"></textarea>
+        <textarea id="flow-input2" rows="6" style="font-family: monospace; width: 100%;"></textarea>
+    </div>
+    <button id="render-flow">Compare Flows</button>
+    <button id="clear-flow">Clear Flows</button>
+    <br>
+
+    <!-- Demo 1 -->
+    <h4>Render (grid, images, labels)</h4>
+    <div id="nr-flow-1" class="flow-renderer"></div>
+
+    <script>
+
+        function highlightNode(node) {
+            
+            ;node = { id: '9550399dd7be7346', z: '6f432348c57a2fda' }
+            let nodeId = node.id
+            // select node by g.flow-layer-0 > g.flow_nodes > data-node-id="8abe21f57db87496"
+            const layer0node = document.querySelector(`g.flow-layer-0 > g.flow_nodes > g[data-node-id="${nodeId}"]`)
+            const layer1node = document.querySelector(`g.flow-layer-1 > g.flow_nodes > g[data-node-id="${nodeId}"]`)
+            const nodes = []
+            nodes.push({
+                node,
+                layer: 0,
+                tab: node.z,
+                filter: 'url(#node-glow)',
+                el: layer0node
+            })
+            nodes.push({
+                node,
+                layer: 1,
+                tab: node.z,
+                filter: 'url(#node-glow)',
+                el: layer1node
+            })
+            
+            nodes.forEach(svgG => {
+                const el = svgG.el
+                if (!el) {
+                    // TODO: highlight the tab instead
+                    return
+                }
+                // scroll the svg element into view by adjusting the parent div scroll
+                el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+                // apply the filter to the node
+                el.style.filter = svgG.filter
+                // el.style.backgroundColor = 'yellow'
+                // draw an oval around the node and shade everything else around it
+                // const bbox = el.getBBox()
+                // const oval = document.createElementNS("http://www.w3.org/2000/svg", "ellipse")
+                // oval.setAttribute("cx", bbox.x + bbox.width / 2)
+                // oval.setAttribute("cy", bbox.y + bbox.height / 2)
+                // oval.setAttribute("rx", bbox.width / 2 + 10)
+                // oval.setAttribute("ry", bbox.height / 2 + 10)
+                // oval.setAttribute("fill", "none")
+                // oval.setAttribute("stroke", "red")
+                // oval.setAttribute("stroke-width", "2")
+                // oval.style.transform = `translate(${bbox.x}px, ${bbox.y}px)`
+                // el.appendChild(oval)
+
+                setTimeout(() => {
+                    try { el.style.filter = '' } catch (e) { }
+                    // oval.remove()
+                }, 4000)
+            })
+        }
+    </script>
+    <script type="module">
+        
+
+        const renderer = new FlowRenderer()
+        const container = document.getElementById('nr-flow-1')
+        const userInput1 = document.getElementById('flow-input1')
+        const userInput2 = document.getElementById('flow-input2')
+        const renderButton = document.getElementById('render-flow')
+        const clearButton = document.getElementById('clear-flow')
+        // init the user input with the a demo flow
+        const demoFlow = [{"id":"3642c7ee286f9c17","type":"tab","label":"Database flows","disabled":false,"info":"","env":[]},{"id":"9ce844e480478dbd","type":"tab","label":"cron schedules","disabled":false,"info":"","env":[]},{"id":"bd2b5f20968be003","type":"MSSQL-CN","tdsVersion":"7_4","name":"wsl docker","server":"172.29.225.148","port":"1433","encyption":true,"trustServerCertificate":true,"database":"db1","useUTC":true,"connectTimeout":"15000","requestTimeout":"15000","cancelTimeout":"5000","pool":"5","parseJSON":false,"enableArithAbort":true,"readOnlyIntent":false},{"id":"2e61dc4b9947418f","type":"http in","z":"3642c7ee286f9c17","name":"","url":"/get-users-by-group","method":"get","upload":false,"swaggerDoc":"","x":150,"y":80,"wires":[["0a821eae2b2f9616"]]},{"id":"ca31ba144ab8f2a6","type":"http response","z":"3642c7ee286f9c17","name":"","statusCode":"","headers":{},"x":910,"y":80,"wires":[]},{"id":"0a821eae2b2f9616","type":"function","z":"3642c7ee286f9c17","name":"extract params","func":"const group = msg.request.params.group\nmsg.payload = {\n    group\n}\nreturn msg;","outputs":1,"timeout":0,"noerr":0,"initialize":"","finalize":"","libs":[{"var":"os","module":"os"}],"x":420,"y":100,"wires":[["fcf14b6628852fca"]]},{"id":"c97e311807e576fd","type":"debug","z":"3642c7ee286f9c17","name":"debug 49","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","statusVal":"","statusType":"auto","x":920,"y":220,"wires":[]},{"id":"fcf14b6628852fca","type":"MSSQL","z":"3642c7ee286f9c17","mssqlCN":"bd2b5f20968be003","name":"","outField":"payload","returnType":0,"throwErrors":1,"query":"select * from  users \r\nwhere group = @group","modeOpt":"queryMode","modeOptType":"query","queryOpt":"payload","queryOptType":"editor","paramsOpt":"","paramsOptType":"editor","rows":"rows","rowsType":"msg","parseMustache":true,"params":[{"output":false,"name":"group","type":"VarChar","valueType":"msg","value":"payload.group","options":{"nullable":true,"primary":false,"identity":false,"readOnly":false}}],"x":660,"y":140,"wires":[["ca31ba144ab8f2a6","c97e311807e576fd"]]},{"id":"6c510f0ec8aab0da","type":"inject","z":"9ce844e480478dbd","name":"Get list of schedules","props":[{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"list-all","x":170,"y":120,"wires":[["c73de127c455c567"]]},{"id":"c73de127c455c567","type":"cronplus","z":"9ce844e480478dbd","name":"","outputField":"payload","timeZone":"","storeName":"","commandResponseMsgOutput":"output1","defaultLocation":"","defaultLocationType":"default","outputs":1,"options":[{"name":"schedule1","topic":"ten","payloadType":"default","payload":"","expressionType":"cron","expression":"0 */10 * * * *","location":"","offset":"0","solarType":"all","solarEvents":"sunrise,sunset"}],"x":380,"y":120,"wires":[[]]}]
+        const demoFlow2 = [{"id":"3642c7ee286f9c17","type":"tab","label":"Database flows","disabled":false,"info":"","env":[]},{"id":"9ce844e480478dbd","type":"tab","label":"cron schedules","disabled":false,"info":"","env":[]},{"id":"bd2b5f20968be003","type":"MSSQL-CN","tdsVersion":"7_4","name":"wsl docker","server":"172.29.225.148","port":"1433","encyption":true,"trustServerCertificate":true,"database":"db1","useUTC":true,"connectTimeout":"15000","requestTimeout":"15000","cancelTimeout":"5000","pool":"5","parseJSON":false,"enableArithAbort":true,"readOnlyIntent":false},{"id":"2e61dc4b9947418f","type":"http in","z":"3642c7ee286f9c17","name":"","url":"/get-users-by-group","method":"get","upload":false,"swaggerDoc":"","x":150,"y":80,"wires":[["0a821eae2b2f9616"]]},{"id":"ca31ba144ab8f2a6","type":"http response","z":"3642c7ee286f9c17","name":"","statusCode":"","headers":{},"x":910,"y":80,"wires":[]},{"id":"0a821eae2b2f9616","type":"function","z":"3642c7ee286f9c17","name":"extract params","func":"const group = msg.request.params.group\nmsg.payload = {\n    group\n}\nreturn msg;","outputs":1,"timeout":0,"noerr":0,"initialize":"","finalize":"","libs":[{"var":"os","module":"os"}],"x":420,"y":100,"wires":[["fcf14b6628852fca"]]},{"id":"fcf14b6628852fca","type":"MSSQL","z":"3642c7ee286f9c17","mssqlCN":"bd2b5f20968be003","name":"","outField":"payload","returnType":0,"throwErrors":1,"query":"select * from  users \r\nwhere group = @group","modeOpt":"queryMode","modeOptType":"query","queryOpt":"payload","queryOptType":"editor","paramsOpt":"","paramsOptType":"editor","rows":"rows","rowsType":"msg","parseMustache":true,"params":[{"output":false,"name":"group","type":"VarChar","valueType":"msg","value":"payload.group","options":{"nullable":true,"primary":false,"identity":false,"readOnly":false}}],"x":660,"y":140,"wires":[["ca31ba144ab8f2a6"]]},{"id":"c73de127c455c567","type":"cronplus","z":"9ce844e480478dbd","name":"","outputField":"payload","timeZone":"","storeName":"","commandResponseMsgOutput":"output1","defaultLocation":"","defaultLocationType":"default","outputs":1,"options":[{"name":"schedule1","topic":"ten","payloadType":"default","payload":"","expressionType":"cron","expression":"0 */5 * * * *","location":"","offset":"0","solarType":"all","solarEvents":"sunrise,sunset"}],"x":420,"y":120,"wires":[["c97e311807e576fd"]]},{"id":"c97e311807e576fd","type":"debug","z":"9ce844e480478dbd","name":"debug 49","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","statusVal":"","statusType":"auto","x":640,"y":180,"wires":[]},{"id":"07b620e6e76107d3","type":"inject","z":"9ce844e480478dbd","name":"new inject","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":200,"y":80,"wires":[["c73de127c455c567"]]}]
+        
+
+        userInput1.value = JSON.stringify(demoFlow, null, 0)
+        userInput2.value = JSON.stringify(demoFlow2, null, 0)
+
+        const flowsToCompare = document.getElementById("flow-data");
+
+        // render empty flows for initial display
+        clearFlows()
+
+       
+        renderButton.addEventListener('click', () => {
+            renderAll()
+        })
+        clearButton.addEventListener('click', () => {
+            clearFlows()
+        })
+        function clearFlows() {
+            renderer.compare([[], []], { container: container })
+        }
+        // render the flow in all containers
+        function renderAll(_flows) {
+            const flows = _flows || Array.from(flowsToCompare.children).map(flow => JSON.parse(flow.value))
+            renderer.compare(flows, { container: container })
+        }
+
+    </script>
+
+</body>
+
+</html>
