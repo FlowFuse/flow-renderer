@@ -604,7 +604,7 @@ const FlowRenderer = (function () {
 
     function updateScale(mainSvgGroup, scale, setAsDefault = false) {
         mainSvgGroup.setAttribute('transform', `scale(${scale})`)
-        const svg = mainSvgGroup.ownerSVGElement
+        const svg = mainSvgGroup.ownerSVGElement || mainSvgGroup
         svg.style.width = `${workspaceSize.width * scale}px` // cause scrollbars to size correctly
         svg.style.height = `${workspaceSize.height * scale}px` // cause scrollbars to size correctly
         mainSvgGroup.setAttribute('_scale_current', scale)
@@ -633,9 +633,11 @@ const FlowRenderer = (function () {
 
     function autoLayout(svg, flow, renderOpts) {
         const computedAutoScaleAndScroll = (renderOpts.autoZoom || renderOpts.autoScroll) ?  computeAutoLayout(flow, renderOpts) : null
+        svg = svg.ownerSVGElement || svg
         if (renderOpts.zoom) {
             if (computedAutoScaleAndScroll && renderOpts.autoZoom) {
-                updateScale(getFlowLayer(svg, renderOpts.layer), computedAutoScaleAndScroll.scale, true);
+                const mainSvgGroup = svg.querySelector('g.outerContainer')
+                updateScale(mainSvgGroup, computedAutoScaleAndScroll.scale, true);
             }
         }
         if (computedAutoScaleAndScroll && renderOpts.autoScroll) {
