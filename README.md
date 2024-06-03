@@ -28,7 +28,7 @@ Add the following script tag to your HTML file:
 ```
 _or wherever the script is located in your project_
 
-Next, add a container element to your HTML file and call the `flowRenderer` function with the flow data and options.
+Next, add a container element to your HTML file and instantiate a `flowRenderer`.
 NOTE: flow-renderer is an ES Module and requires a modern browser to run. Script tags must have the `type="module"` attribute.
 
 By default, the flow renderer will render the flow with `gridLines`, `images`, `labels`, `zoom`, `autoZoom`, and `autoScroll` enabled.
@@ -128,6 +128,24 @@ renderer.renderFlows(flow, {
     </script>
 ```
 
+
+### Basic example comparing to flows
+
+```html
+<div id="nr-flow-1" class="flow-renderer" style="height: 300px"></div>
+```
+
+```html
+<script type="module">
+  const renderer = new FlowRenderer()
+  const container1 = document.getElementById('nr-flow-1');
+  const flow1 = [{"id": "1001", "type": "inject", "x": 100, "y": 40, "z": "9999", "wires": [["1002"]]}, {"id": "1002", "type": "debug", "x":300, "y": 40, "z": "9999"}]
+  const flow2 = [{"id": "1001", "type": "inject", "x": 120, "y": 40, "z": "9999", "wires": [["1002"]]}, {"id": "1002", "type": "debug", "x":120, "y": 80, "z": "9999"}]
+  renderer.compare([flow1, flow2], { container: container1 })
+</script>
+```
+
+
 ## Acknowledgements
 
 This project owes a huge thanks to Gerrit Riessen for his original works on [node-red-flowviewer](https://github.com/gorenje/node-red-flowviewer-js). It was this great contribution that started the ball rolling. Gerrit kindly allowed us relicense the parts we needed to use in this project.
@@ -138,6 +156,7 @@ This project owes a huge thanks to Gerrit Riessen for his original works on [nod
 * Mobile pinch zoom is not yet implemented
 * The flow renderer does not support the full range of contributed Node-RED nodes however they will render as a generic node type complete with the node's label.
 * The flow renderer does not always render the flows and nodes exactly as they appear in the Node-RED editor. This is due in part to being a client-side render with no server-side component to provide full context and partly due to the current limitations of the renderer itself.
+* The flow compare functionality is still in very early development and may not work as expected if the flows are too dissimilar or are not well formed exports from Node-RED.
 
 ## Versioning
 
