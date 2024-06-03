@@ -2992,7 +2992,7 @@ const FlowRenderer = (function () {
                     selectedTabEl.classList.add('tab-glow')
                     tabBlinkTimer = setTimeout(() => {
                         selectedTabEl.classList.remove('tab-glow')
-                    }, 5000)
+                    }, 10000)
                 }
             }
 
@@ -3040,7 +3040,7 @@ const FlowRenderer = (function () {
                     if (layer1Node) { layer1Node.style.filter = '' }
                     if (layer2Node) { layer2Node.style.filter = '' }
                 } catch (e) { }
-            }, 5000)
+            }, 10000)
         }
 
         function updateOpacities () {
