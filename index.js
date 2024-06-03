@@ -7,6 +7,7 @@
  * @property {boolean} [labels=true] - Whether to display labels on the flow diagram. Defaults to true.
  * @property {boolean} [autoZoom=true] - Whether to automatically zoom the diagram to fit the container. Depends on zoom option being true. Defaults to true.
  * @property {boolean} [autoScroll=true] - Whether to automatically scroll the diagram to the top leftmost node. Defaults to true.
+ * @property {DOMTokenList|string} [scope="flow-renderer"] - A CSS scope class for the parent of the SVG. Defaults to 'flow-renderer'.
  * @property {Array<Object>} flowId - The specific flow(s) to render. If not provided, all flows will be rendered.
  * @property {HTMLElement} container - The container div where the SVG diagram and controls will be rendered.
  * @property {Document} document - The document object to use for creating SVG elements. Defaults to the global document object.
@@ -33,6 +34,7 @@ const FlowRenderer = (function () {
     const node_height = 30
     const node_width = 100
     const gridSize = 20;
+    const workspaceSize = { width: 8000, height: 8000 }
     const snapGrid = true;
     const portSpacing = 13.5
 
@@ -43,7 +45,6 @@ const FlowRenderer = (function () {
     RED.view.gridSize = function () { return gridSize }
     RED.view.tools.calculateGridSnapOffsets = calculateGridSnapOffsets // defined in node-red region below
     RED.utils.parseContextKey = parseContextKey // defined in node-red region below
-
 
     /** @type {FlowRendererOptions} */
     const defaults = {
@@ -453,6 +454,7 @@ const FlowRenderer = (function () {
     }
 
     function getNodeColor (type) {
+        type = type || "_default"
         let colors = colorByType[type]
         if (!colors) {
             if (type.startsWith("subflow:")) {
@@ -530,24 +532,6 @@ const FlowRenderer = (function () {
         return null
     }
 
-    /**
-     * Create a SVG element with the given type and attributes
-     * @param {Document} doc  - The document to create the SVG element in
-     * @param {String} type - The type of the SVG element
-     * @param {Object.<string, string>} [attributes] - An object with the attributes of the SVG element in the form {attr: value}
-     * @returns 
-     */
-    function createSvgElement(type, attributes) {
-        const doc = getDocument(this)
-        const el = doc.createElementNS.apply(doc, ["http://www.w3.org/2000/svg", type])
-        if (typeof attributes === "object") {
-            for (const attr in attributes) {
-                el.setAttribute(attr, attributes[attr])
-            }
-        }
-        return el
-    }
-    
     function clamp (val, min, max, def) {
         const isNumber = (typeof val === "number") && !isNaN(val)
         if (!isNumber) {
@@ -581,7 +565,7 @@ const FlowRenderer = (function () {
         }
         
         // get the first child g element of the svg element
-        const mainSvgGroup = svg.querySelector('g')
+        const mainSvgGroup = svg.querySelector('g.outerContainer')
 
         // initialize the scale
         updateScale(mainSvgGroup, originalScale, true)
@@ -621,8 +605,8 @@ const FlowRenderer = (function () {
     function updateScale(mainSvgGroup, scale, setAsDefault = false) {
         mainSvgGroup.setAttribute('transform', `scale(${scale})`)
         const svg = mainSvgGroup.ownerSVGElement
-        svg.style.width = `${8000 * scale}px` // cause scrollbars to size correctly
-        svg.style.height = `${8000 * scale}px` // cause scrollbars to size correctly
+        svg.style.width = `${workspaceSize.width * scale}px` // cause scrollbars to size correctly
+        svg.style.height = `${workspaceSize.height * scale}px` // cause scrollbars to size correctly
         mainSvgGroup.setAttribute('_scale_current', scale)
         if (setAsDefault) {
             mainSvgGroup.setAttribute('_scale_original', scale)
@@ -651,7 +635,7 @@ const FlowRenderer = (function () {
         const computedAutoScaleAndScroll = (renderOpts.autoZoom || renderOpts.autoScroll) ?  computeAutoLayout(flow, renderOpts) : null
         if (renderOpts.zoom) {
             if (computedAutoScaleAndScroll && renderOpts.autoZoom) {
-                updateScale(svg.querySelector('g.outerContainer'), computedAutoScaleAndScroll.scale, true);
+                updateScale(getFlowLayer(svg, renderOpts.layer), computedAutoScaleAndScroll.scale, true);
             }
         }
         if (computedAutoScaleAndScroll && renderOpts.autoScroll) {
@@ -663,41 +647,40 @@ const FlowRenderer = (function () {
     function saveLayout(svg, renderOpts, flowid) {
         // save the current scroll and scale values in the container as attributes
         const container = svg.parentElement
+        const outerContainer = svg.querySelector('g.outerContainer')
         const scrollX = container.scrollLeft
         const scrollY = container.scrollTop
-        const scale = getScale(svg.querySelector('g.outerContainer'))
-        const id = flowid || renderOpts.flowId || "default"
+        const scale = getScale(outerContainer)
+        const id = flowid || renderOpts.flowId || "global"
         // console.log("Saving layout", { id, scrollX, scrollY, scale })
-        container.setAttribute(`_state_${id}_x`, scrollX)
-        container.setAttribute(`_state_${id}_y`, scrollY)
-        container.setAttribute(`_state_${id}_scale`, scale)
+        container.setAttribute(`data-tab-${id}-x`, scrollX)
+        container.setAttribute(`data-tab-${id}-y`, scrollY)
+        container.setAttribute(`data-tab-${id}-scale`, scale)
     }
 
     function restoreLayout(svg, renderOpts, flowid) {
         // restore the scroll and scale values from the container attributes
         const container = svg.parentElement
-        const id = flowid || renderOpts.flowId || "default"
-        const scrollX = container.getAttribute(`_state_${id}_x`)
-        const scrollY = container.getAttribute(`_state_${id}_y`)
-        const scale = container.getAttribute(`_state_${id}_scale`)
+        const outerContainer = svg.querySelector('g.outerContainer')
+        const id = flowid || renderOpts.flowId || "global"
+        const scrollX = container.getAttribute(`data-tab-${id}-x`)
+        const scrollY = container.getAttribute(`data-tab-${id}-y`)
+        const scale = container.getAttribute(`data-tab-${id}-scale`)
         // console.log("Restoring layout", { id, scrollX, scrollY, scale })
         if (typeof scrollX === "string" && typeof scrollY === "string") {
             updateScroll(container, scrollX, scrollY)
         }
         if (typeof scale === "string") {
-            updateScale(svg.querySelector('g.outerContainer'), scale)
+            updateScale(outerContainer, scale)
         }
     }
 
     function clearSavedLayout(svg) {
-        // console.log("Clearing saved layout")
         const container = svg.parentElement
-        // scan all attributes and remove the ones that match /_.state_.*/
-        const attributes = container.attributes
-        for (let i = 0; i < attributes.length; i++) {
-            const attr = attributes[i]
-            if (/^_state_.*/.test(attr.name)) {
-                container.removeAttribute(attr.name)
+        const outerContainer = svg.querySelector('g.outerContainer')
+        for(const key in outerContainer.dataset) {
+            if (/^tab-\w+-.*/.test(key)) {
+                container.removeAttribute(key)
             }
         }
     }
@@ -707,13 +690,13 @@ const FlowRenderer = (function () {
         // by scanning for most extreme node positions (taking into account node size)
         const SCALE_MIN = 0.2
         const SCALE_MAX = 1.0
-        const container = renderOpts.container.querySelector('.red-ui-workspace-chart')
-        const containerRect = container.getBoundingClientRect()
+        const workspaceChart = renderOpts.container.querySelector('.red-ui-workspace-chart')
+        const containerRect = workspaceChart.getBoundingClientRect()
         const containerWidth = containerRect.width - 25 // 25 is the scrollbar width
         const containerHeight = containerRect.height - 25 // 25 is the scrollbar height
 
-        let minX = 8000
-        let minY = 8000
+        let minX = workspaceSize.width
+        let minY = workspaceSize.height
         let maxX = 0
         let maxY = 0
         const flowId = renderOpts.flowId
@@ -770,12 +753,17 @@ const FlowRenderer = (function () {
         if (scrollY > 0) {
             scrollY -= 40
         }
-        scrollX = clamp(scrollX * scale, 0, container.scrollWidth) // clamp to 0 - scrollWidth
-        scrollY = clamp(scrollY * scale, 0, container.scrollHeight) // clamp to 0 - scrollHeight
+        scrollX = clamp(scrollX * scale, 0, workspaceChart.scrollWidth) // clamp to 0 - scrollWidth
+        scrollY = clamp(scrollY * scale, 0, workspaceChart.scrollHeight) // clamp to 0 - scrollHeight
         return { scale, scrollX, scrollY, minX, minY, maxX, maxY }
     }
 
-    function createDefaultDivContainer(container) {
+    /**
+     * Creates a container which is an outer div for containing the SVG
+     * @param {HTMLElement} container 
+     * @returns {HTMLDivElement}
+     */
+    function createWorkspaceContainer(container) {
         const doc = getDocument(container, this)
         const div = doc.createElement("div")
         div.classList.add("red-ui-workspace-chart")
@@ -801,6 +789,25 @@ const FlowRenderer = (function () {
             container.appendChild(toolbar)
         }
         return toolbar
+    }
+
+    function createCompareControls(container) {
+        const doc = getDocument(container, this)
+        if (!doc) { return null }
+        let toolbar = container.querySelector(".toolbar")
+        if (!toolbar) {
+            toolbar = createToolbar(container)
+        }
+        let compareControls = toolbar.querySelector(".compare-controls")
+        if (compareControls) {
+            return  toolbar.querySelector(".flow-compare-slider")
+        }
+        compareControls = createHTMLElement("div", null, "button-group compare-controls", null, toolbar)
+        const slider = createHTMLElement("input", null, "flow-compare-slider", null, compareControls)
+        slider.type = "range"
+        slider.min = "0"
+        slider.max = "100"
+        return slider
     }
 
     function createZoomControls(container) {
@@ -880,6 +887,7 @@ const FlowRenderer = (function () {
             download: downloadBtn
         }
     }
+
     function download(event, data, mimeType, filename, callback) {
         // download the data as a file
         callback = callback || function () {}
@@ -958,37 +966,498 @@ const FlowRenderer = (function () {
 
     /**
      * Generates a default SVG element with the required groups:
-     * 
-     * ```html
-     * <svg>
-     *     <g class="flow_grid"></g>
-     *     <g class="flow_group_elements"></g>
-     *     <g class="flow_group_select"></g>
-     *     <g class="flow_wires"></g>
-     *     <g class="flow_nodes"></g>
-     * </svg>
-     * ```
      * @param {Document} doc 
      * @param {HTMLElement} [container]
+     * @param {Object} [options]
+     * @param {Boolean} [options.addDefaultLayer] - whether to add the default layer group
+     * @param {Number} [options.layer] - the layer index, used for visually comparing flows
+     * @returns {SVGSVGElement}
      */
-    function createDefaultSVG(container) {
+    function createDefaultSVG(container, { addDefaultLayer = true, layer = 0 } = {}) {
         const doc = getDocument(container, this)
         const svg = doc.createElementNS("http://www.w3.org/2000/svg", "svg")
-        const svgG = doc.createElementNS("http://www.w3.org/2000/svg", "g")
-        svgG.setAttribute("class", "outerContainer")
-        svg.setAttribute("style", "width:8000px; height:8000px;")
-        svg.appendChild(svgG)
-        const gs = ['flow_grid', 'flow_group_elements', 'flow_group_select', 'flow_wires', 'flow_nodes']
-        for (let g of gs) {
-            const group = doc.createElementNS("http://www.w3.org/2000/svg", "g")
-            group.setAttribute("class", g)
-            svgG.appendChild(group)
-        }
-        // otherwise append the svg to the target
+        svg.setAttribute("style", `width:${workspaceSize.width}px; height:${workspaceSize.height}px;`)
         container.appendChild(svg)
+        // add defs
+        const defs = doc.createElementNS("http://www.w3.org/2000/svg", "defs")
+        svg.appendChild(defs)
+        // add the grid pattern and glow filter to defs
+        const filterDef = `
+        <pattern id="grid" width="${gridSize}" height="${gridSize}" patternUnits="userSpaceOnUse">
+            <path d="M ${gridSize} 0 L 0 0 0 ${gridSize}" fill="none" stroke="rgb(208, 208, 208)" stroke-width="1" shape-rendering="geometricprecision"></path>
+        </pattern>
+        <filter id="node-glow" x="-5000%" y="-5000%" width="10000%" height="10000%">
+            <feFlood result="flood" flood-color="#7d26cd" flood-opacity="0.8"></feFlood>
+            <feComposite in="flood" result="mask" in2="SourceGraphic" operator="in"></feComposite>
+            <feMorphology in="mask" result="dilated" operator="dilate" radius="2"></feMorphology>
+            <feGaussianBlur in="dilated" result="blurred" stdDeviation="5">
+                <animate attributeName="stdDeviation" values="5;0;5" dur="1s" repeatCount="indefinite"></animate>
+            </feGaussianBlur>
+            <feMerge>
+                <feMergeNode in="blurred"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>`
+        defs.innerHTML = filterDef
+
+        const outerContainer = createSvgElement("g" , { class: "outerContainer" })
+        svg.appendChild(outerContainer)
+        if (addDefaultLayer) {
+            createSVGLayer(svg, { layer })
+        }
         return svg
     }
 
+    /**
+     * Create a SVG element with the given type and attributes
+     * @param {Document} doc  - The document to create the SVG element in
+     * @param {String} type - The type of the SVG element
+     * @param {Object.<string, string>} [attributes] - An object with the attributes of the SVG element in the form {attr: value}
+     * @returns 
+     */
+    function createSvgElement(type, attributes, parent) {
+        const doc = getDocument(parent, this)
+        const el = doc.createElementNS.apply(doc, ["http://www.w3.org/2000/svg", type])
+        if (typeof attributes === "object") {
+            for (const attr in attributes) {
+                el.setAttribute(attr, attributes[attr])
+            }
+        }
+        if (parent) {
+            parent.appendChild(el)
+        }
+        return el
+    }
+
+    /**
+     * Adds an outer `g` to the SVG element with the required groups for generating a flow
+     * @param {SVGSVGElement} svg 
+     * @param {Object} [options]
+     * @param {Number} [options.layer] - the layer index, used for visually comparing flows
+     * @returns {SVGGElement}
+     */
+    function createSVGLayer(svg, { layer = 0, opacity = 1 } = {}) {
+        // check and create if necessary the outerContainer.
+        // The grid will be added to this container alongside (but before) any layers
+        let outerContainer = svg.querySelector('g.outerContainer')
+        if (!outerContainer) {
+            outerContainer = createSvgElement('g' , { class: 'outerContainer' }, svg)
+        }
+
+        if (!outerContainer.querySelector(`g.flow_grid`)) {
+            createSvgElement('g', { class: 'flow_grid' }, outerContainer)
+        }
+
+        // Create the layer container and all of its groups where the flow will be rendered
+        let flowLayer = outerContainer.querySelector(`g.flow-layer-${layer}`)
+        if (!flowLayer) {
+            flowLayer = createSvgElement('g', { class: `flow-layer-${layer || 0}` }, outerContainer)
+        }
+        // clear layer contents (if any)
+        while (flowLayer.firstChild) {
+            flowLayer.removeChild(flowLayer.firstChild)
+        }
+        flowLayer.setAttribute('opacity', opacity)
+
+        createSvgElement('g', 'flow_group_elements', flowLayer)
+        createSvgElement('g', 'flow_group_select', flowLayer)
+        createSvgElement('g', 'flow_wires', flowLayer)
+        createSvgElement('g', 'flow_nodes', flowLayer)
+        return flowLayer
+    }
+
+    /**
+     * Draw the Workspace Grid into the SVG element
+     * @param {SVGGElement} gEl The `g` element in which to draw the grid
+     * @returns void
+     */
+    function drawSVGGrid(gEl) {
+        if (gEl.childNodes.length > 0) {
+            return // grid already drawn
+        }
+        // create <rect width="100%" height="100%" fill="url(#grid)" 
+        const gridRect = createSvgElement('rect', {
+            width:  `${workspaceSize.width}px`,
+            height: `${workspaceSize.height}px`,
+            fill: "url(#grid)"
+        }, gEl)
+        gridRect.style.transform = 'translate(-1px, -1px)'
+    }
+
+    /**
+     * Creates an HTML element and returns it. If `parent` is provided, the element is appended to the parent
+     * @param {String} tag - The tag name of the HTML element to create
+     * @param {Object<string:any>} [attributes] - An object with the attributes of the HTML element in the form {attr: value}
+     * @param {*} [classes] - A string or an array of strings with the classes to add to the HTML element
+     * @param {*} [textContent] - The text content of the HTML element
+     * @param {HTMLElement} [parent] - The parent element to append the created element to
+     * @returns {HTMLElement}
+     */
+    function createHTMLElement(tag, attributes, classes, textContent, parent) {
+        const doc = getDocument(parent, this)
+        const el = doc.createElement(tag)
+        if (typeof attributes === "object") {
+            for (const attr in attributes) {
+                el.setAttribute(attr, attributes[attr])
+            }
+        }
+        if (classes && typeof classes === "string") {
+            el.classList.add(...classes.split(" "))
+        } else if (Array.isArray(classes)) {
+            el.classList.add(...classes)
+        }
+        if (typeof textContent === "string") {
+            el.textContent = textContent
+        }
+        if (parent) {
+            parent.appendChild(el)
+        }
+        return el
+    }
+
+    function diffProcessor(diff) {
+        const changeList = []
+        const tabs = {}
+        const keysChanged = new Set([...Object.keys(diff.changed), ...Object.keys(diff.added), ...Object.keys(diff.deleted), ...Object.keys(diff.moved), ...Object.keys(diff.positionChanged)])
+
+        const v1 = diff.currentConfig
+        const v2 = diff.newConfig
+
+        function getDifferences() {
+            const changes = []
+            if (keysChanged.size === 0) {
+                return changes
+            }
+
+            // Always start with a global tab
+            tabs.global = {
+                id: "global",
+                v1: { tab: {nodes: v1.globals} },
+                v2: { tab: {nodes: v2.globals} }
+            }
+
+            // Add the flow tabs
+            for (const tabId of [...v1.tabOrder, ...v2.tabOrder]) {
+                const v1Tab = v1.tabs[tabId]
+                const v2Tab = v2.tabs[tabId]
+                const v1Order = v1.tabOrder.indexOf(tabId)
+                const v2Order = v2.tabOrder.indexOf(tabId)
+                tabs[tabId] = {
+                    id: tabId,
+                    v1: { order: v1Order, tab: v1Tab },
+                    v2: { order: v2Order, tab: v2Tab }
+                }
+            }
+
+            // Add the subflows as tabs too
+            const v1SubFlowKeys = Object.keys(v1.subflows)
+            const v2SubFlowKeys = Object.keys(v2.subflows)
+            for (const subFlowId of [...v1SubFlowKeys, ...v2SubFlowKeys]) {
+                if (tabs[subFlowId]) { continue } // already got this one
+                const v1SubFlow = v1.subflows[subFlowId]
+                const v2SubFlow = v2.subflows[subFlowId]
+                tabs[subFlowId] = {
+                    id: subFlowId,
+                    v1: { tab: v1SubFlow },
+                    v2: { tab: v2SubFlow }
+                }
+            }
+
+            // scan each tab and populate the change list
+            for (const tabId of Object.keys(tabs)) {
+                changes.push(...getTabChanges(diff, tabs[tabId]))
+            }
+
+            // return unique entries
+            const seen = new Set()
+            return changes.filter(change => {
+                const movedZ = change.prop === "z" && change.diffType === "moved"
+                const key = `${movedZ ? '*' : change.tab}-${change.item}-${change.diffType}-${change.prop}-${change.value1}-${change.value2}`
+                if (seen.has(key)) { return false }
+                seen.add(key)
+                return true
+            })
+        }
+
+        function formatChange (tab, item, diffType, prop, value1, value2) {
+            const change = {tab, item, diffType, prop, value1, value2, toString: () => ""}
+            const addQuotes = (v) => v ? `'${v}'` : `''`
+            const getName = (node) => node ? addQuotes(getNodeLabel(node)) : "'n/a'"
+            const _tab = diff.currentConfig.all[tab] || diff.newConfig.all[tab]
+            const tabName = getName(_tab)
+            const _item = diff.currentConfig.all[item] || diff.newConfig.all[item]
+            const v1node = item === 'tab' ? _tab : diff.currentConfig.all[item]
+            const v2node = item === 'tab' ? _tab : diff.newConfig.all[item]
+            const v1orv2 = (v1node || v2node)
+            const type = v1node && v1node.type
+            const thisType = item === 'tab' ? 'tab' : 'node'
+            const v1NodeName = (v1node && (v1node.name || v1node.label || v1node.id)) || '-'
+            const v2NodeName = (v2node && (v2node.name || v2node.label || v2node.id)) || '-'
+            const wireChange = /wires\[\d+\]/.test(prop)
+            let wireText = ''
+            if (wireChange) {
+                if (change.value1 && !change.value2) {
+                    wireText = `had wire removed from ${getName(v1node)}`
+                } else if (!change.value1 && change.value2) {
+                    wireText = `was wired up to ${getName(v2node)}`
+                }
+            }
+            const movedFrom = value1 && (prop === 'z' || /wires\[\d+\]/.test(prop)) ? diff.currentConfig.all[value1] : null
+            const movedTo = value2 && (prop === 'z' || /wires\[\d+\]/.test(prop)) ? diff.newConfig.all[value2] : null
+            
+            change.toString = function () {
+                const stringBuilder = []
+                switch (diffType) {
+                    case "deleted":
+                        stringBuilder.push("deleted", thisType, getName(_item))
+                        break
+                    case "added":
+                        stringBuilder.push("added", thisType, getName(_item))
+                        break
+                    case "moved":
+                        stringBuilder.push(getName(_item), "moved from ", getName(movedFrom), "to", getName(movedTo))
+                        break
+                    case "changed":
+                        if (wireChange) {
+                            stringBuilder.push(tabName, getName(_item), wireText)
+                        } else if (item === 'tab') {
+                            stringBuilder.push(tabName, addQuotes(change.prop), "was", addQuotes(change.value1 || ''), "now", addQuotes(change.value2 || ''))
+                        } else {
+                            stringBuilder.push(getName(_item), addQuotes(change.prop), "was", addQuotes(change.value1 || ''), "now", addQuotes(change.value2 || ''))
+                        }
+                        break
+                    case "positionChanged":
+                        stringBuilder.push(getName(_item), "moved from", change.value1, "to", change.value2)
+                        break
+                    default:
+                        stringBuilder.push(tabName, getName(_item), addQuotes(change.prop), "was", addQuotes(change.value1 || ''), "now", addQuotes(change.value2 || ''))
+                        break
+                }
+                return stringBuilder.join(" ")
+            }
+            return change
+        }
+
+        /**
+         * 
+         * @param {*} diff - The diff containing the changes
+         * @param {*} tab 
+         * @returns 
+         */
+        function getTabChanges(diff, tab) {
+            /** A key-value pair of node id to node object */
+            const v1Nodes = diff.currentConfig.all
+            /** A key-value pair of node id to node object */
+            const v2Nodes = diff.newConfig.all
+    
+            const changes = []
+            if (!tab.v1 || !tab.v2) {
+                if (tab.v1) {
+                    changes.push(formatChange(tab.id, tab.id, "tab", "deleted", tab.v1, null))
+                }
+                if (tab.v2) {
+                    changes.push(formatChange(tab.id, tab.id, "tab", "added", null, tab.v2))
+                }
+                return changes
+            }
+
+            const t1props = tab.v1?.tab ? {...tab.v1.tab.n} : {}
+            t1props.order =  tab.v1?.order
+            const t2props = tab.v2?.tab ? {...tab.v2.tab.n} : {}
+            t2props.order = tab.v2?.order
+            const t1nodes = tab.v1?.tab?.nodes || []
+            const t2nodes = tab.v2?.tab?.nodes || []
+
+            changes.push(...getItemDifferences(tab.id, "tab", "", "changed", t1props, t2props))
+            const t1NodeIds = t1nodes.map(n => n.id)
+            const t2NodeIds = t2nodes.map(n => n.id)
+            const tabKeysChanged = new Set([...t1NodeIds, ...t2NodeIds].filter(id => keysChanged.has(id)))
+            const numberOrNull = v => (typeof v !== "number" ? null : v)
+            const copyObjectWithoutProps = (props, obj) => {
+                const newObj = {...obj}
+                for (const prop of props) {
+                    delete newObj[prop]
+                }
+                return newObj
+            }
+            for (const changeId of tabKeysChanged) {
+                const v1node = v1Nodes[changeId]
+                const v2node = v2Nodes[changeId]
+                const v1andv2 = !!(v1node && v2node)
+
+                if (diff.deleted[changeId]) {
+                    changes.push(...getItemDifferences(tab.id, changeId, "", "deleted", v1node, v2node))
+                    continue
+                }
+                if (diff.added[changeId]) {
+                    changes.push(...getItemDifferences(tab.id, changeId, "", "added", v1node, v2node))
+                    continue
+                }
+                if (v1andv2) {
+                    let otherChanges = true
+                    if (diff.moved[changeId]) {
+                        changes.push(...getItemDifferences(tab.id, changeId, "", "moved", { z: v1node.z }, { z: v2node.z }))
+                    }
+                    if (diff.positionChanged[changeId]) {
+                        otherChanges = false // position changes indicate no other changes
+                        const v1Obj = { x: numberOrNull(v1node.x), y: numberOrNull(v1node.y) }
+                        const v2Obj = { x: numberOrNull(v2node.x), y: numberOrNull(v2node.y) }
+                        const v1ObjStr = JSON.stringify(v1Obj)
+                        const v2ObjStr = JSON.stringify(v2Obj)
+                        changes.push(...getItemDifferences(tab.id, changeId, "position", "positionChanged", v1ObjStr, v2ObjStr))
+                    }
+                    if (otherChanges) {
+                        const v1obj = copyObjectWithoutProps(["x", "y", "z", "w", "h"], v1node)
+                        const v2obj = copyObjectWithoutProps(["x", "y", "z", "w", "h"], v2node)
+                        changes.push(...getItemDifferences(tab.id, changeId, "", "changed", v1obj, v2obj))
+                    }
+                }
+            }
+            return changes
+        }
+
+        function getItemDifferences (tabId, itemId, prop, changeType, value1, value2) {
+            const diffList = []
+            if (changeType === "deleted") {
+                diffList.push(formatChange(tabId, itemId, changeType, prop, value1 ? '' : 'deleted', value2 ? '' : 'deleted'))
+            } else if (changeType === "added") {
+                diffList.push(formatChange(tabId, itemId, changeType, prop, value1 ? 'added' : '', value2 ? 'added' : ''))
+            } else if (typeof value1 !== typeof value2) {
+                diffList.push(formatChange(tabId, itemId, 'changed', prop, value1 || '', value2 || ''))
+            } else if(Array.isArray(value1)) {
+                for (let i = 0; i < value1.length; i++) {
+                    const thisProp = prop ? `${prop}[${i}]` : `[${i}]`
+                    const v1val = value1[i]
+                    const v2val = value2[i]
+                    diffList.push(...getItemDifferences(tabId, itemId, thisProp, changeType || 'changed', v1val, v2val))
+                }
+            } else if (value1 && value2 && typeof value1 === "object" && typeof value2 === "object") {
+                const keys = Object.keys(value1)
+                for (const key of keys) {
+                    const keyNeedsBrackets = /[^a-zA-Z0-9_$]/.test(key)
+                    const thisProp = prop ? (keyNeedsBrackets ? `${prop}["${key}"]` : `${prop}.${key}`) : (keyNeedsBrackets ? `["${key}"]` : key)
+                    const v1val = value1[key]
+                    const v2val = value2[key]
+                    diffList.push(...getItemDifferences(tabId, itemId, thisProp, changeType || 'changed', v1val, v2val))
+                }
+            } else if (value1 !== value2) {
+                diffList.push(formatChange(tabId, itemId, changeType, prop, value1, value2))
+            }
+            return diffList
+        }
+
+        changeList.push(...getDifferences())
+
+        return {
+            get changes() {
+                return changeList
+            },
+            get diff() {
+                return diff
+            },
+            get tabs() {
+                return tabs
+            },
+            getNodeInfo(nodeId) {
+                return {
+                    propertiesChanged: changeList.filter(c => c.itemId === nodeId && c.tab !== nodeId),
+                    v1: v1.all[nodeId],
+                    v2: v2.all[nodeId]
+                }
+            },
+            getTabInfo(tabId) {
+                return {
+                    propertiesChanged: changeList.filter(c => c.tab === tabId && c.itemId === "tab"),
+                    nodesChanged: changeList.filter(c => c.tab === tabId && c.itemId !== "tab"),
+                    v1: tabs[tabId],
+                    v2: tabs[tabId]
+                }
+            }
+        }
+    }
+
+    /**
+     * Renders a table of differences in the given container
+     * @param {HTMLElement} container - the container to create the diff table in
+     * @param {*} diff
+     * @returns 
+     */
+    function diffTableCreate(container, changes) {
+        const doc = getDocument(container, this)
+        let diffTbl = container.querySelector(".diff-table ")
+        if (!diffTbl) {
+            diffTbl = createHTMLElement('table', { class: 'diff-table' }, null, null, container)
+        }
+        while (diffTbl.firstChild) {
+            diffTbl.removeChild(diffTbl.firstChild)
+        }
+
+        // add a row for each change in differ.changes
+        for (const change of changes) {
+            const tr = createHTMLElement('tr', null, null, null, diffTbl)
+            const tdItemInfo = createHTMLElement('td', null, null, null, tr)
+            const td1div = createHTMLElement('div', null, 'diff-info', null, tdItemInfo)
+            const spanType = createHTMLElement('span', { title: change.diffType }, `diff-type diff-type-${change.diffType}`, ' ', td1div)
+            const spanText = createHTMLElement('span', null, `diff-type-text diff-type-text-${change.diffType}`, change.item, td1div)
+
+            const tabDiv = container.parentElement.parentElement.querySelector('.red-ui-tabs')
+            const workspaceChart = container.parentElement.parentElement.querySelector('.red-ui-workspace-chart')
+            const slider = container.parentElement.parentElement.querySelector('.flow-compare-slider')
+
+            const tdProp = createHTMLElement('td', null, null, change.prop, tr)
+            const tdV1 = createHTMLElement('td', null, null, '', tr)
+            const t1V1Div = createHTMLElement('div', null, 'diff-value diff-value-1', null, tdV1)
+            const v1ItemButton = createHTMLElement('button', { 'data-item-id': change.item, 'data-tab-id': change.tab, 'data-diff-type': change.diffType }, null, 'v1', t1V1Div)
+            const t1V1Span = createHTMLElement('span', null, null, change.value1 || '', t1V1Div)
+
+            
+            const tdV2 = createHTMLElement('td', null, null, '', tr)
+            const t1V2Div = createHTMLElement('div', null, 'diff-value diff-value-2', null, tdV2)
+            const v2ItemButton = createHTMLElement('button', { 'data-item-id': change.item, 'data-tab-id': change.tab, 'data-diff-type': change.diffType }, null, 'v2', t1V2Div)
+            const t1V2Span = createHTMLElement('span', null, null, change.value2 || '', t1V2Div)
+
+            if (change.diffType === 'added') {
+                v1ItemButton.disabled = true
+                v2ItemButton.onclick = function() { change.highlight(1) }
+            } else if (change.diffType === 'deleted') {
+                v2ItemButton.disabled = true
+                v1ItemButton.onclick = function() { change.highlight(0) }
+            } else {
+                v1ItemButton.onclick = function() { change.highlight(0) }
+                v2ItemButton.onclick = function() { change.highlight(1) }
+            }
+        }
+        return diffTbl
+    }
+
+    /**
+     * 
+     * @param {FlowRendererOptions} renderOpts - rendering options
+     * @param {HTMLElement} [container] - the container element (if omitted, renderopts.container is used)
+     * @returns {Array<string>}
+     */
+    function getScope (renderOpts) {
+        const container = renderOpts?.container
+        const dtl = new Set()
+        let scope = renderOpts?.scope || ''
+        if (scope && typeof scope === 'string') {
+            dtl.add(scope)
+        } else if ((Array.isArray(scope) || scope instanceof DOMTokenList) && scope.length > 0) {
+            dtl.add(...scope)
+        } else if (container?.classList?.length) {
+            dtl.add(...container.classList)
+        }
+        if (dtl.size === 0) {
+            dtl.add("flow-renderer")
+        }
+        return [...dtl]
+    }
+
+    /** @returns {SVGGElement} */
+    function getFlowLayer(svg, layer) {
+        return svg.querySelector(`g.flow-layer-${layer || 0}`)
+    }
+    
     function getCSS(scope) {
         // normalize the scope(s)
         if (scope && (scope.length && typeof scope !== "string" && typeof scope[0] === "string")) {
@@ -998,20 +1467,98 @@ const FlowRenderer = (function () {
         scope = scope.split(" ").map(s => `.${s}`).join(" ").trim()
         const css =`
         :root {
-            --red-ui-primary-background: #fff;
-            --red-ui-secondary-text-color: #333;
             --red-ui-view-grid-color: #eee;
             --red-ui-view-border: 1px solid #bbbbbb;
             --red-ui-node-border: #999;
-            --red-ui-node-background-default: #eee;
-            --red-ui-node-icon-background-color-fill: black;
-            --red-ui-node-icon-background-color-opacity: 0.1;
-            --red-ui-node-label-color: #333;
             --red-ui-node-port-background: #d9d9d9;
-            --red-ui-link-color: #999;
             --red-ui-workspace-button-color: #333;
             --red-ui-workspace-button-background: #f3f3f3;
+
+            --red-ui-primary-font: Helvetica Neue, Arial, Helvetica, sans-serif;
+            --red-ui-primary-font-size: 14px;
+            --red-ui-monospace-font: Menlo, Consolas, DejaVu Sans Mono, Courier, monospace;
+            --red-ui-primary-background: #f3f3f3;
+
+            --red-ui-form-background: #fff;
+            --red-ui-form-placeholder-color: #aaa;
+            --red-ui-form-text-color: #555;
+            --red-ui-form-text-color-disabled: #bbb;
+            --red-ui-form-input-focus-color: rgba(85, 150, 230, 0.8);
             --red-ui-form-input-border-color: #ccc;
+            --red-ui-form-input-border-selected-color: #aaa;
+            --red-ui-form-input-border-error-color: rgb(214, 97, 95);
+            --red-ui-form-input-background: #fff;
+            --red-ui-form-input-background-disabled: #f9f9f9;
+            --red-ui-form-button-background: #efefef;
+
+            --red-ui-diff-state-color: #555;
+            --red-ui-diff-state-prefix-color: #888;
+            --red-ui-diff-state-added: #009900;
+            --red-ui-diff-state-deleted: #f80000;
+            --red-ui-diff-state-changed: #f89406;
+            --red-ui-diff-state-moved: #3f81b3;
+        }
+        ${scope} .diff-table {
+            width: 100%;
+            font-size: var(--red-ui-primary-font-size);
+            font-family: var(--red-ui-primary-font);
+        }
+        ${scope} .diff-table thead tr {
+            font-weight: bold;
+            padding: 2px 4px;
+            /* bottom border only */
+            border-bottom: 3px solid #ddd;
+        }
+        ${scope} .diff-table td {
+            padding: 2px 4px;
+            border-bottom: 1px solid #ddd;
+        }
+        ${scope} .diff-table .diff-info {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        ${scope} .diff-value button {
+            height: 20px;
+            width: 20px;
+            padding: 1px;
+        }
+        ${scope} .diff-value span {
+            margin-left: 4px;
+            margin-top: 2px;
+        }
+        ${scope} .diff-type {
+            height: 14px;
+            width: 14px;
+            margin: 2px;
+        }
+        ${scope} .diff-type-text {
+            flex-grow: 1;
+        }
+        ${scope} .diff-type-moved {
+            background-color: var(--red-ui-diff-state-moved);
+        }
+        ${scope} .diff-type-added {
+            background-color: var(--red-ui-diff-state-added);
+        }
+        ${scope} .diff-type-deleted {
+            background-color: var(--red-ui-diff-state-deleted);
+        }
+        ${scope} .diff-type-changed {
+            background-color: var(--red-ui-diff-state-changed);
+        }
+        ${scope} .diff-type-positionChanged {
+            background-color: var(--red-ui-diff-state-changed);
+        }
+
+        .red-ui-editor {
+            font-size: var(--red-ui-primary-font-size);
+            font-family: var(--red-ui-primary-font);
+            padding: 0;
+            margin: 0;
+            background: var(--red-ui-primary-background);
+            color: var(--red-ui-primary-text-color);
+            line-height: 20px
         }
         ${scope} {
             position: relative;
@@ -1023,8 +1570,11 @@ const FlowRenderer = (function () {
             height: 100%;
             width: 100%;
         }
-        ${scope} .red-ui-workspace-chart.has-tabs {
-            height: calc(100% - 34px); // 34px is the height of the tabs
+        ${scope} div.red-ui-footer {
+            height: 20px
+        }
+        ${scope}.has-tabs div.red-ui-workspace-chart {
+            height: calc(100% - 34px);
         }
         ${scope} svg {
             position: relative;
@@ -1083,6 +1633,21 @@ const FlowRenderer = (function () {
         ${scope} svg .node-highlight {
             stroke-width: 3px;
         }
+        ${scope} .tab-glow {
+            border-radius: 2px;
+            animation: tab-glow-animation 1s infinite;
+        }
+        @keyframes tab-glow-animation {
+            0% {
+                box-shadow: 0 0 0px 0px #7d26cddd;
+            }
+            50% {
+                box-shadow: 0 0 10px 5px #7d26cddd;
+            }
+            100% {
+                box-shadow: 0 0 0px 0px #7d26cddd;
+            }
+        }
 
         ${scope} svg .node-disabled {
             stroke-dasharray: 8,3;
@@ -1100,7 +1665,7 @@ const FlowRenderer = (function () {
             stroke: rgb(204, 204, 204);
         }
         ${scope} svg .grid-line {
-            shape-rendering: crispedges;
+            shape-rendering: geometricprecision;
             stroke: rgb(238, 238, 238);
             stroke-width: 1px;
             fill: none;
@@ -1135,6 +1700,7 @@ const FlowRenderer = (function () {
             background-color: #f0f0f0;
             max-width: 200px;
             max-height: 34px; /* for calculating svg height */
+            height: 34px; /* for calculating svg height */
             width: 14%;
             overflow: hidden;
             white-space: nowrap;
@@ -1145,6 +1711,11 @@ const FlowRenderer = (function () {
             position: relative;
             z-index: 1;
             top: 1px;
+        }
+        ${scope} .red-ui-tab div.red-ui-tab-label {
+            position: absolute;
+            top: 7px;
+            left: 10px;
         }
         ${scope} .red-ui-tab-subflow-icon {
             mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjUgMjUuOTRoN2MuNTggMCAxLS40MiAxLTF2LTJjMC0uNTgtLjQyLTEtMS0xaC03Yy0uNTggMC0xIC40Mi0xIDF2MmMwIC41OC40MiAxIDEgMXptLTE3IDEyaDdjLjU4IDAgMS0uNDIgMS0xdi0yYzAtLjU4LS40Mi0xLTEtMUg4Yy0uNTggMC0xIC40Mi0xIDF2MmMwIC41OC40MiAxIDEgMXptLS40MTYgMTFDNS42MjQgNDguOTQgNCA0Ny4zMTUgNCA0NS4zNTZWMTQuNTIyYzAtMS45NiAxLjYyNS0zLjU4MiAzLjU4NC0zLjU4MmgyNC44MzJjMS45NiAwIDMuNTg0IDEuNjIzIDMuNTg0IDMuNTgydjMwLjgzNGMwIDEuOTYtMS42MjUgMy41ODQtMy41ODQgMy41ODR6TTMyIDM2Ljk0SDE5YzAgMi4xOS0xLjgxIDQtNCA0SDd2NC40MTZjMCAuMzUuMjM1LjU4NC41ODQuNTg0aDI0LjgzMmMuMzUgMCAuNTg0LS4yMzUuNTg0LS41ODR2LTguNDE3em0xLTJ2LTZoLThjLTIuMTkgMC00LTEuODEtNC00aC0xYy00LjMzMy0uMDAyLTguNjY3LjAwNC0xMyAwdjZoOGMyLjE5IDAgNCAxLjgxIDQgNGgxM3ptMC0xNnYtNC40MThjMC0uMzUtLjIzNS0uNTgyLS41ODQtLjU4Mkg3LjU4NGMtLjM1IDAtLjU4NC4yMzMtLjU4NC41ODJ2OC40MTdjNC4zMzMuMDAyIDguNjY3LjAwMSAxMyAuMDAxaDFjMC0yLjE5IDEuODEtNCA0LTRoOHoiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIi8+PC9zdmc+Cg==);
@@ -1258,6 +1829,26 @@ const FlowRenderer = (function () {
         ${scope} .copy-controls.button-group button {
             padding: 0px 4px;
         }
+
+        /* compare controls */
+        ${scope} .compare-controls.button-group {
+            margin-right: 24px;
+        }
+        ${scope} .compare-controls input[type='range'].flow-compare-slider {
+            width: 100%;
+            -webkit-appearance: none;
+        }
+        ${scope} input[type='range'].flow-compare-slider::-webkit-slider-runnable-track {
+            height: 16px;
+            background: var(--red-ui-workspace-button-background);
+            border-radius: 16px;
+        }
+        /* Track: Mozilla Firefox */
+        ${scope} input[type='range'].flow-compare-slider::-moz-range-track {
+            height: 16px;
+            background: var(--red-ui-workspace-button-background);
+            border-radius: 16px;
+        }
         `
         return css
     }
@@ -1273,12 +1864,14 @@ const FlowRenderer = (function () {
         }
     }
 
-    function resetSVG (svg) {
+    function resetSVG (svg, layer) {
         if (svg) {
-            // TODO: remove all children from the SCG then rebuild it.
+            // TODO: remove all children from the SVG then rebuild it.
             // Additionally, use this in the CreateDefaultSVG function
-            ['flow_grid', 'flow_group_elements', 'flow_group_select', 'flow_wires', 'flow_nodes'].forEach(groupClass => {
-                const g = svg.querySelector(`.${groupClass}`) || createSvgElement('g', { class: g })
+            const layerGroup = svg.querySelector(`.flow-layer-${layer || 0}`)
+            const subGroups = ['flow_group_elements', 'flow_group_select', 'flow_wires', 'flow_nodes']
+            subGroups.forEach(groupClass => {
+                const g = layerGroup.querySelector(`.${groupClass}`) || createSvgElement('g', { class: groupClass }, layerGroup)
                 while (g.firstChild) {
                     g.removeChild(g.firstChild)
                 }
@@ -1289,6 +1882,114 @@ const FlowRenderer = (function () {
     // #endregion
     
     // #region "Node-RED src code parts"
+
+    // SRC: https://github.com/node-red/node-red/blob/3fd2d07c759be11395615f7b1d4c97190321021d/packages/node_modules/%40node-red/editor-client/src/js/ui/diff.js#L1145
+    function parseNodes(nodeList) {
+        var tabOrder = [];
+        var tabs = {};
+        var subflows = {};
+        var globals = [];
+        var all = {};
+
+        nodeList.forEach(function(node) {
+            all[node.id] = node;
+            if (node.type === 'tab') {
+                tabOrder.push(node.id);
+                tabs[node.id] = {n:node,nodes:[]};
+            } else if (node.type === 'subflow') {
+                subflows[node.id] = {n:node,nodes:[]};
+            }
+        });
+
+        nodeList.forEach(function(node) {
+            if (node.type !== 'tab' && node.type !== 'subflow') {
+                if (tabs[node.z]) {
+                    tabs[node.z].nodes.push(node);
+                } else if (subflows[node.z]) {
+                    subflows[node.z].nodes.push(node);
+                } else {
+                    globals.push(node);
+                }
+            }
+        });
+
+        return {
+            all: all,
+            tabOrder: tabOrder,
+            tabs: tabs,
+            subflows: subflows,
+            globals: globals
+        }
+    }
+
+    // SRC: https://github.com/node-red/node-red/blob/3fd2d07c759be11395615f7b1d4c97190321021d/packages/node_modules/%40node-red/editor-client/src/js/ui/diff.js#L1182
+    function generateDiff(currentNodes,newNodes) {
+        const currentConfig = parseNodes(currentNodes);
+        const newConfig = parseNodes(newNodes);
+        const added = {};
+        const deleted = {};
+        const changed = {};
+        const positionChanged = {};
+        const moved = {};
+
+        Object.keys(currentConfig.all).forEach(function(id) {
+            // const node = RED.nodes.workspace(id)||RED.nodes.subflow(id)||RED.nodes.node(id); // redundant?
+            if (!newConfig.all.hasOwnProperty(id)) {
+                deleted[id] = true;
+                return
+            }
+            const currentConfigJSON = JSON.stringify(currentConfig.all[id])
+            const newConfigJSON = JSON.stringify(newConfig.all[id])
+            
+            if (currentConfigJSON !== newConfigJSON) {
+                changed[id] = true;
+                if (currentConfig.all[id].z !== newConfig.all[id].z) {
+                    moved[id] = true;
+                } else if (
+                    currentConfig.all[id].x !== newConfig.all[id].x ||
+                    currentConfig.all[id].y !== newConfig.all[id].y ||
+                    currentConfig.all[id].w !== newConfig.all[id].w ||
+                    currentConfig.all[id].h !== newConfig.all[id].h
+                ) {
+                    // This node's position on its parent has changed. We want to
+                    // check if this is the *only* change for this given node
+                    const currentNodeClone = JSON.parse(currentConfigJSON)
+                    const newNodeClone = JSON.parse(newConfigJSON)
+
+                    delete currentNodeClone.x
+                    delete currentNodeClone.y
+                    delete currentNodeClone.w
+                    delete currentNodeClone.h
+                    delete newNodeClone.x
+                    delete newNodeClone.y
+                    delete newNodeClone.w
+                    delete newNodeClone.h
+                    
+                    if (JSON.stringify(currentNodeClone) === JSON.stringify(newNodeClone)) {
+                        // Only the position has changed - everything else is the same
+                        positionChanged[id] = true
+                    }
+                }
+
+            }
+        });
+        Object.keys(newConfig.all).forEach(function(id) {
+            if (!currentConfig.all.hasOwnProperty(id)) {
+                added[id] = true;
+            }
+        });
+
+        const diff = {
+            currentConfig,
+            newConfig,
+            added,
+            deleted,
+            changed,
+            positionChanged,
+            moved
+        };
+        return diff;
+    }
 
     // SRC: https://github.com/node-red/node-red/blob/29ed5b27925e51185098a7fe3180faa4c8a734d7/packages/node_modules/%40node-red/editor-client/src/js/ui/view.js#L1057-L1179
     function generateLinkPath(origX,origY, destX, destY, sc, hasStatus = false) {
@@ -1842,6 +2543,12 @@ const FlowRenderer = (function () {
         "_default": defaultLabelFunct,
     };
 
+    function getNodeLabel(node, subflows, flowdata) {
+        const lblFunct = (labelByFunct[node.type] || labelByFunct["_default"])
+        const subflowObj = (subflows && subflows[node.type]) || {}
+        return lblFunct(node, subflowObj, flowdata)
+    }
+
     // #endregion
 
     // #region "Flow Rendering functions"
@@ -1896,6 +2603,43 @@ const FlowRenderer = (function () {
         return tabsArray
     }
 
+    function addTab (tabContainer, tab, index, renderOpts, openTabCallback) {
+        const thisId = `red-ui-tab-${index}`
+        const container = renderOpts.container
+        const svg = renderOpts.svg || container.querySelector('svg')
+        const doc = getDocument(renderOpts.document, _this.document, container, this)
+        // const name = tab.type === 'tab' ? 'Flow ' + (index + 1) : tab.label
+        const name = tab.label
+        let tabEl = container.querySelector(`.${thisId}`)
+        if (!tabEl) {
+            tabEl = doc.createElement('div')
+            tabContainer.appendChild(tabEl)
+            tabEl.classList.add('red-ui-tab')
+            tabEl.classList.add('red-ui-tab-' + tab.type)
+            // add the as a data attribute
+            tabEl.setAttribute('data-flow-id', tab.id)
+        }
+        if (tab.disabled) {
+            tabEl.classList.add('disabled')
+            const img = doc.createElement('i')
+            img.classList.add('red-ui-tab-disabled-icon')
+            tabEl.appendChild(img)
+        } else if (tab.type === 'subflow') {
+            // <i class="red-ui-tab-icon" style="mask-image: url(red/images/subflow_tab.svg);"></i>
+            const img = doc.createElement('i')
+            img.classList.add('red-ui-tab-subflow-icon')
+            tabEl.appendChild(img)
+        }
+        tabEl.title = name
+        const nameSpan = doc.createElement('span')
+        nameSpan.textContent = name
+        tabEl.appendChild(nameSpan)
+        tabEl.onclick = function (event) {
+            saveLayout(svg, renderOpts, renderOpts.flowId)
+            openTabCallback(tab.id)
+            restoreLayout(svg, renderOpts, tab.id)
+        }
+    }
     /**
      * Normalise the flows array & return a new array of cloned flows
      * @param {Flows} flow - The flows to normalise
@@ -1929,6 +2673,9 @@ const FlowRenderer = (function () {
         // data-xxx="true" will enable the option
         // data-xxx="false" will disable the option
         if (options) {
+            if (!options.scope) {
+                options.scope = getScope(options)
+            }
             if (options.container) {
                 const containerOptions = {}
                 const dataOptions = ['scope', 'gridLines', 'arrows', 'zoom', 'images', 'linkLines', 'labels', 'autoZoom', 'autoScroll', 'flowId']
@@ -1945,6 +2692,337 @@ const FlowRenderer = (function () {
         // merge the options
         const opts = Object.assign({}, ...mergeItems)
         return opts
+    }
+
+    /**
+     * Render 2 flows overlaid on top of each other for a visual comparison.
+     * @param {Array<[],[]>} flows - An array of flows to render for comparison
+     * @param {*} renderOpts - Rendering options
+     * @returns {{}} Comparison object containing the changes and the tabMap
+     */
+    function compare (flows, renderOpts) {
+
+        if (!flows || flows.length < 2) {
+            return renderFlows(flows, renderOpts)
+        } if (flows.length > 2) {
+            // for now, we only support comparing 2 
+            // the SVG and labels part of this is already capable of handling  more than 2 layers however
+            // the slider needs work or some kind of selector buttons need adding to correctly transision between flows
+            // Also the table comparison is only written for 2 flows
+            flows.splice(2)
+        }
+        const tabMap = new Map()
+        const diff = generateDiff(flows[0], flows[1])
+        const comparison = diffProcessor(diff)
+        comparison.changes.forEach(change => {
+            // attach the highlight function to each change in differ
+            change.highlight = (layerNo) => highlightChangeItem(layerNo, change)
+        })
+        comparison.tabMap = tabMap
+        renderOpts = normaliseOptions(renderOpts)
+
+        // to compare flows visually, we need to scan the flows and collect
+        // all TABs (flow tabs and subflow tabs) and associate the flows with the tabs
+
+        // then via a slider, we can compare the flows by affecting the opacity of the layers
+        // There may be more than 2 flows so the slider should be able to handle multiple layers (TODO)
+        
+        // To achieve this, the SVG will contain multiple g elements, each representing a layer
+        // each layer is one version of the flow, the slider will adjust the opacity of each layer
+        // Additionally, since the tabs themselves may be different, we need to create also render
+        // labels for all the tabs and the opacity of the tabs will also be adjusted by the slider
+
+        // SETUP
+        /** @type {Document} */
+        const doc = getDocument(renderOpts.document, _this.document, renderOpts.container, this)
+        /** @type {HTMLElement} */
+        const container = renderOpts.container
+
+        // add css
+        addStyle(doc, renderOpts.scope)
+
+        const hasZoom = renderOpts.zoom
+        const hasGrid = renderOpts.gridLines
+        renderOpts.zoom = false // disable zoom for the compare view - setup after rendering
+        renderOpts.gridLines = false // disable grid lines for the compare view - setup after rendering
+
+        // remove all elements from the container
+        while (container.firstChild) {
+            container.removeChild(container.firstChild)
+        }
+
+        // Create a div for the main sections (tabs, workspace, toolbar) and add to the container
+        // const main = createHTMLElement('div', null, null, null, container)
+        // main.style.height = renderOpts.height || container.clientHeight + 'px'
+        const tabsContainer = createHTMLElement('div', null, 'red-ui-tabs', null, container)
+        const workspaceContainer = createWorkspaceContainer(container)
+        const svg = createDefaultSVG(workspaceContainer, { addDefaultLayer: false })
+        const outerContainer = [...svg.childNodes].find(el => el.tagName === 'g' && el.classList.contains('outerContainer'))
+
+        const slider = createCompareControls(container)
+        slider.type = 'range'
+        slider.min = 0
+        slider.max = 100
+        slider.value = 0
+        slider.step= 5
+        slider.style.width = '100%'
+        slider.classList.add('flow-compare-slider')
+
+        // TODO: Generating the diff table is disabled - requires more work
+        // const footer = createHTMLElement('div', 'footer', null, null, container)
+        // const diffDiv = createHTMLElement('div', 'red-ui-diff', null, null, footer)
+        // diffTableCreate(diffDiv, comparison.changes)
+
+        // scan the array flows, generate a distinct set of tabs
+        const flowRenderer = container// layers[i] //.querySelector('.red-ui-workspace-chart')
+        const workspace = workspaceContainer//flowRenderer.querySelector('.red-ui-workspace-chart')
+        clearSavedLayout(svg)
+        for (let i = 0; i < flows.length; i++) {
+            // generate the SVG group layers for each flow
+            const layer = i
+            const svgLayer = createSVGLayer(svg, { layer, opacity: i === 0 ? 1 : 0 })
+            const flowTabs = [...(getFlowTabs(flows[i]) || [])]
+            for (let tab of flowTabs) {
+                const order = tab.order
+                const flowId = tab.id
+                /** @type {FlowRendererOptions} */
+                const innerOptions = {
+                    ... renderOpts,
+                    index: i,
+                    layer,
+                    svgLayer,
+                    order,
+                    document: doc,
+                    container: flowRenderer,
+                    flowId
+                }
+                const tabData = {
+                    renderOptions: innerOptions,
+                    index: i,
+                    layer,
+                    order,
+                    svgLayer,
+                    flowRenderer,
+                    workspace,
+                    tab: tab
+                }
+                if (!tabMap.has(flowId)) {
+                    tabMap.set(flowId, {})
+                }
+                tabMap.get(flowId)[i] = tabData
+            }
+        }
+
+        // add tabs to the tabs container
+        tabMap.entries().forEach(([flowId, layers]) => {
+            const tabOptions = {
+                ...renderOpts,
+                flowId: flowId,
+                container: null,
+                layers,
+            }
+            addTab(tabsContainer, tabOptions, function (tabOptions) {
+                const tabs = tabsContainer.querySelectorAll('.red-ui-tab')
+                tabs.forEach(tab => tab.classList.remove('active'))
+                // get the tab element with the data-flow-id attribute equal to the id
+                const selectedTab = tabsContainer.querySelector(`[data-flow-id="${tabOptions.flowId}"]`)
+                selectedTab.classList.add('active')
+    
+                // update the SVG to the rendered SVG stored in the renderings object
+                const layers = Object.values(tabOptions.layers)
+                layers.forEach(layer => {
+                    /** @type {SVGGElement} */
+                    const flowLayer = layer.svgLayer
+                    flowLayer.setAttribute('opacity', 0) // to do use calculated opacity from the slider
+                    const renderOptions = layer.renderOptions
+                    renderFlow(flows[renderOptions.index] || [], renderOptions)
+                    if (hasZoom) {
+                        setupZoom(svg, renderOpts.container)
+                    }
+                    if (hasGrid) {
+                        // search children of SVG (not grandchildren) for the grid
+                        /** @type {SVGGElement} */
+                        let flow_gridEl = [...outerContainer.childNodes].find(el => el.tagName === 'g' && el.classList.contains('flow_grid'))
+                        if (!flow_gridEl) {
+                            flow_gridEl = createSvgElement('g', { class: 'flow_grid' })
+                            // insert grid as the topmost child of the SVG
+                            outerContainer.insertBefore(flow_gridEl, svg.firstChild)
+                        }
+                        if (flow_gridEl) {
+                            drawSVGGrid(flow_gridEl)
+                        }
+                    }
+                    updateOpacities()
+                })
+            })
+        })
+
+        // add event listeners to the slider to adjust the opacity of the hidden divs
+        slider.addEventListener('input', function (e) {
+            updateOpacities()
+        })
+
+        //# region "Local Helper functions"
+        function addTab (tabContainer, tabOptions, onClick) {
+            const doc = getDocument(tabOptions.document, _this.document, container, this)
+            const layers = tabOptions.layers
+            for (let layer of Object.values(layers)) {  
+                // const container = renderOpts.compareData.map(d => d.flowContainer)
+                const tab = layer.tab
+                const name = tab.label
+                const thisIdIdx = `red-ui-tab-${layer.index}`
+                const thisId = `red-ui-tab-${tab.id}`
+                // const svg = flowTab.flowRenderer.querySelector('svg')
+                let tabEl = tabContainer.querySelector(`.${thisId}`)
+                
+
+                if (!tabEl) {
+                    tabEl = doc.createElement('div')
+                    tabContainer.appendChild(tabEl)
+                    tabEl.classList.add('red-ui-tab')
+                    tabEl.classList.add(thisIdIdx)
+                    tabEl.classList.add(thisId)
+                    tabEl.classList.add('red-ui-tab-' + layers.type)
+                    // add the as a data attribute
+                    tabEl.setAttribute('data-flow-id', tab.id)
+                }
+
+                let tabLabel = tabEl.querySelector(`.red-ui-tab-label-${layer.index}`)
+                if (!tabLabel) {
+                    tabLabel = doc.createElement('div')
+                    tabLabel.classList.add(`red-ui-tab-label-${layer.index}`)
+                }
+                tabLabel.classList.add('red-ui-tab-label')
+                tabLabel.setAttribute('data-layer', layer.index)
+                tabLabel.style.opacity = 0 // will update once all are rendered
+                // tabLabel.style.position = 'absolute'
+                // tabLabel.style.top = '0'
+                // tabLabel.style.left = '0'
+                tabEl.appendChild(tabLabel)
+
+                if (tab.disabled) {
+                    tabLabel.classList.add('disabled')
+                    const img = doc.createElement('i')
+                    img.classList.add('red-ui-tab-disabled-icon')
+                    tabLabel.appendChild(img)
+                } else if (tab.type === 'subflow') {
+                    // <i class="red-ui-tab-icon" style="mask-image: url(red/images/subflow_tab.svg);"></i>
+                    const img = doc.createElement('i')
+                    img.classList.add('red-ui-tab-subflow-icon')
+                    tabLabel.appendChild(img)
+                }
+                tabLabel.title = name
+                const nameSpan = doc.createElement('span')
+                nameSpan.textContent = name
+                tabLabel.appendChild(nameSpan)
+                tabEl.onclick = function (event) {
+                    saveLayout(svg, tabOptions, tabOptions.flowId)
+                    onClick(tabOptions)
+                    restoreLayout(svg, tabOptions, tab.id)
+                }
+            }
+        }
+
+        function highlightChangeItem (layerNo, changeItem) {
+            console.log("highlightChangeItem", layerNo, changeItem)
+            const currentTabEl = tabsContainer.querySelector(`.red-ui-tab.active`)
+            const currentTabId = currentTabEl.getAttribute('data-flow-id')
+            let selectedTabId = changeItem.tab
+            if (changeItem.diffType === 'moved') {
+                if (layerNo === 0) {
+                    selectedTabId = changeItem.value1 // the new z value is where it moved to
+                } else if (layerNo === 1) {
+                    selectedTabId = changeItem.value2 // the new z value is where it moved to
+                }
+            }
+            const selectedTabEl = tabsContainer.querySelector(`.red-ui-tab[data-flow-id="${selectedTabId}"]`)
+            // if the selected tab is not the tab of the change, select the tab
+            const tabPropChanged = changeItem.item === 'tab' && changeItem.diffType === 'changed'
+            if (tabPropChanged || selectedTabId !== currentTabId) {
+                if (selectedTabEl) {
+                    selectedTabEl.click()
+                    selectedTabEl.classList.add('tab-glow')
+                    setTimeout(() => {
+                        selectedTabEl.classList.remove('tab-glow')
+                    }, 4000)
+                }
+            }
+
+            // calculate ideal slider value for the layerNo (to make it more visible (75%))
+            const sliderValue = layerNo === 0 ? 10 : 90;
+            // change the slider value gradually
+            (async function(){
+                let currentValue = parseInt(slider.value)
+                const increment = sliderValue > currentValue ? 1 : -1
+                while (currentValue !== sliderValue) {
+                    currentValue += increment
+                    slider.value = currentValue
+                    //trigger the input event
+                    const event = new Event('input', { bubbles: true })
+                    slider.dispatchEvent(event)
+                    await new Promise(resolve => setTimeout(resolve, 10))
+                }
+            })()
+
+            const node = { 
+                id: changeItem.item, 
+                z: changeItem.tab
+            }
+            let nodeId = node.id
+            // select node by g.flow-layer-0 > g.flow_nodes > data-node-id="8abe21f57db87496"
+            const layerNode = svg.querySelector(`g.flow-layer-${layerNo} > g.flow_nodes > g[data-node-id="${nodeId}"]`)
+            
+            if (!layerNode) {
+                return
+            }
+            // scroll the svg element into view by adjusting the parent div scroll
+            layerNode.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+            // apply the filter to the node
+            layerNode.style.filter = 'url(#node-glow)'
+            setTimeout(() => {
+                try { layerNode.style.filter = '' } catch (e) { }
+            }, 4000)
+        }
+
+        function updateOpacities () {
+            // NOTE: Currently, the number of flows supported is 2. therefore the algorithm is simply 1-(sliderValue/100) and (sliderValue/100)
+            const sliderValue = parseInt(slider.value)
+            const opacities = [1 - (sliderValue / 100), (sliderValue / 100)]
+            // update the opacity on the layers
+            opacities.forEach((opacity, index) => {
+                // tweak opacities to make them a little more visible
+                opacity = opacity > 0.05 ? clamp(opacity + 0.15, 0, 1) : opacity
+                const layer = getFlowLayer(svg, index)
+                layer?.setAttribute('opacity', opacity)
+            })
+            // update opacity on tab label-x also
+            const tabLabels = tabsContainer.querySelectorAll('.red-ui-tab-label')
+            tabLabels.forEach((label, layer) => {
+                let idx = parseInt(label.getAttribute('data-layer'))
+                if (isNaN(idx) || idx < 0 || idx >= flows.length) { idx = 0 }
+                label.style.opacity = opacities[idx] || 0
+            })
+        }
+        //# endregion
+
+        // simulate first tab click
+        const firstTab = tabsContainer.querySelector('.red-ui-tab')
+        if (firstTab) {
+            firstTab.click()
+        }
+
+        if (tabMap.size > 0) {
+            container.classList.add('has-tabs') // tabs affect the available space for the flow SVG
+        } else {
+            container.classList.remove('has-tabs')
+        }
+        const hasScrollBars = hasScrollbars(svg.parentElement)
+        if (hasScrollBars.hasHorizontalScrollbar || hasScrollBars.hasVerticalScrollbar) {
+            container.classList.add('has-scrollbars')
+        } else {
+            container.classList.remove('has-scrollbars')
+        }
+        return comparison
     }
 
     /**
@@ -1973,8 +3051,7 @@ const FlowRenderer = (function () {
         container.appendChild(tabContainer)
 
         // setup the scrollable div container for the svg element
-        /** @type {HTMLDivElement} */
-        const div = createDefaultDivContainer(container)
+        const workspaceContainer = createWorkspaceContainer(container)
 
         const copyControls = createCopyControls(container)
         copyControls.copy.onclick = function (e) {
@@ -1986,22 +3063,11 @@ const FlowRenderer = (function () {
         
 
         // generate the SVG element
-        /** @type {SVGSVGElement} */
-        const svg = createDefaultSVG(div)
+        const svg = createDefaultSVG(workspaceContainer)
         resetSVG(svg)
         clearSavedLayout(svg)
 
-        if (!renderOpts.scope) {
-            const containerClasses = container.classList
-            if (containerClasses && containerClasses.length) {
-                renderOpts.scope = containerClasses
-            } else {
-                renderOpts.scope = 'flow-renderer'
-                container.classList.add(renderOpts.scope)
-            }
-        } else {
-            container.classList.add(renderOpts.scope)
-        }
+        container.classList.add(renderOpts.scope)
 
         // tab helper functions
         const openTab = function (id) {
@@ -2012,44 +3078,6 @@ const FlowRenderer = (function () {
             selectedTab.classList.add('active')
             renderOpts.flowId = id
             return renderFlow(flows, renderOpts)
-        }
-        const addTab = function (tab, index) {
-            const thisId = `red-ui-tab-${index}`
-            // const name = tab.type === 'tab' ? 'Flow ' + (index + 1) : tab.label
-            const name = tab.label
-            let tabEl = container.querySelector(`.${thisId}`)
-            if (!tabEl) {
-                tabEl = doc.createElement('div')
-                tabContainer.appendChild(tabEl)
-                tabEl.classList.add('red-ui-tab')
-                tabEl.classList.add('red-ui-tab-' + tab.type)
-                // add the as a data attribute
-                tabEl.setAttribute('data-flow-id', tab.id)
-            }
-            if (tab.disabled) {
-                tabEl.classList.add('disabled')
-                const img = doc.createElement('i')
-                img.classList.add('red-ui-tab-disabled-icon')
-                tabEl.appendChild(img)
-            } else if (tab.type === 'subflow') {
-                // <i class="red-ui-tab-icon" style="mask-image: url(red/images/subflow_tab.svg);"></i>
-                const img = doc.createElement('i')
-                img.classList.add('red-ui-tab-subflow-icon')
-                tabEl.appendChild(img)
-            }
-            tabEl.title = name
-            const nameSpan = doc.createElement('span')
-            nameSpan.textContent = name
-            tabEl.appendChild(nameSpan)
-            tabEl.onclick = function (event) {
-                if (flows && flows.length) {
-                    saveLayout(svg, renderOpts, renderOpts.flowId)
-                }
-                openTab(tab.id)
-                if (flows && flows.length) {
-                    restoreLayout(svg, renderOpts, tab.id)
-                }
-            }
         }
 
         // add styles
@@ -2064,11 +3092,13 @@ const FlowRenderer = (function () {
         // create tabs for each flow
         const tabs = getFlowTabs(flows)
         tabs.forEach((tab, index) => {
-            addTab(tab, index, renderOpts)
+            addTab(tabContainer, tab, index, renderOpts, openTab)
         })
 
         if (tabs.length) {
-            div.classList.add('has-tabs') // tabs affect the available space for the flow SVG
+            container.classList.add('has-tabs') // tabs affect the available space for the flow SVG
+        } else {
+            container.classList.remove('has-tabs')
         }
 
         // use renderOpts.flowId (or find a suitable first tab)
@@ -2128,30 +3158,12 @@ const FlowRenderer = (function () {
         /** @type {SVGSVGElement} */
         let svg = container && container.querySelector('svg')
         svg = svg || createDefaultSVG(container)
-        resetSVG(svg)
+        resetSVG(svg, renderOpts.layer)
 
         /** @type {SVGGElement} */
-        const flow_gridEl = svg.querySelector('.flow_grid');
+        const flow_gridEl = (renderOpts.svgLayer || svg).querySelector('.flow_grid');
         if (renderOpts.gridLines && flow_gridEl) {
-            for (var idx = 0; idx < 250; idx++) {
-                flow_gridEl.append(createSvgElement('line', {
-                    x1: 0,
-                    x2: 8000,
-                    y1: 20 * idx,
-                    y2: 20 * idx,
-                    class: 'grid-line'
-                }));
-            }
-
-            for (var idx = 0; idx < 250; idx++) {
-                flow_gridEl.append(createSvgElement('line', {
-                    x1: 20 * idx,
-                    x2: 20 * idx,
-                    y1: 0,
-                    y2: 8000,
-                    class: 'grid-line'
-                }));
-            }
+            drawSVGGrid(flow_gridEl)
         }
 
         /*  this is used to define which nodes get input decoration, this is not clear from the json data so
@@ -2180,15 +3192,15 @@ const FlowRenderer = (function () {
         */
 
         /** @type {SVGGElement} */
-        const flow_nodesEl = svg.querySelector('.flow_nodes')
+        const flow_nodesEl = (renderOpts.svgLayer || svg).querySelector('.flow_nodes')
 
         /*
         * Important lesson: never assume that (x,y) means top-left corner ... in the case of the flows.json, (x,y) is the midpoint of the node.
         * For the sack of sanity, compute the top-left corner (x,y) and add it to the node. We also add the bounding-box so we have the width.
         */
         flow.forEach(function (obj) {
+            const svgMainId = `n-${obj.id}`
             if (obj.z == flowId || obj.id == flowId /* this is a subflow or tab */) {
-
                 // get node dimensions
                 var dimensions = getNodeDimensions(obj)
                 /** flag to indicate node should be full size or collapsed */
@@ -2220,9 +3232,10 @@ const FlowRenderer = (function () {
                         /* input connectors */
                         for (var idx = 0; idx < subFlowInsOutsStatusNodes[obj.id].in.length; idx++) {
                             var inObj = subFlowInsOutsStatusNodes[obj.id].in[idx];
-                            var grpId = "grp" + Math.random().toString().substring(2);
+                            // var grpId = "grp" + Math.random().toString().substring(2);
+                            // const grpObj = createSvgElement('g', { id: grpId });
+                            const grpObj = createSvgElement('g', { class: 'in-connector' });
 
-                            const grpObj = createSvgElement('g', { id: grpId });
                             flow_nodesEl.appendChild(grpObj);
 
                             grpObj.appendChild(createSvgElement('rect', {
@@ -2261,8 +3274,7 @@ const FlowRenderer = (function () {
                         /* output connectors */
                         for (var idx = 0; idx < subFlowInsOutsStatusNodes[obj.id].out.length; idx++) {
                             const outObj = subFlowInsOutsStatusNodes[obj.id].out[idx];
-                            const grpId = "grp" + Math.random().toString().substring(2);
-                            const grpObj = createSvgElement('g', { id: grpId, })
+                            const grpObj = createSvgElement('g', { class: 'out-connector' })
                             flow_nodesEl.appendChild(grpObj);
 
                             grpObj.appendChild(createSvgElement('rect', {
@@ -2310,8 +3322,7 @@ const FlowRenderer = (function () {
                         /* status connectors */
                         if (subFlowInsOutsStatusNodes[obj.id].status) {
                             const outObj = subFlowInsOutsStatusNodes[obj.id].status;
-                            const grpId = "grp" + Math.random().toString().substring(2);
-                            const grpObj = createSvgElement('g', { id: grpId, })
+                            const grpObj = createSvgElement('g', { class: 'status-connector' })
                             flow_nodesEl.appendChild(grpObj);
 
                             grpObj.appendChild(createSvgElement('rect', {
@@ -2350,8 +3361,7 @@ const FlowRenderer = (function () {
                         break;
                     }
                     case "junction": {
-                        const grpId = "grp" + Math.random().toString().substring(2)
-                        const grpObj = createSvgElement('g', { id: grpId, })
+                        const grpObj = createSvgElement('g', { class: 'junction' })
                         flow_nodesEl.appendChild(grpObj)
 
                         grpObj.appendChild(createSvgElement('rect', {
@@ -2375,8 +3385,6 @@ const FlowRenderer = (function () {
                     }
                     default: {
                         /* the type of the node that represents a subflow is subflow:XXXX while the subflow has type 'subflow' */
-                        const grpTextId = "grpTxt" + Math.random().toString().substring(2)
-                        // const lblFunct = renderOpts.labels ? (labelByFunct[obj.type] || labelByFunct["_default"]) : emptyLabelFunct
                         const lblFunct = (labelByFunct[obj.type] || labelByFunct["_default"])
                         const subflowObj = subflows[obj.type] || {}
                         const textLabels = getLabelParts(lblFunct(obj, subflowObj, flow), "node-text-label")
@@ -2385,7 +3393,7 @@ const FlowRenderer = (function () {
                         let grpText
                         
                         if (showLabel) {
-                            grpText = createSvgElement('g', { id: grpTextId, "transform": "translate(38," + (textLabels.lines.length > 1 ? 18 : 16) + ")" })
+                            grpText = createSvgElement('g', { "transform": "translate(38," + (textLabels.lines.length > 1 ? 18 : 16) + ")" })
                             var ypos = 0
 
                             textLabels.lines.forEach(function (lne) {
@@ -2400,8 +3408,7 @@ const FlowRenderer = (function () {
                         }
 
                         // construct main outer group of the node
-                        const grpId = "g" + Math.random().toString().substring(2)
-                        const grpObj = createSvgElement('g', { id: grpId, })
+                        const grpObj = createSvgElement('g', { "data-node-id": obj.id, class: 'node' })
                         flow_nodesEl.appendChild(grpObj)
 
                         if (showLabel && grpText) {
@@ -2557,7 +3564,7 @@ const FlowRenderer = (function () {
         * been placed
         */
 
-        const flow_group_selectEl = svg.querySelector('.flow_group_select')
+        const flow_group_selectEl = (renderOpts.svgLayer || svg).querySelector('.flow_group_select')
 
         var doneGroups = []
         var todoGroups = []
@@ -2685,7 +3692,7 @@ const FlowRenderer = (function () {
         /*
           * Rendering the wires between nodes
           */
-        const flow_wiresEl = svg.querySelector('.flow_wires')
+        const flow_wiresEl = (renderOpts.svgLayer || svg).querySelector('.flow_wires')
 
         var linkOutNodes = []
 
@@ -2699,7 +3706,7 @@ const FlowRenderer = (function () {
 
                 for (var wdx = 0; wdx < inObj.wires.length; wdx++) {
                     var otherNode = nodes[inObj.wires[wdx].id];
-
+                    if (!otherNode) { continue }
                     var startX = inObj.bbox.x + inObj.bbox.width;
                     var startY = inObj.bbox.y + inObj.bbox.height / 2;
                     var endX = otherNode.bbox.x;
@@ -2718,6 +3725,7 @@ const FlowRenderer = (function () {
 
                 for (var wdx = 0; wdx < outObj.wires.length; wdx++) {
                     var otherNode = nodes[outObj.wires[wdx].id];
+                    if (!otherNode) { continue }
                     const initFactor = (otherNode.wires.length == 1 ? ((otherNode.bbox.height / 2) ) : ((otherNode.wires.length % 2 == 0) ? 3.5 : 4.5) + 5)
 
                     var startX = otherNode.bbox.x + otherNode.bbox.width;
@@ -2837,6 +3845,7 @@ const FlowRenderer = (function () {
     // #endregion
 
     return {
+        compare,
         renderFlows: renderFlows,
         renderFlow: renderFlow,
         normaliseOptions: normaliseOptions,
