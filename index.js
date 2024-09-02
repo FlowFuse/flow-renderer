@@ -2825,7 +2825,10 @@ const FlowRenderer = (function () {
         }
 
         // add tabs to the tabs container
-        tabMap.entries().forEach(([flowId, layers]) => {
+        // destructuring for browser compatibility
+        [...tabMap.entries()].forEach((el) => {
+            const flowId = el[0];
+            const layers = el[1];
             const tabOptions = {
                 ...renderOpts,
                 flowId: flowId,
