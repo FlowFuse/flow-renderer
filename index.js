@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /**
  * @typedef {Object} FlowRendererOptions
  * @property {boolean} [gridLines=true] - Whether to display grid lines on the flow diagram. Defaults to true.
@@ -24,8 +25,8 @@
  * @property {Array<FlowNode>} nodes - The nodes in the flow.
  */
 
-const FlowRenderer = (function () {
-    let _this = this || {};
+const FlowRenderer = function () {
+    const _this = this || {}
     // #region Constants
     const styleId = 'flow-renderer-css'
     const PORT_WIDTH = 10
@@ -33,9 +34,9 @@ const FlowRenderer = (function () {
     const lineCurveScale = 0.75
     const node_height = 30
     const node_width = 100
-    const gridSize = 20;
+    const gridSize = 20
     const workspaceSize = { width: 8000, height: 8000 }
-    const snapGrid = true;
+    const snapGrid = true
     const portSpacing = 13.5
 
     const RED = {}
@@ -72,299 +73,299 @@ const FlowRenderer = (function () {
     }
 
     const widthHeightByType = {
-        "junction": { width: 10, height: 10},
-        "link in": { width: 30, height: 30},
-        "link out": { width: 30, height: 30},
-        "subflow": { width: 40, height: 40},
-        "_default": { width: 100, height: 30},
-        "_default_no_label": { width: 30, height: 30},
+        junction: { width: 10, height: 10 },
+        'link in': { width: 30, height: 30 },
+        'link out': { width: 30, height: 30 },
+        subflow: { width: 40, height: 40 },
+        _default: { width: 100, height: 30 },
+        _default_no_label: { width: 30, height: 30 }
     }
 
     const imgByType = {
-        "batch": "batch.svg",
-        "catch": "alert.svg",
-        "change": "swap.svg",
-        "complete": "alert.svg",
-        "rbe": "rbe.png",
-        "comment": "comment.svg",
-        "csv": "parser-csv.svg",
-        "debug": "debug.svg",
-        "delay": "timer.svg",
-        "exec": "cog.svg",
-        "feedparse": "parser-xml.svg",
-        "file": "file.svg",
-        "file in": "file-in.svg",
-        "function": "function.svg",
-        "http response": "white-globe.svg",
-        "http in": "white-globe.svg",
-        "http request": "white-globe.svg",
-        "inject": "inject.svg",
-        "join": "join.svg",
-        "json": "parser-json.svg",
-        "link in": "link-out.svg",
-        "link out": "link-out.svg",
-        "link outlink": "link-out.svg",
-        "link outreturn": "link-return.svg",
-        "link call": "link-call.svg",
-        "xml": "parser-xml.svg",
-        "yaml": "parser-yaml.svg",
+        batch: 'batch.svg',
+        catch: 'alert.svg',
+        change: 'swap.svg',
+        complete: 'alert.svg',
+        rbe: 'rbe.png',
+        comment: 'comment.svg',
+        csv: 'parser-csv.svg',
+        debug: 'debug.svg',
+        delay: 'timer.svg',
+        exec: 'cog.svg',
+        feedparse: 'parser-xml.svg',
+        file: 'file.svg',
+        'file in': 'file-in.svg',
+        function: 'function.svg',
+        'http response': 'white-globe.svg',
+        'http in': 'white-globe.svg',
+        'http request': 'white-globe.svg',
+        inject: 'inject.svg',
+        join: 'join.svg',
+        json: 'parser-json.svg',
+        'link in': 'link-out.svg',
+        'link out': 'link-out.svg',
+        'link outlink': 'link-out.svg',
+        'link outreturn': 'link-return.svg',
+        'link call': 'link-call.svg',
+        xml: 'parser-xml.svg',
+        yaml: 'parser-yaml.svg',
 
-        "mqtt in": "bridge.svg",
-        "mqtt out": "bridge.svg",
-        "tcp in": "bridge.svg",
-        "tcp out": "bridge.svg",
-        "tcp request": "bridge.svg",
-        "udp in": "bridge.svg",
-        "udp out": "bridge.svg",
-        "markdown": "parser-markdown.png",
+        'mqtt in': 'bridge.svg',
+        'mqtt out': 'bridge.svg',
+        'tcp in': 'bridge.svg',
+        'tcp out': 'bridge.svg',
+        'tcp request': 'bridge.svg',
+        'udp in': 'bridge.svg',
+        'udp out': 'bridge.svg',
+        markdown: 'parser-markdown.png',
 
-        "postgresql": "db.svg",
-        "range": "range.svg",
-        "sort": "sort.svg",
-        "split": "split.svg",
-        "subflow": "subflow.svg",
-        "switch": "switch.svg",
-        "template": "template.svg",
-        "trigger": "trigger.svg",
+        postgresql: 'db.svg',
+        range: 'range.svg',
+        sort: 'sort.svg',
+        split: 'split.svg',
+        subflow: 'subflow.svg',
+        switch: 'switch.svg',
+        template: 'template.svg',
+        trigger: 'trigger.svg',
 
         // dashboard 1.0
-        ui_button: "ui_button.png",
-        ui_template: "ui_template.png",
-        ui_toast: "ui_toast.png",
-        ui_audio: "feed.svg",
-        ui_chart: "ui_chart.png",
-        ui_colour_picker: "ui_colour_picker.png",
-        ui_date_picker: "ui_date_picker.png",
-        ui_dropdown: "ui_dropdown.png",
-        ui_form: "ui_form.png",
-        ui_gauge: "ui_gauge.png",
-        ui_numeric: "ui_numeric.png",
-        ui_slider: "ui_slider.png",
-        ui_switch: "ui_switch.png",
-        ui_text: "ui_text.png",
-        ui_text_input: "ui_text.png",
+        ui_button: 'ui_button.png',
+        ui_template: 'ui_template.png',
+        ui_toast: 'ui_toast.png',
+        ui_audio: 'feed.svg',
+        ui_chart: 'ui_chart.png',
+        ui_colour_picker: 'ui_colour_picker.png',
+        ui_date_picker: 'ui_date_picker.png',
+        ui_dropdown: 'ui_dropdown.png',
+        ui_form: 'ui_form.png',
+        ui_gauge: 'ui_gauge.png',
+        ui_numeric: 'ui_numeric.png',
+        ui_slider: 'ui_slider.png',
+        ui_switch: 'ui_switch.png',
+        ui_text: 'ui_text.png',
+        ui_text_input: 'ui_text.png',
 
         // dashboard 2.0
-        "ui-button": "ui_button.png",
-        "ui-button-group": "ui_button.png",
-        "ui-chart": "ui_chart.png",
+        'ui-button': 'ui_button.png',
+        'ui-button-group': 'ui_button.png',
+        'ui-chart': 'ui_chart.png',
         // "ui-control": "ui_control.png",
-        "ui-dropdown": "ui_dropdown.png",
+        'ui-dropdown': 'ui_dropdown.png',
         // "ui-event": "ui_event.png",
-        "ui-form": "ui_form.png",
-        "ui-gauge": "ui_gauge.png",
-        "ui-markdown": "ui_text.png", // temporary
+        'ui-form': 'ui_form.png',
+        'ui-gauge': 'ui_gauge.png',
+        'ui-markdown': 'ui_text.png', // temporary
         // "ui-notification": "",
         // "ui-radio-group": "",
-        "ui-slider": "ui_slider.png",
-        "ui-switch": "ui_switch.png",
+        'ui-slider': 'ui_slider.png',
+        'ui-switch': 'ui_switch.png',
         // "ui-table": "",
-        "ui-template": "ui_template.png",
-        "ui-text": "ui_text.png",
-        "ui-text-input": "ui_text.png",
+        'ui-template': 'ui_template.png',
+        'ui-text': 'ui_text.png',
+        'ui-text-input': 'ui_text.png',
 
-        "websocket in": "white-globe.svg",
-        "websocket out": "white-globe.svg",
+        'websocket in': 'white-globe.svg',
+        'websocket out': 'white-globe.svg',
 
-        "i2c scan": "serial.svg",
-        "i2c in": "serial.svg",
-        "i2c out": "serial.svg",
+        'i2c scan': 'serial.svg',
+        'i2c in': 'serial.svg',
+        'i2c out': 'serial.svg',
 
-        "cronplus": "timer.svg",
+        cronplus: 'timer.svg',
 
         /* custom, my own private collection */
-        "Thought": "alert.svg",
-        "Idea": "light.svg",
+        Thought: 'alert.svg',
+        Idea: 'light.svg',
 
         // FlowFuse specific
-        "project link out": "ff-logo.svg",
-        "project link in": "ff-logo.svg",
-        "project link call": "ff-logo.svg"
+        'project link out': 'ff-logo.svg',
+        'project link in': 'ff-logo.svg',
+        'project link call': 'ff-logo.svg'
     }
 
     const imageNameToContent = {
-        "alert.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjE2Ljc0IC00MTUuMDQpIHNjYWxlKC42MjE0MykiIGZpbGw9IiNmZmYiPjxwYXRoIGQ9Ik0zNzEuMyA2ODMuOTdsMS42MS0xLjYxSDM4OWwxLjYxIDEuNjEtMy4yMTkgNDAuMjMtMy4yMTggMy4yMThoLTYuNDM3bC0zLjIxOS0zLjIxOHoiLz48cmVjdCB4PSIzNzIuOTEiIHk9IjczNS40NyIgd2lkdGg9IjE2LjA5MiIgaGVpZ2h0PSIxNi4wOTIiIHJ5PSIzLjAxNyIgY29sb3I9IiMwMDAiLz48L2c+PC9zdmc+Cg==",
-        "arduino.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAHYSURBVEiJ7ZTBq4xRGMZ/77kzC6XuWN26V8qNdAsbyoI/AvU5u7tB3SihZMGClIVSlhSShb4zN5uxoGYplMWNbCjlkjuUmjKjKXdm3sfCN2NY6i6keVbnvOf0e9/zPuccy/OctVRYU9oYOAb+r8DSkBzCRJZlR4EzwCzSquChmZ1NKb0BiDEacA2YByrAV+BWs9m8WK/XWwDkeY6k0O/3b+qXGpJ6kuTuS5ImJVm/3z8/2ODuDZe+F+NXkibzPB8e+VAI4TDwGdifUpput9tTwFUz2wEsuvuJEMIl4BEwV61Wpw3mJD0xs+3AjdEKL0j6Jmmm+H0MsGLt1EjlL4rYlKT3q9LuYv5ckkYrBOimlFayLDsuySV5jHErcAfoShJwJcZYAR4Dm8pwEsDdnw69GAFOxBg3hBDuApuBWWDZ3SNQMjMDFoBWt9vNJDV6vd7twtBdfwI/AOv1sw9bUkrLwCdgPoSwACwBi8A+4HS5XG6a2cFSqfQuxnhZ0h7g2W8uS3owMFDSS0mdQd8kzRQ34XoR60p67e5fCpffdjqdjcMeppQcOODu54AWsBNYV2Q9klJaSSl5COGYu98DHNhmZhVJ981sb61W+8jAybXUv/+Wx8Ax8C/0A+UBSZXw25H1AAAAAElFTkSuQmCC",
-        "arrow-in.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTggNXYxMkg3djI2aDExdjEybDE0LTI1eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo=",
-        "batch.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii42MTIiPjxwYXRoIGQ9Ik0zNC4wMDEgMjcuOTg3bC00IC4wMDR2My45OTdsNC0uMDFNNDAuMDAxIDI3Ljk4N2wtNCAuMDA0djMuOTk3bDQtLjAxTTI2LjAwMSAyOS45ODdsLTctNy45ODZ2MTUuOTg2TTM0LjAwMSAxMy45ODdsLTQgLjAwNHYzLjk5N2w0LS4wMU00MC4wMDEgMTMuOTg3bC00IC4wMDR2My45OTdsNC0uMDFNMzQuMDAxIDQxLjk4OGwtNCAuMDAzdjMuOTk3bDQtLjAxTTQwLjAwMSA0MS45ODhsLTQgLjAwM3YzLjk5N2w0LS4wMU04LjAwMSAyNy45ODdsLTQgLjAwNHYzLjk5N2w0LS4wMU0xNC4wMDEgMjcuOTg3bC00IC4wMDR2My45OTdsNC0uMDFNOC4wMDEgMTkuOTg3bC00IC4wMDR2My45OTdsNC0uMDFNMTQuMDAxIDE5Ljk4N2wtNCAuMDA0djMuOTk3bDQtLjAxTTguMDAxIDM1Ljk4N2wtNCAuMDA0djMuOTk3bDQtLjAxTTE0LjAwMSAzNS45ODdsLTQgLjAwNHYzLjk5N2w0LS4wMSIvPjwvZz48L3N2Zz4K",
-        "bluetooth.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAuCAQAAADjedMPAAAAAXNSR0IArs4c6QAAAAJiS0dEAACqjSMyAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gYEFSkDI2AawgAACLlJREFUSMeNVm1wFeUZPe/H7t7szZIbAkRirsqtCtGEBEQjesGULymKBiLCVYRq60csHWvb0Tqj/Zg60zpjp2WKf0oLgiiCtFhERSUSmPIRQhC4EQU0FZIKwcSb5JLN3bv7vk9/LNQ6g9Pun3d3Z8+zZ87zPGcOuySCi1weinjCO8grWVzC7HQ/VxnDutiH4Bd9C43r3HJrW/VTkzb4Rh4oE8VqCN7/W8BDoSoqaQ2+iM9+a091jwDixUnDBy5S4hsYjNLHs11q1CAvqt79i6tM1ZnZ7F1nDCpTef+7gAehIFpV0vIZYJnj9z5VW6Wm2Ifcb7EyVmkEX+Mhv4JZ509AiRv9QvscjABgsMzpbw6bPuNwtWDWEZ/lytGFQRECrZCBB8UNcB+QQdxw/V/6+2Pl6kCOBAAwIDbp/c2Tanzy5vBKFmMTItXa5DUG0K+Eywq4oyN+rd/F63Wxsq0Jkf2209cLi9VfWr6UwEDgkcsWWjs/6P3YP6FW6Ga6Uo8PpFEouOKPBlk12e41ovYtzn7rqGmpDYNlQ0M28CUxA8QAcBCkM2XHM2Pr1EJnAQM+4a8YEPtyM31+yHgo0p2t0h3B1mxBUIJtfp1+SxsukPQzEowAqCwARMxJ78+ftCFbLuIyzat0d/ahyCGDL1Cr3FCQGVa1fDr4rT7Iq3S51Qtt2woaAA48MHQMIAin7r13J4yxusR4A5BY5S5Q/DnU2L59WCXkDv9us+D518SU4SNlazDCas2fszVnRMBAutZPA4B0anb/qGq/S95h5ds19nNAo4gZSbPCTJobSt0PSZ9+rQExYxlrQCrWMp2IiKjl2yl7eZmXDp/8ge21jqgwk2bMaBRImklzGYsZFWb/Pk1EmjJrUqZlNoqkeb6AbplVYSbN5WX5I5o0Ka0yeyfFjGUsaSZNvoc+kyv5/GE19tFHqR9gFFuyYvUN1joATAMaYD77nLcRurPtDABjymR6/rCV/DO5h+Q8f5RuFifyh9zY4cFbp21DjGH4PRvNJ5cCFI4RDDWNR3hq5fAUwIj6d83+y8ddIiHqvLMKc5wGLLFLjZR9hT3afvcmlSEirenklgJj3wwiIk1vzG1A75rwXmc23dqAokipscRuwByHt+Wi9qA7zegMJuBKsfHoXxfofjDgsrldL+ZNQIOhUL3wavESAoH635j/hx1Ru9afZgy6Ubsth208ZSbNCnNWiSmSZirmiH013mD4t3ynJtKaQvFIBwN7J05xro40IOxCytzG+THWibg8yX/dZyEuxw78DPPT22dTP4FBlDOAAaKKAaD+trr6NHnjI1PFZc5JHpedOMZElPJ2k/qNv84abqWpB5/w4QW7zlRuLVtEkdAsGBgI1N90288//Z27i4/JbRIVg9+jF/hl5tmcgBmRNe7fCj70Rhk351iQxuTIzqGjZ8a+F7+bWWAAAAqGdsx+7EAkfyw4JbJ8CFXWWjl1KGudBC8BeVNFeVBjr3VPO91mQmzI3mG04okj+2cSAxQIxD5INrTUyCrVbXYpZo2wdvrlwVRBXkloKG0WUOk+7oi+ExSX86zNXtSIy6t+CAACDIzKnpkcKxlqFsDt1u5cuTipQxQg6qwZ/m4k5EY1TB3iyZFv9x/n49nVBStWjrwXIDACI1ZUcfulm7Ye5Muoq6god1DdbhTzjmCBypmIGctF0kyaZSJppmxHJM0GNIqzL58fm/AgIk09r5YaMcMRS+xwAZPmchEzxCTZGwyKhBxnN+Wulcf5meC49ebq4fey84NMCE0FKLhm6TWntrTTteIYSiMJltG9QVQiZjSKJXbMiBn1MUdMcRrFl+vC8VHn9j0bbmPTs9SjiUhR78vLxTSRcpJmzAiZ8EqWFh3BaDZRN2Wjxhj1q7WxexnA0Hegju8KByHa3HQb+gCO4nsWv+TbN7rdNJp1BGlRyXiXXKCA62VezBpxpf79n0beAxB0f+vMnxzRmkAEAL/8oHWazmowFKc2r3zd/gLXS2CB6pJI2TFjbukssVw4IrOWSBNpNbC9tsKc47w9N5SxZVaBMc/eN1H3EREp6l/TKGaJuaUxI2Xzd8TCSGHWFR/jn6uL7gMAPbB/2vfTJWjLFQ8BDCCoekMX3N/eslJDg8NZvOR+VxRmF0beEfLv7i38JjZSNqPlyGwAgds8Z/WRGrvJA3ImgwZnjHUGI9TqRbU/DU2mb8Pzb42UncEef6fmc3lUVykHNcVPLt/+Y9Z78JaPWjpR3m/z6Y41BHBonHFO0OMLb1gTtrN7083fxecOqlRUz+UypYG0KHWz+bx88c+n3nisa6IAOgoLVI/LDYAAGjmw8aGpKwCA0LM+9fAYK6PgdpiLFTQfJ1YBiNo76awahYdPLvWrFHC5OxkJCaUB4uyKR6auIGgAfS+tv++Md7l7J6I2sArjhOh0zuVnUqFlGuOsT3Nx9hH/B13Cz/KE969IXXn5fYyBoteGUSKz9sGlrYXD5GndG5RGRuQ/xCeFfGqWG+vQlY2rHhcASlAtAGANH/A8QaGPgwHoXzuzcZQg7/KhNuo227w+S/C6vHyRR1BsKbPDBYCEBDqCMHLEbRMMFzZyYO3kB0+TK+L6FEliNnld4jvBFs2LhKl69Z5cCOoILsBfo043H8JBLPPS9MbT9AQbYe2lvFiMQ+6QbHHf4+fAASYksqqdgPawT0hIYJEwFYFAADLrG35wgzeavW2lc/Osp4P1vFac9KOGhBVmJAsQpIBKlpAXGEyI7M1ZAQPQ+3L9A3GZFnG9112MNXpgGAbbOM5nqv+kNCbaKSE7gnYKVTiaqzc8CWReqX+AWTd6jgyoWtxJsyJNOSksWF+PeRYAJTqCkAUA3GVs9Sz64pWxjyTkXe7rdrPfiiq1SPS4UPK/Yh77Kit7IFXJLqgQ9Y7GHpUbu0eJdnuMGnS7TWaRl5Bb/Ij4xqCpREICVapKDZhpobJ/zETtZpHOAd0mQN4w6x3/DuPrsfTf18syu360MqUAAAAASUVORK5CYII=",
-        "bridge-dash.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTkuOTI0IDYuNjFjNC4zNzIgNS40MzMgNy4xODIgMTMuODkzIDcuMTgyIDIzLjM5NyAwIDkuNDkzLTIuODA0IDE3Ljk0Ni03LjE2NyAyMy4zNzltLTQuMjk0LTM4LjM5YzUuNjQ1IDkuNDE3IDcuMTcyIDIwLjk0NC4wMjQgMjkuOTkzbS00LjM2LTIxLjY2MWMxLjMzOCAxLjQ1OSAyLjIxNSAzLjkwNiAyLjIxNSA2LjY4IDAgMi41NzEtLjc1NSA0Ljg2My0xLjkzMSA2LjM0NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2UtZGFzaGFycmF5PSIxNC4wOTYsIDMuNTI0IiBzdHJva2Utd2lkdGg9IjMuNTI0Ii8+PC9zdmc+Cg==",
-        "bridge.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTkuOTI0IDYuNjFjNC4zNzIgNS40MzMgNy4xODIgMTMuODkzIDcuMTgyIDIzLjM5NyAwIDkuNDkzLTIuODA0IDE3Ljk0Ni03LjE2NyAyMy4zNzltLTQuMjk0LTM4LjM5YzUuNjQ1IDkuNDE3IDcuMTcyIDIwLjk0NC4wMjQgMjkuOTkzbS00LjM2LTIxLjY2MWMxLjMzOCAxLjQ1OSAyLjIxNSAzLjkwNiAyLjIxNSA2LjY4IDAgMi41NzEtLjc1NSA0Ljg2My0xLjkzMSA2LjM0NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMuMjI0Ii8+PC9zdmc+",
-        "cog.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMTJhMTggMTggMCAwIDAtMy40OTQuMzZsLTEuNDI4IDUuNzE1LTUuMDYtMy4wMzZhMTggMTggMCAwIDAtNC45NDYgNC45MTdsMy4wNDUgNS4wNzgtNS43NjUgMS40NDJBMTggMTggMCAwIDAgMiAzMGExOCAxOCAwIDAgMCAuMzQ1IDMuNDM0bDUuNzc1IDEuNDQ0LTMuMDcyIDUuMTJhMTggMTggMCAwIDAgNC44OTMgNC45MjRsNS4xMzctMy4wODMgMS40NTUgNS44MkExOCAxOCAwIDAgMCAyMCA0OGExOCAxOCAwIDAgMCAzLjQ3LS4zNTNsMS40NTItNS44MDcgNS4xMjggMy4wNzZhMTggMTggMCAwIDAgNC45MDUtNC45MTNsLTMuMDc0LTUuMTI0IDUuNzgzLTEuNDQ2QTE4IDE4IDAgMCAwIDM4IDMwYTE4IDE4IDAgMCAwLS4zNjctMy41MjlsLTUuNzUtMS40MzcgMy4wNDEtNS4wNjlhMTggMTggMCAwIDAtNC45MzctNC45MjhsLTUuMDY1IDMuMDM4LTEuNDMzLTUuNzI4QTE4IDE4IDAgMCAwIDIwIDEyem0wIDlhOSA5IDAgMCAxIDkgOSA5IDkgMCAwIDEtOSA5IDkgOSAwIDAgMS05LTkgOSA5IDAgMCAxIDktOXoiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTgiIHN0eWxlPSJpc29sYXRpb246YXV0bzttaXgtYmxlbmQtbW9kZTpub3JtYWwiLz48L3N2Zz4K",
-        "comment.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzYuMTkgMjguNmMwIDYuMDg4LTcuMjg5IDExLjAyNC0xNi4yOCAxMS4wMjRhMjMuOTggMjMuOTggMCAwIDEtMi45ODItLjE4NWMtMS4yNzItLjE1OS03LjkzMyA3LjUyNi0xMy4xMTMgNi41My4xOC0yLjAwNCA4LjE4LTYuMDA0IDUuODctOC43OUM1Ljk5MyAzNS4xNiAzLjYzIDMyLjA2NiAzLjYzIDI4LjZjMC02LjA4OCA3LjI4OS0xMS4wMjQgMTYuMjgtMTEuMDI0IDguOTkxIDAgMTYuMjggNC45MzYgMTYuMjggMTEuMDI0eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjYmFiYWJhIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41IiBzdHlsZT0iaXNvbGF0aW9uOmF1dG87bWl4LWJsZW5kLW1vZGU6bm9ybWFsIi8+PC9zdmc+Cg==",
-        "db.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzU1IC03MDQuMzYpIj48ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCgxLjI4NjggMCAwIDEuOTI2MyAtNjQuNDQ0IC02MDcuNTYpIiBjeD0iMzQxLjI1IiBjeT0iNjg4LjYxIiByeD0iOS44NCIgcnk9IjMuMjUiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTM4Ny4zMiA3NTAuNDhjMCAxLjk0OS01LjY2OSA1Ljg3OS0xMi42NjIgNS44NzlzLTEyLjY2Mi0zLjkzLTEyLjY2Mi01Ljg3OXYtMjcuMDQzYzAgMS45NDkgNS42NjkgNi4yNDIgMTIuNjYyIDYuMjQyczEyLjY2Mi00LjI5MyAxMi42NjItNi4yNDJ2MjcuMDQzIiBjb2xvcj0iIzAwMCIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4K",
-        "debug.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAuMDA0IDE0LjQ5OWgyME0xMC4wMDQgNDYuNTAzaDIwTTEwLjAwNCAyMi41aDIwTTEwLjAwNCAzMC41MDFoMjBNMTAuMDA0IDM4LjUwMmgyMCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuOTk5NzAwMDAwMDAwMDAwMyIvPjwvc3ZnPgo=",
-        "envelope.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNMjAgMzIuOTZsLTE4LTE4aDM2eiIvPjxwYXRoIGQ9Ik0yIDIwLjM2bDE4IDE4IDE4LTE4djI2LjFIMnoiLz48L2c+PC9zdmc+Cg==",
-        "feed.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjYjg1YzVjIiBzdHJva2U9IiMwMDAiPjxwYXRoIGNvbG9yPSIjMDAwIiBkPSJNLS4wMS0uMDA0aDM5Ljk5OHY2MEgtLjAxeiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ1MC4yNjYgLTU4NS4zNykiPjxyZWN0IHg9IjQ2NC4yNyIgeT0iNjI1LjM3IiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ5PSIyLjQiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIiBzdHJva2U9Im5vbmUiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNCI+PHBhdGggZD0iTTQ2MS4yNyA2MTguODdsNS41LTIuNWg3bDUuNSAyLjVNNDU5LjI3IDYwOC44N2w1LjUtMi41aDExbDUuNSAyLjVNNDU3LjI3IDU5OC44N2w1LjUtMi41aDE1bDUuNSAyLjUiLz48L2c+PC9nPjwvZz48L3N2Zz4=",
-        "file-in.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmg5djdIMTh2MTBoMTB2N0g1eiIvPjxwYXRoIGQ9Ik0yMiA5Ljk2bDEzIDEzSDIyeiIvPjxwYXRoIGQ9Ik0yOCAyNS45Nmg3djZsNSA2LTQuOTg3IDYtLjAxMyA2aC03bDEwLTEyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjwvc3ZnPg==",
-        "file.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmgxNnYyNEg1di03aDV2N2wxMC0xMi0xMC0xMnY3SDV6Ii8+PHBhdGggZD0iTTIyIDkuOTZsMTMgMTNIMjJ6Ii8+PC9nPjxwYXRoIGQ9Ik01IDMwLjk2SDB2MTRoNXYtMkgydi0xMGgzeiIgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+",
-        "function.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAuOTk5IDMxLjAwNXYtM2gtNi43NjJzLjgxMi0xMi4zOTcgMS4xNjItMTQgLjU5Ny0zLjM1IDIuNjI4LTMuMTAzIDEuOTcxIDMuMTAzIDEuOTcxIDMuMTAzbDQuODYyLS4wMTZzLS43ODMtMy45ODQtMi43ODMtNS45ODQtNy45NDYtMS43LTkuNjMzLjAzYy0xLjY4NyAxLjczLTIuMzAyIDUuMDY1LTIuNTk3IDYuNDIyLS41ODggNC41LS44NTQgOS4wMjctMS4yNDggMTMuNTQ3aC04LjZ2M0gxOC4xcy0uODEyIDEyLjM5OC0xLjE2MiAxNC0uNTk3IDMuMzUtMi42MjggMy4xMDMtMS45NzItMy4xMDItMS45NzItMy4xMDJsLTQuODYyLjAxNXMuNzgzIDMuOTg1IDIuNzgzIDUuOTg1YzIgMiA3Ljk0NiAxLjY5OSA5LjYzNC0uMDMxIDEuNjg3LTEuNzMgMi4zMDItNS4wNjUgMi41OTctNi40MjIuNTg3LTQuNS44NTQtOS4wMjcgMS4yNDgtMTMuNTQ3eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo=",
-        "hash.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii44NTciPjxwYXRoIGQ9Ik0xNy45OTcgOC45OThsLTUuOTcyLjA3Mi00LjAyOCA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik02IDE2Ljk5OWwtMSA2IDMxIDEgMS02eiIvPjxwYXRoIGQ9Ik0zMS45OTYgOC45OThsLTUuOTcxLjA3Mi00LjAyOSA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik0zLjk5OCAzNy4wMDRsLTEgNiAzMSAxIDEtNnoiLz48L2c+PC9zdmc+Cg==",
-        "inject.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTggNXYxMkg3djloMTV2LTdsNiAxMS02IDEydi04SDd2OWgxMXYxMmwxNC0yNXoiIGZpbGw9IiNmZmYiLz48L3N2Zz4K",
-        "join.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNDAuMDAxIDM5Ljk5bC0uMDMyLTE5Ljk1NS0xMS45NjcuMDE3djE5Ljk4M2wxMi0uMDQ2TTguMDAxIDI4LjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxTTE0LjAwMSAyOC4wMjdsLTQgLjAwNHYzLjk5N2w0LS4wMU0yNS4wMDEgMzAuMDI3bC03LTcuOTg2djE1Ljk4Nk04LjAwMSAyMC4wMjdsLTQgLjAwNHYzLjk5Nmw0LS4wMU0xNC4wMDEgMjAuMDI3bC00IC4wMDR2My45OTZsNC0uMDFNOC4wMDEgMzYuMDI3bC00IC4wMDR2My45OTdsNC0uMDFNMTQuMDAxIDM2LjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxIiBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii42MTIiLz48L3N2Zz4K",
-        "leveldb.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAyCAYAAADWU2JnAAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAALEwAACxMBAJqcGAAABh9JREFUWMPtWFtsXNUVXfuO52XjJ8GxMRBI0oAhgBJCCI9IpSppRVErVKmI9wdCQiAM4qGqjUDqRyWQEI+qIPGQ+KiUFEFLAAFVixCRGqUBSoIDcV6O7Tjx+BHb4xnP3OfZqx9jx46ZO34wjoSa/Xnu3eeus886a+17gDNxJn7AIfNNOLiDF5x3ORoDDyuqz0b9qU8pJOi70t+5k3su/YkcBUTLAmYFGNnZhfVi4ed1zXiyIspk4GM4UiFpEZrAQzsARqLw1SBCFUuEzSZAsiKOczVAM0SQG+FfIXh75Ci+WH611Tuv1R/exab0AF9z80oTcE/Xbn3QGN680PJnhvQ3gc9/kqQzrnuzJ/jTWZNIWnZWHyPJ3Kj+tpx8ICkA4Lt6rzHakxvVd0lNhiY4Od5nAu0DgIFBlcUka+9ePum77C6BXrn/EzbNd2Inx3+pkvk03yH5up3h6t0fal3qgFaWylOjB3Z/pK1hpeTAET6x0NXms/pI4LFflSSVpNIYsnMXX9r/b2480cOLssOs3gSV0RS3GKOvknwotDK+p1s8m0z3c2M+o9GFAnPz+r4qnQKwQqhSCyALYANfX1HVByZzrCKnXaIJoKYR25PV8FQ51L2bvyI11rmLFnVuXIpXWr+0LEnkRvC4GnqFmSGl1KQiVIAmEkWw5IIruY0ELrqaVMLYGR5S5XsjvdjbcpmsfOMB/u3mR9Ha0orVGsDyXNkUT+IqCCMAISKygOOn9D1uZcnQ0LHpXCn+3qk5qvonz9aHZ63M/ERbJqu5EIeRopxxsuJbFmOnwxRP9OC4iESmj1kzj7abQ4oEy/95YnJekqxdij6AVigYANGnNqDNHsNHhaTygHKyuGmsX1oHj/DGvg48AeBtUO4EJB4uWmN60u7dHJebgH/0HOanCKqzsbIoUZ2sriuqwKpvera2FSVwJDpFpniVHAGwGcDm7v+yuaaRl0pEliWrcVfgM1lVLxsATvCP0xYkXjSBvBp8nU7hPRrp1IDfhHM3pPjGKPNjfH6wawrt3EKlr0Mb5vq2neG9To6dpL48vTLF7GArSfquOr7DLaMp3lgO3oyPcO3IMf4+8Dk8seWTOtNWQmcKO1URkziA2+uacLubZ8aKYB+AHc44D8Ur0dH9pfSt2iiHZ2YHnl5LlWjgAZEof2ECWUnl6mQNVlXVF05SmBbNSfRiSdQA2EDymrMaCtL2oxsAkiA500YAEBUT5yQ6QyhLWcO8FLjYRAuxnbD4rmsL5XQocGEREg7GswXZQdm/OAo8/aCAXp7HRRBuB8Yn7TT+TGUai4aH0IDqZPEzAJUlt6nlMjnhHZOlvisfTgIqZ6WcLLa/sxnVtU3WtzPJP9MOzMyxoW7eRmW3qo4GntrTrKFIzzLzmVKVaTV6JPD12e/aAcPtIJaE9cXfed2y9fi68TzJAcA5F8pbAN46uZUB173waziPb5Mfj/VzSeAyPu3vFg3LeFxErPtr+eYbGStbVACzjI904R6RQjs6S6entDP6wWgXz2pF+f6fSE2mU3wsTIGtMANLVMsttcuY3UeoMZpW5dPtH2tssIsRNYyU+qgJNOK7jJIa7dmjt3o2P5tQ3nzNUjz3vXvgiZVMthFKPWXoZFCnmmCdaorD5pvNm0qJ1PSG9xSRL5UjIX8fABA/2o4Ds2zT6QkTSLBiPZaHgBE4GX6+2CBI0BnH6yBb0/1oLwomN8I/kFjb286nFhMIQHuoC+8SsrG+2dpRognSTz1btx/v4CW+q3mWKQpsVo7189bsMH9XuBTQVbNd6sRSB/W+CfXc+vGLer6b021Tijr/ptwEmkqnuO7T17hJVXs9R7vtLBvmfKeXHdaWwMVdlfV4JpaQg0M9fL+2EUP5Meyra5I78mk0VCS4JpZA42Rj7dkYjSZQnxnEC91fyT/6DyO96jquOf9y3G1FcH3gyc7cGNsamq0vF3zbOdCpa+pb0AZirYhcQXA0GsfQQCcOnXMh4ibAgBXBEt8VJ1GF5cZnQyQqLQChBp9A8Bd3HP+prLUOlvXqFQDWgJWf27g48LnSd2GpL1ZtM+qOfcuOqgbJ1zfTEbHaz9xsn4n/q/gfqTGjd49vU6gAAAAASUVORK5CYII=",
-        "light.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCguNzg3MzcgMCAwIC43ODc5MyAtMjcxLjI5NCAtNTI5Ljk5KSIgc3Ryb2tlPSIjZmZmIiBmaWxsPSJub25lIj48ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCgxLjQ5MjQgMCAwIDEuNDYxNiAtNTkuNDkxIC0zNDMuNDYpIiBjeD0iMjg3Ljc1IiBjeT0iNzE1Ljg2IiByeD0iMTAuNzUiIHJ5PSIxMiIgY29sb3I9IiMwMDAiIHN0cm9rZS13aWR0aD0iNC4wNzEiLz48cGF0aCBkPSJNMzYyLjUgNzE3Ljg2djE1LjVjNi4zNzEgMi4xMjggOC43MTIgMi4wMDMgMTUgMHYtMTUuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1LjAxIi8+PHBhdGggZD0iTTM2Ni41IDcxNy44NmwxLTEyaDVsMSAxMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjMuMDA2Ii8+PC9nPjwvc3ZnPgo=",
-        "link-call.svg": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBDcmVhdGVkIHdpdGggSW5rc2NhcGUgKGh0dHA6Ly93d3cuaW5rc2NhcGUub3JnLykgLS0+Cjxzdmcgd2lkdGg9IjEwLjU4M21tIiBoZWlnaHQ9IjE1Ljg3NW1tIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMC41ODMgMTUuODc1IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogPHBhdGggZD0ibTguMjAyMSAyLjM4MTItNC44OTIyIDAuNTM2MTIgMS42MDQgMC45MjYwNC0xLjAzOTUgMS44MDA0YzAuNzM3MTktMC4zNzQwMiAxLjY0MzctMC4zODIyNyAyLjQwOTUgMC4wNTk4OTIgMC43NjUxMSAwLjQ0MTc0IDEuMjExOCAxLjIzMDEgMS4yNTc3IDIuMDU1bDEuMDM4NC0xLjc5ODYgMS42MDQgMC45MjYwNHptLTIuMzgxMyA0LjEyNDRjLTAuNzcwMTYtMC40NDQ2NS0xLjc0MDItMC4xODQ3NC0yLjE4NDggMC41ODU0Mi0wLjQ0NDY1IDAuNzcwMTYtMC4xODUgMS43NDA2IDAuNTg1MTYgMi4xODUzIDAuNzcwMTYgMC40NDQ2NSAxLjc0MjIgMC4xODUzMyAyLjE4NjktMC41ODQ4MyAwLjQ0NDY1LTAuNzcwMTYgMC4xODI5NS0xLjc0MTItMC41ODcyMS0yLjE4NTh6bS0zLjMxOTMgMS41MTU5LTEuODIxMSAzLjE1NDIgMy42NjYyIDIuMTE2NyAxLjgyLTMuMTUyNGMtMC43MzczMSAwLjM3MjY2LTEuNjQzMSAwLjM3OTYxLTIuNDA4Mi0wLjA2MjEyOS0wLjc2NTg1LTAuNDQyMTYtMS4yMTIyLTEuMjMwOS0xLjI1NjktMi4wNTYzeiIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4K",
-        "link-out.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNyAzOC45OHYzLjk4M2gxMXYxMmwxMy0yM0gxOWwtLjQ2My4wMTdjLTEuMjggNC4wNDgtNS4wNjYgNi45ODMtOS41MzcgNi45ODN6bTEyLTExLjAxN2gxMmwtMTMtMjN2MTJIN1YyMC45bDIgLjA2NGM0LjQ2NyAwIDguMjUgMi45MyA5LjUzNCA2Ljk3MnpNNi45NSAyNC4yMmE2IDYgMCAxIDEtLjA4MyAxMS40NTYiIGZpbGw9IiNmZmYiIHN0eWxlPSJpc29sYXRpb246YXV0bzttaXgtYmxlbmQtbW9kZTpub3JtYWwiLz48L3N2Zz4K",
-        "link-return.svg": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBDcmVhdGVkIHdpdGggSW5rc2NhcGUgKGh0dHA6Ly93d3cuaW5rc2NhcGUub3JnLykgLS0+Cjxzdmcgd2lkdGg9IjEwLjU4M21tIiBoZWlnaHQ9IjE1Ljg3NW1tIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMC41ODMgMTUuODc1IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogPHBhdGggZD0ibTIuNjYyMyAxMy4yOTIgNC44OTIyLTAuNTM2MTItMS42MDQtMC45MjYwNCAxLjAzOTUtMS44MDA0Yy0wLjczNzE5IDAuMzc0MDItMS42NDM3IDAuMzgyMjctMi40MDk1LTAuMDU5ODkyLTAuNzY1MTEtMC40NDE3NC0xLjIxMTgtMS4yMzAxLTEuMjU3Ny0yLjA1NWwtMS4wMzg0IDEuNzk4Ni0xLjYwNC0wLjkyNjA0em0yLjM4MTMtNC4xMjQ0YzAuNzcwMTYgMC40NDQ2NSAxLjc0MDIgMC4xODQ3NCAyLjE4NDgtMC41ODU0MiAwLjQ0NDY1LTAuNzcwMTYgMC4xODUtMS43NDA2LTAuNTg1MTYtMi4xODUzLTAuNzcwMTYtMC40NDQ2NS0xLjc0MjItMC4xODUzMy0yLjE4NjkgMC41ODQ4My0wLjQ0NDY1IDAuNzcwMTYtMC4xODI5NSAxLjc0MTIgMC41ODcyMSAyLjE4NTh6bTMuMzE5My0xLjUxNTkgMS44MjExLTMuMTU0Mi0zLjY2NjItMi4xMTY3LTEuODIgMy4xNTI0YzAuNzM3MzEtMC4zNzI2NiAxLjY0MzEtMC4zNzk2MSAyLjQwODIgMC4wNjIxMjkgMC43NjU4NSAwLjQ0MjE2IDEuMjEyMiAxLjIzMDkgMS4yNTY5IDIuMDU2M3oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+Cg==",
-        "mongodb.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEbSURBVEiJ7davSwRBGMbx76rJ4Gky62EThNOmWfwL7mlm0WAw2U2mK3aDwj5gMBgEi8FmEbGIWYMGwR8gJssGhb2dmdsNIr5t5n3nMy8TZibL85wmY6hR7e+AkmYlTTUCSpoAjoEjSa1aoKRhIAfaQAc4kTRap8NtYPnbeAnYHQiUNAZslaTWJS0O0uEGMF4ynwG9JFBSBmxWbLYgqZPSYRuYrAABVlPA+QAGMJcCTkeAMyngcwT4mQI+RYCPKeAZ8BYAL6JB2y/AQQB0NFjEXkXu0PZlEmj7BjgtSd0Ca/3WhS6HLj/P6gPo2u57vpWg7VdgBbgrpnZsX1etCV6wtt+Bh2J4H6r//Y/USGTdPnAOXIUKs/+fQ+34AkBdPov8hXWQAAAAAElFTkSuQmCC",
-        "mouse.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB98CBBcXKYRGaWIAAAIfSURBVEjHrVY9a1RBFD33bjAhNqYTBW0kpBErawPpjIq4RWyEYG2hiIWdnY3+Aiut/GhiYyeIhb/AJGgQFAtTpFlWCYjnHIvMw3XzXvI2m1vNx50zc7/OHaClSLLtB2WMsUXSkiSRfHgYYAAA29clmeSZJt0cBdh2pwz7h/HKm9qRJ2OD2Z4vpi7vF5SJOn9lZgV0SdKk7bsAEBEXbSeALdtvIuLPoP4uIVmBzktyMdG2RdJlooH1hcFzTaDvCtgLSfNl7bgkD1gxK+lWccPzRjeQXC5gdwaVSJ4eBKxeZPt20e8OO726+ZOkrzUX/Qc4tLci6WN1SRZnV/uzth+3jT5JZOYqgJkskdkVnsxcbwvY6XRgmxExASCaKiVGzNG9S8/2WFQyUbN2VdIvAOuZ2Ss+/l1z8REAc7bnALiR86qELolsSZ9tr5REfkTytaSfA4lu2z8q4ohhQABd25sRcTIiFm1fADATEZOl7PoANgA8i4g1Sd3MXAJwIiK4y+SI6GfmhzJ91YInFw7MhzUpNh7BHijKto+OAhARYVtVPuYwU0TE5REBp2z3M1N1Tn5q+9uIreELydWmzRsl9061LLtzhRPP79nQSXq4hQ7PSR4juW37ZSNr24akqfLK7ySvNdDWFUnbRW+61U9C0lo5sCnpHslFSfclbXmnsbytY5s9fwqSzkra8L/OZJLvq59DK7A635EM29O9Xm/fc38BtSAs2DgLlw8AAAAASUVORK5CYII=",
-        "parser-csv.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDcuMDM0bC0yMiAuMDQzdjQ1Ljk1OGgzMnYtMzZ6bS0xNC44MzggMTRoMi44Mzh2MTUuMDAxaC0zVjI1LjczOGMtMS4wMjcuOTYtMi42MDYgMS4xMTQtNCAxLjU3NFYyNC43NmMuNzM0LS4yNCAxLjUzLS43MDYgMi4zOS0xLjM3My44NjEtLjY3MyAxLjQ1Mi0xLjQ1NyAxLjc3Mi0yLjM1MXptMTUuOTQ4IDBjMS40NDggMCAyLjgyNC4zOTIgMy42NSAxLjE3My44MjguNzggMS4yNCAxLjc1MSAxLjI0IDIuOTEyIDAgLjY2LS4xMiAxLjI5LS4zNiAxLjg5YTcuMTQzIDcuMTQzIDAgMCAxLTEuMDUgMS44NzJjLS4zNC40MzMtLjk1MiAxLjA1Ny0xLjg0IDEuODctLjg4Ni44MTUtMS42ODcgMS4zNTUtMS45MjcgMS42MjItLjIzMy4yNjctLjQyMy40MDgtLjU3LjY2Mmg1Ljc0OHYzSDIxLjk4Yy4xMDctLjk4Ny40MjctMi4xOTIuOTYtMy4wNzIuNTM0LS44ODcgMS44MjUtMi4wNiAzLjQtMy41MjIgMS4yNjctMS4xOCAxLjk3Mi0xLjk4MiAyLjI1OS0yLjQwMi4zODctLjU4LjQwMi0xLjE1NC40MDItMS43MjEgMC0uNjI3LjAwOC0xLjEwOC0uMzMyLTEuNDQxLS4zMzMtLjM0LTEuMDM1LS41MS0xLjYyOS0uNTEtLjU4NyAwLTEuMDUzLjE3OC0xLjQuNTMxLS4zNDcuMzU0LS41NDYgMS4zMTYtLjYgMi4xMzdoLTMuMDM5Yy4xNjctMS41NDguOTI4LTMuMzE1IDEuODA5LTMuOTg5Ljg4LS42NzMgMS45OC0xLjAxMSAzLjMtMS4wMTF6TTE3LjAwMiAzMy4wMzZoM3YxLjkyOGMwIC44MTQtLjA3MyAxLjQ1NS0uMjEzIDEuOTIyLS4xNC40NzMtLjQwNy44OTgtLjggMS4yNzEtLjM4Ny4zNzQtLjg4LjY2Ni0xLjQ4MS44OGwtLjU0OS0xLjE2MWMuNTY3LS4xODcuOTY5LS40NDMgMS4yMS0uNzcuMjQtLjMyNy4zNjctLjUwMy4zOC0xLjA3aC0xLjU0N3oiIGZpbGw9IiNmZmYiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIuNjEyIi8+PC9zdmc+Cg==",
-        "parser-html.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDcuMDM0bC0yMiAuMDQzdjQ1Ljk1OGgzMnYtMzZ6bS0xMyAxM2wzIDItNiA4IDYgOC4wMDEtMyAyLTctMTB6bTEzIDBsNyAxMC03IDEwLjAwMS0zLTIgNi04LTYtOHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIuNjEyIi8+PC9zdmc+Cg==",
-        "parser-json.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDcuMDM0bC0yMiAuMDQzdjQ1Ljk1OGgzMnYtMzZ6bS05LjE3IDEwLjAwMmgxLjE5N3YzLjExYy0uOTc0IDAtMi4xLjA1Ny0yLjM4MS4xN2ExLjE0NiAxLjE0NiAwIDAgMC0uNjA2LjQ5M2MtLjEzMS4yMTctLjE5Ny41OTMtLjE5NyAxLjEzMSAwIC41NDYtLjA0IDEuNTgzLS4xMTkgMy4xMS0uMDQ0Ljg1OC0uMTU4IDEuNTU2LS4zNDIgMi4wOTMtLjE4NC41My0uNDIxLjk2OC0uNzEgMS4zMTUtLjI4MS4zNDctLjcxNi43MDUtMS4zMDMgMS4wNzguNTE3LjI5NS45MzkuNjQyIDEuMjYzIDEuMDQuMzM0LjM5MS41ODguODY5Ljc2NCAxLjQzMy4xNzUuNTYzLjI5IDEuMzE4LjM0MiAyLjI2M2E4Ni45IDg2LjkgMCAwIDEgLjA5MiAyLjc1NmMwIC41NzMuMDcuOTcyLjIxIDEuMTk4LjE0LjIyNS4zNS4zOTUuNjMxLjUwNy4yOS4xMjIgMS40MDguMTgyIDIuMzU2LjE4MnYzLjEyMUgxNi44M2MtMS4xODUgMC0yLjA5My0uMDk1LTIuNzI1LS4yODVhMy42OSAzLjY5IDAgMCAxLTEuNjA0LS45MjQgMy4zIDMuMyAwIDAgMS0uODY5LTEuNjEzYy0uMTQ5LS42MzMtLjIyNC0xLjYzNC0uMjI0LTMuMDA0IDAtMS41OTYtLjA3LTIuNjMzLS4yMS0zLjExLS4xOTItLjY5My0uNDg3LTEuMTg3LS44ODItMS40ODItLjM4Ni0uMzAzLTIuNTA5LS41MzktMy4zMTYtLjU4MnYtM2MuNjQtLjAzNSAyLjY0OS0uMTkgMi45NzQtLjM0Ni4zMjQtLjE1Ni42MDUtLjQxNy44NDItLjc4MS4yMzctLjM3My4zOTgtLjgzNi40ODYtMS4zOS4wNy0uNDE3LjEwNi0xLjE0My4xMDYtMi4xNzUgMC0xLjY4Mi4wOC0yLjg1Mi4yMzgtMy41MTEuMTU4LS42NjguNDQzLTEuMjAxLjg1NS0xLjYuNDEzLS40MDggMS4wMTItLjcyOSAxLjgwMS0uOTYzLjUzNS0uMTU2IDMuNjc3LS4yMzQgMi41MjctLjIzNHptNS4xNTcgMGgxLjE5N2MxLjE1IDAgMS45OTMuMDc4IDIuNTI4LjIzNC43OS4yMzQgMS4zODguNTU1IDEuOC45NjMuNDEzLjM5OS42OTguOTMyLjg1NiAxLjYuMTU4LjY1OS4yMzggMS44My4yMzggMy41MTEgMCAxLjAzMi4wMzYgMS43NTguMTA2IDIuMTc0LjA4Ny41NTUuMjUgMS4wMTguNDg2IDEuMzkuMjM3LjM2NS41MTcuNjI2Ljg0Mi43ODIuMzI0LjE1NiAyLjMzMy4zMTEgMi45NzMuMzQ2djNjLS44MDcuMDQzLTIuOTMuMjc4LTMuMzE1LjU4Mi0uMzk1LjI5NS0uNjkuNzg5LS44ODMgMS40ODItLjE0LjQ3Ny0uMjA5IDEuNTE0LS4yMDkgMy4xMSAwIDEuMzctLjA3NSAyLjM3LS4yMjQgMy4wMDQtLjE1LjY0MS0uNDQgMS4xOC0uODcgMS42MTNhMy42OSAzLjY5IDAgMCAxLTEuNjAzLjkyNGMtLjYzMi4xOS0zLjkwOS4yODUtMi43MjUuMjg1aC0xLjE5N3YtMy4xMjFjLjk0NyAwIDIuMDY2LS4wNiAyLjM1Ni0uMTgyLjI4LS4xMTIuNDktLjI4Mi42My0uNTA4LjE0LS4yMjUuMjExLS42MjUuMjExLTEuMTk3IDAtLjM5OS4wMy0xLjMxNi4wOTItMi43NTYuMDUzLS45NDUuMTY2LTEuNy4zNDItMi4yNjQuMTc1LS41NjMuNDMtMS4wNDEuNzY0LTEuNDMxYTQuNDM0IDQuNDM0IDAgMCAxIDEuMjYzLTEuMDQxYy0uNTg3LS4zNzMtMS4wMjItLjczMS0xLjMwMi0xLjA3OC0uMjktLjM0Ny0uNTI3LS43ODYtLjcxMS0xLjMxNS0uMTg1LS41MzctLjI5OC0xLjIzNS0uMzQyLTIuMDk0LS4wOC0xLjUyNi0uMTItMi41NjMtLjEyLTMuMTA5IDAtLjUzOC0uMDY1LS45MTQtLjE5Ny0xLjEzYTEuMTQ2IDEuMTQ2IDAgMCAwLS42MDUtLjQ5NWMtLjI4LS4xMTMtMS40MDctLjE3LTIuMzgtLjE3eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9Ii42MTIiLz48L3N2Zz4K",
-        "parser-xml.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDcuMDM0bC0yMiAuMDQzdjQ1Ljk1OGgzMnYtMzZ6bS0xMyAxM2wzIDItNiA4IDYgOC4wMDEtMyAyLTctMTB6bTEzIDBsNyAxMC03IDEwLjAwMS0zLTIgNi04LTYtOHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIuNjEyIi8+PC9zdmc+Cg==",
-        "parser-yaml.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDYuOTg3bC0yMiAuMDQzdjQ1Ljk1OGgzMlYxNi45ODd6TTEwLjU2NyAxOS4zNjJoNS4zNTJjLjc2OCAwIDEuMjgyLjEwNCAxLjU0My4zMTMuMjczLjIwOC40MS41NzMuNDEgMS4wOTMgMCAuNTIxLS4xNjMuODg2LS40ODggMS4wOTQtLjMxMy4yMDktLjg5Mi4zMTMtMS43MzkuMzEzaC0uNjQ0bDQuNzI2IDguNDc3IDQuOTAzLTguNDc3aC0uODAxYy0uNzAzIDAtMS4xOTEtLjEwNC0xLjQ2NS0uMzEzLS4yNzMtLjIwOC0uNDEtLjU3My0uNDEtMS4wOTQgMC0uNTQ2LjExNy0uOTE4LjM1Mi0xLjExMy4yMzQtLjE5NS44MjYtLjI5MyAxLjc3Ny0uMjkzaDMuNTk0Yy45OSAwIDEuNjIuMTA0IDEuODk0LjMxMy4yODcuMTk1LjQzLjU2LjQzIDEuMDkzIDAgLjUyMS0uMTQzLjg4Ni0uNDMgMS4wOTQtLjI3My4yMDktLjguMzEzLTEuNTgyLjMxM2gtLjMxMmwtNi42NCAxMS4zODd2Ni4yMTFoMi44NWMxLjAwMyAwIDEuNjQxLjA5OCAxLjkxNS4yOTMuMjg2LjE4Mi40My41MzQuNDMgMS4wNTUgMCAuNTM0LS4xNDQuOTA1LS40MyAxLjExMy0uMjc0LjE5NS0uODM0LjI5My0xLjY4LjI5M2gtOS4yNzdjLS44NDcgMC0xLjQwNi0uMDk4LTEuNjgtLjI5My0uMjczLS4yMDgtLjQxLS41OC0uNDEtMS4xMTMgMC0uNTIxLjE1LS44NzMuNDUtMS4wNTUuMzEyLS4xOTUuOTUtLjI5MyAxLjkxMy0uMjkzaDIuODMyVjMzLjI5bC02LjUwNC0xMS4xMTRoLS4zMzJjLS43ODEgMC0xLjMxNS0uMTA0LTEuNjAxLS4zMTItLjI4Ny0uMjA5LS40My0uNTczLS40My0xLjA5NCAwLS40ODIuMTE3LS44MzMuMzUxLTEuMDU1LjI0OC0uMjM0LjYyNi0uMzUxIDEuMTMzLS4zNTF6IiBmaWxsPSIjZmZmIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iLjYxMiIvPjwvc3ZnPgo=",
-        "range.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOC4wMDMgNDIuMDA3aDV2LTE4aC01ek04LjAwMyAyMC4wMDZoNXYtNWgtNXpNMjUgNTIuMDA3aDh2LTI5aC04ek0yNSAxNS4wMWg4di04aC04eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSJub25lIi8+PHBhdGggZD0iTTE1LjgxOSAxNS42MzlsNi4yOTMtMi41MTdNMTUuMTkgNDIuMzg1bDcuMjM2IDMuNzc1IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS4yNTg2MiIvPjwvc3ZnPgo=",
-        "rbe.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wcPFiwJnbnE1AAAAIlJREFUWMPtl7sJgEAQRGcPYwMbELQni7AJW7QYEzEYYwX1vog4L13YeWw0CwjxR0hOjKCEiC8LyZXkTLIvIWIBMiPJ1ne3xVzlsMDMrubn2RMu5UqhYUVlciMZyUhGMpKRjGQk87ZMauGuPAIaABuADsCQMzyoA6eExVRSd/eKRHrUubuxEJ9gB2tHwAJpckKMAAAAAElFTkSuQmCC",
-        "redis.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAJdSURBVEiJ7ZVNSFVREMd/zxQL2kSBQl+4qSgoKVxKrSoo+lgNLdUylSzaJLWpNhG0SPuwoIW0sTvRIhShTSRRELTQQEOjoiCoJLEPi1Ly3+KdZ+c9nwbiIqiBw+XMnf/vMnPmzE0lScJcWsGc0v4D58QK/xRgZkXA0rD94u7DswKa2QrgIFADlAT3TzPrAJrd/X4+XSruQzNLAduBemAH6ZK8B7qAcWA1sCWE9wAtwA13H5uEJEmCpCWSjkl6od/WLckkFSVJQmZJ2iCpTdL3EPdO0klJJUmSTKb8BigGPgOXgCvu/jRfSu7+BKgys6aQST1wCjgOzM8Ai4FeoNLdR6eraw54CDhtZmeBh8AmyD6UcuCRmTUD7e7+bSagmRUCVUAdsDHjzwAvA/uAdcA14JyZXQeuuvtADmgRcAA4BCwP7g/ATWDyUBSK3CHpoqRX0eHcldQoqU5Sq6TR4B+WdEvSPUljkpQkSRbwmaSKsC+QtFNSl6SfyrZ+SbWSFoTYckmDucC+SNAjqToSlEnaE1Zl9MHdkh5Eur4YOBi9GA/PEUnnJa2KenChpMOSnoeYiUg3mJvygKQKSSWSTkh6HYn6JfVK+hR8X0M91wTNQCbleNqsDC2wzN3PAGXALuAOsBgoBd4CTSGmIehqgjarbRpJd3w1UG1mj4HWdP96Z54e3GpmR4FtQAp4CVyAqcNhM9AA7AWKgBGgDbhNejisB44Aa4OkG2gGOt19YgowApcC+4HaqHkz9gNoB1rCvc6yvMAIPI/0GMtcrY+kr+XQdJoZgbOxv/8n9Q8CfwE7dg5XDmjPIwAAAABJRU5ErkJggg==",
-        "rpi.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii4xMzgiPjxwYXRoIGQ9Ik0yMC4yMSAyMC45OGMyLjA5Ni0uMDIzIDQuNjk0IDEuNTYyIDQuNjgzIDMuMDU4LS4wMSAxLjMyLTEuODI0IDIuMzktNC42NjcgMi4zNy0yLjc4NC0uMDM0LTQuNjU2LTEuMzQ0LTQuNjUtMi42MjMuMDA1LTEuMDUzIDIuMjcxLTIuODY2IDQuNjM0LTIuODA1ek0xMy4wNyAyMS44N2MuNDY5LS4wMDkuOTU0LjAyOCAxLjQ0OS4xMTEgMS40NTguMjQ1LTYuOTkgNy42MjMtNy4xMiA1Ljk3Ny0uMTE2LTMuNzU2IDIuMzktNi4wMjcgNS42NzEtNi4wODh6TTI2LjkxIDIxLjk5YzMuMjguMDYxIDUuNzg3IDIuMzMgNS42NyA2LjA4Ni0uMTMgMS42NDUtOC41NzctNS43My03LjExOS01Ljk3NWE3LjgzIDcuODMgMCAwIDEgMS40NDktLjExMXpNMjUuNzYgMjYuNTljMS41Ni4xNDMgMy4xNDMgMS4wOCA0LjE3NSAyLjY0MyAxLjY1MiAyLjUgMS4yNyA1LjY1Ni0uODU1IDcuMDQ4LTIuMTI1IDEuMzkyLTUuMTg1LjQ5Mi02LjgzNy0yLjAwOC0xLjY1Mi0yLjUtMS4yNjktNS42NTYuODU1LTcuMDQ4Ljc5Ny0uNTIyIDEuNzI1LS43MiAyLjY2Mi0uNjM1ek0xNC43IDI2Ljg0Yy45MzctLjA4NiAxLjg2NS4xMTMgMi42NjEuNjM1IDIuMTI1IDEuMzkyIDIuNTA4IDQuNTQ4Ljg1NiA3LjA0OC0xLjY1MiAyLjUtNC43MTIgMy4zOTctNi44MzcgMi4wMDUtMi4xMjQtMS4zOTItMi41MDctNC41NDUtLjg1NS03LjA0NSAxLjAzMi0xLjU2MyAyLjYxNC0yLjUgNC4xNzUtMi42NDN6TTMzLjA1IDI5LjZhLjcyOC43MjggMCAwIDEgLjIwNC4wMjZjMy44MDYgMi4xNzMgMy4xNDUgNy4wMSAxLjA5MiA4LjY2LTEuODA4LjgwNC0zLjI5LTguNjUzLTEuMjk2LTguNjg2ek02Ljk1IDI5LjczYzEuOTk0LjAzMy41MTIgOS40OS0xLjI5NiA4LjY4Ny0yLjA1My0xLjY1MS0yLjcxNC02LjQ4NiAxLjA5Mi04LjY2YS43MzguNzM4IDAgMCAxIC4yMDQtLjAyN3pNMjAuMyAzNi4yM2MyLjgzMi0uMDE0IDUuMTQxIDIuMDkzIDUuMTU2IDQuNzA0di4wNDljLjAxNSAyLjYxLTIuMjY5IDQuNzM4LTUuMSA0Ljc1Mi0yLjgzMi4wMTQtNS4xNDEtMi4wOS01LjE1Ni00LjcwMWEyLjk5NiAyLjk5NiAwIDAgMSAwLS4wNTFjLS4wMTUtMi42MTEgMi4yNjgtNC43NCA1LjEtNC43NTN6TTMxLjY2IDM4LjAyYy40LS4wMTEuNzc3LjEwMiAxLjExNS4zNjQuOTEuOTA3IDEuNDQzIDQuMzItLjE1IDYuMzY2LTIuMTk1IDMuMDQ1LTUuMTY1IDMuMTY0LTYuMjcyIDIuMzE2LTEuMTU3LTEuMDkyLS4yNzQtNC40ODIgMS4zMTMtNi4zNCAxLjM2MS0xLjUzOCAyLjc5My0yLjY3NSAzLjk5NC0yLjcwNnpNOC42NSAzOC43NGMxLjI5LjA1NSAyLjgzNiAxLjA3NiA0LjA5OSAyLjU0IDEuNDY2IDEuNzY4IDIuMTM1IDQuODcyLjkxIDUuNzg4LTEuMTU3LjY5OC0zLjk2OC40MDktNS45NjctMi40NjMtMS4zNDctMi40MDktMS4xNzUtNC44Ni0uMjI5LTUuNThhMi4wNyAyLjA3IDAgMCAxIDEuMTg3LS4yODV6TTIwLjM1IDQ3LjIxYzIuMDYtLjA5IDQuODI0LjY2MyA0LjgzIDEuNjYyLjAzMy45Ny0yLjUwOCAzLjE2My00Ljk2NyAzLjEyLTIuNTQ3LjExLTUuMDQ1LTIuMDg1LTUuMDEyLTIuODQ2LS4wMzgtMS4xMTYgMy4xMDItMS45ODcgNS4xNDktMS45MzZ6TTM1LjEzIDExLjAzYy0uNTY5IDcuMzU2LTcuNDA5IDE0LjEyOC0xMS42MjkgNi45NzEgMS4zNjMtMS41MiAzLjg1My0zLjMwNiA4LjEzMy01LjUxMy0zLjMzIDEuMTMyLTYuMzM1IDIuNjQtOC44NSA0LjcxNi01LjgzOC00LjI5NiA0LjczNC05LjY3NSAxMi4zNDYtNi4xNzR6Ii8+PHBhdGggZD0iTTUuNDIgMTEuMDNjLjU2OSA3LjM1NiA3LjQwOSAxNC4xMjggMTEuNjI5IDYuOTcxLTEuMzYzLTEuNTItMy44NTMtMy4zMDYtOC4xMzMtNS41MTMgMy4zMyAxLjEzMiA2LjMzNSAyLjY0IDguODUgNC43MTYgNS44MzgtNC4yOTYtNC43MzQtOS42NzUtMTIuMzQ2LTYuMTc0eiIvPjwvZz48L3N2Zz4=",
-        "serial.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNC41IDQ3LjVoNGwuMDQtMzQuOTk1TDE5LjUgMTIuNXYzNWgxMXYtMzVoNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIiBzdHJva2Utd2lkdGg9IjUiLz48L3N2Zz4K",
-        "sort.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAuMDAxIDE5Ljk1NWwtNy41LTguMTc4LTcuNSA4LjE3OGg1djI4aDV2LTI4ek0zNS4wMDEgMzkuOTU1bC03LjUgOC4xNzctNy41LTguMTc3aDV2LTI4aDV2Mjh6IiBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii41MzEiLz48L3N2Zz4K",
-        "split.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYuMDAxIDM5Ljk5bC0uMDMyLTE5Ljk1Ny0xMS45NjguMDE3djE5Ljk4M2wxMi0uMDQ1TTM0LjAwMSAyOC4wMjdsLTQgLjAwNHYzLjk5N2w0LS4wMU00MC4wMDEgMjguMDI3bC00IC4wMDR2My45OTdsNC0uMDFNMjcuMDAxIDMwLjAyN2wtNy03Ljk4NnYxNS45ODZNMzQuMDAxIDIwLjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxTTQwLjAwMSAyMC4wMjdsLTQgLjAwNHYzLjk5N2w0LS4wMU0zNC4wMDEgMzYuMDI3bC00IC4wMDR2My45OTdsNC0uMDFNNDAuMDAxIDM2LjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxIiBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii42MTIiLz48L3N2Zz4K",
-        "status.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAzMGg5bDMuNS0xMCA1IDI1IDUuMTI1LTMwTDI3LjUgNDAgMzEgMzBoOSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2UtbWl0ZXJsaW1pdD0iNi41IiBzdHJva2Utd2lkdGg9IjQiLz48L3N2Zz4K",
-        "subflow.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjUgMjUuOTRoN2MuNTggMCAxLS40MiAxLTF2LTJjMC0uNTgtLjQyLTEtMS0xaC03Yy0uNTggMC0xIC40Mi0xIDF2MmMwIC41OC40MiAxIDEgMXptLTE3IDEyaDdjLjU4IDAgMS0uNDIgMS0xdi0yYzAtLjU4LS40Mi0xLTEtMUg4Yy0uNTggMC0xIC40Mi0xIDF2MmMwIC41OC40MiAxIDEgMXptLS40MTYgMTFDNS42MjQgNDguOTQgNCA0Ny4zMTUgNCA0NS4zNTZWMTQuNTIyYzAtMS45NiAxLjYyNS0zLjU4MiAzLjU4NC0zLjU4MmgyNC44MzJjMS45NiAwIDMuNTg0IDEuNjIzIDMuNTg0IDMuNTgydjMwLjgzNGMwIDEuOTYtMS42MjUgMy41ODQtMy41ODQgMy41ODR6TTMyIDM2Ljk0SDE5YzAgMi4xOS0xLjgxIDQtNCA0SDd2NC40MTZjMCAuMzUuMjM1LjU4NC41ODQuNTg0aDI0LjgzMmMuMzUgMCAuNTg0LS4yMzUuNTg0LS41ODR2LTguNDE3em0xLTJ2LTZoLThjLTIuMTkgMC00LTEuODEtNC00aC0xYy00LjMzMy0uMDAyLTguNjY3LjAwNC0xMyAwdjZoOGMyLjE5IDAgNCAxLjgxIDQgNGgxM3ptMC0xNnYtNC40MThjMC0uMzUtLjIzNS0uNTgyLS41ODQtLjU4Mkg3LjU4NGMtLjM1IDAtLjU4NC4yMzMtLjU4NC41ODJ2OC40MTdjNC4zMzMuMDAyIDguNjY3LjAwMSAxMyAuMDAxaDFjMC0yLjE5IDEuODEtNCA0LTRoOHoiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIi8+PC9zdmc+Cg==",
-        "swap.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNMTIuNzg3IDI2LjQzMkw5LjUgMTguMDAzaC00LjV2LTVoOGwyLjI4NiA2LjI4Nm01LjM1NyAxNC4yODZsMy4zNTcgOC40MjhoNHYtOGw3IDEwLjUtNyAxMC41di04aC03LjVsLTIuMzU3LTYuMjg2Ii8+PHBhdGggZD0iTTEzLjAwMSA0Ny4wMDNsMTAuODU3LTI5aDQuMTQzdjhsNy0xMC41LTctMTAuNXY4aC03LjVsLTExIDI5aC00LjV2NXoiLz48L2c+PC9zdmc+",
-        "switch.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS4wMDEgMjcuMDA2djZsMTAuMTItLjAxNCAzLjAyMyA3LjcyOCAyLjM1NyA2LjI4Nmg3LjV2OGw3LTEwLjUtNy0xMC41djhoLTRsLTMuMzU3LTguNDI5Yy0uNDc1LTEuMjY3LS45My0yLjQzNS0xLjI5NS0zLjYwMWw0LjUxLTExLjk3SDI4djhsNy0xMC41LTctMTAuNXY4aC03LjVMMTUuMDk4IDI3eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSJub25lIi8+PC9zdmc+Cg==",
-        "template.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAuMDQxIDQ3LjkxdjMuNDg1aC0xLjVxLTYuMDI3IDAtOC4wODQtMS43OS0yLjAzMy0xLjc5Mi0yLjAzMy03LjE0VjM2LjY4cTAtMy42NTUtMS4zMDctNS4wNTgtMS4zMDYtMS40MDQtNC43NDMtMS40MDRoLTEuNDc2di0zLjQ2aDEuNDc2cTMuNDYgMCA0Ljc0My0xLjM4IDEuMzA3LTEuNDA0IDEuMzA3LTUuMDF2LTUuODA4cTAtNS4zNDkgMi4wMzMtNy4xMTYgMi4wNTctMS43OSA4LjA4My0xLjc5aDEuNTAxdjMuNDZoLTEuNjQ2cS0zLjQxMiAwLTQuNDUzIDEuMDY1LTEuMDQgMS4wNjUtMS4wNCA0LjQ3N3Y2LjAwMnEwIDMuOC0xLjExNCA1LjUxOC0xLjA4OSAxLjcxOS0zLjc1IDIuMzI0IDIuNjg1LjY1MyAzLjc3NSAyLjM3MSAxLjA4OSAxLjcxOSAxLjA4OSA1LjQ5NHY2LjAwMnEwIDMuNDEyIDEuMDQgNC40Nzd0NC40NTMgMS4wNjV6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iLjcxOSIvPjwvc3ZnPgo=",
-        "timer.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBjb2xvcj0iIzAwMCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTU0MCAtOTg3LjM2KSI+PHBhdGggZD0iTTU2NS40MyAxMDAxLjljNi41NjIgMi4wODkgMTEuMzE2IDguMjMzIDExLjMxNiAxNS40ODggMCA4Ljk3NS03LjI3NSAxNi4yNS0xNi4yNSAxNi4yNXMtMTYuMjUtNy4yNzUtMTYuMjUtMTYuMjVjMC0yLjgwMi43MS01LjQzOCAxLjk1OC03Ljc0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIzIiBzdHlsZT0iaXNvbGF0aW9uOmF1dG87bWl4LWJsZW5kLW1vZGU6bm9ybWFsIi8+PGNpcmNsZSBjeD0iNTYwIiBjeT0iMTAwMS40IiByPSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjMiIHN0eWxlPSJpc29sYXRpb246YXV0bzttaXgtYmxlbmQtbW9kZTpub3JtYWwiLz48cGF0aCBkPSJNNTYwIDEwMTQuNGMtMS4yMDYgMC0xMS0xMC45OTktMTIuMzU0LTkuOTc1UzU1NyAxMDE2LjE0OCA1NTcgMTAxNy40czEuMzYgMyAzIDMgMy0xLjM2MSAzLTMtMS43OTQtMy0zLTN6IiBmaWxsPSIjZmZmIi8+PC9nPjwvc3ZnPgo=",
-        "trigger.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNC41IDQ3LjQ2aDRsLjA0LTM0Ljk5NSAxMC45Ni0uMDA1djM1aDE2IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIHN0cm9rZS13aWR0aD0iNSIgZmlsbD0ibm9uZSIvPjwvc3ZnPgo=",
-        "watch.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzU1IC03MDQuMzYpIj48Y2lyY2xlIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00My4wOTEgLTQ0Ljc1Mikgc2NhbGUoLjgxODE4KSIgY3g9IjUwNS41IiBjeT0iOTQxLjg2IiByPSIxNC41IiBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNMzc3LjYyIDczNy44Nmw4Ljg3NyAxNS41IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI2Ii8+PC9nPjwvc3ZnPgo=",
-        "white-globe.svg": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMTJhMTggMTggMCAwIDAtMTQuMjQ2IDcuMDMzbDIuNTI3Ljg0NCAxLjk4My0xLjc5NyA0Ljg5LTMuNzE1Ljk5LjkzLTQuMDg1IDEuOTE4LS4wNjMgMi40MTYgMy4yMi0uODA1Yy45NS0uNjggMS44OTktMS4zNjQgMi44NDktMi4wNDVsLS4yNDktMi4yOWgxLjM2NGMxLjUwNi0uNTE3IDMuMDEzLTEuMDMyIDQuNTItMS41NDhsMS4zNDEgMS4zMjUtLjM1MSAxLjk1Ny0yLjA0My0uMTg2IDEuOTgyIDIuNjYyLTIuNDc3IDEuODU4di0xLjYxbC0yLjI5LjEyM2MtLjg2OC42Ni0xLjczNSAxLjMyMi0yLjYwMiAxLjk4M2wtLjM3MSAzLjM0My0zLjA5Ni40OTctMS4wNTMgMi40MTQuNDk0LjQ5NiAxLjE3OC0uMzEgMS4yMzgtMS40MjUgMi4xMDYuMzcxIDEuMTEzIDEuMjM5YzEuNTY5LjY5MSAzLjEzOSAxLjM4MiA0LjcwNyAyLjA3NEgxMS4wNjhsLTEuNjcyIDEuNDU1LS4zMSAyLjY2MiAxLjc5NyAyLjg1IDQuNTgyLjg2Ny45OSAyLjY2Mi0uMzcxIDMuMDk2IDIuMTA1IDEuNjEgMy4yODEuMzFMMjUgNDMuMTU4bC4zNy0xLjYxLjU2LTIuMDQ0Yy40OTUtLjQ5NS45ODgtLjk5MSAxLjQ4NC0xLjQ4NmwuMTI1LTEuNjctMi44NS0xLjY3Mi0xLjQ4NC0yLjE2OCAxLjU0Ny40OTYgMi40MTYgMi40MTQgMi4zNTEtMS4zLjE4Ni0yLjY2My0yLjQxNC0uMzcxLjEyMy0xLjMzMmg0LjY0NGwxLjQyNCAyLjJjLjU3OC4zMDkgMS4xNTcuNjE3IDEuNzM1LjkyN2wtLjI0OS0zLjEyN2gxLjIzOWwxLjMgMy40MzcuNDA1LTEuNDJBMTggMTggMCAwIDAgMzggMzBhMTggMTggMCAwIDAtMTgtMTh6TTIuOTU3IDMzLjgwOWwtLjUxOC4wNDNhMTggMTggMCAwIDAgMi42NzYgNi4yMzhjLjIxLS42MjguNDE4LTEuMjU2LjYyNy0xLjg4NXYtMi4yOUw1IDM0LjI0MmwtMi4wNDMtLjQzNHptMjUuNTI3IDEyLjA0OWwtNS40OTYgMS44ODlhMTggMTggMCAwIDAgNS40OTYtMS44ODl6IiBjb2xvcj0iIzAwMCIgZmlsbD0iI2ZmZiIgc3R5bGU9Imlzb2xhdGlvbjphdXRvO21peC1ibGVuZC1tb2RlOm5vcm1hbCIvPjwvc3ZnPg==",
-        "parser-markdown.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAoCAYAAADpE0oSAAAABmJLR0QA/wD/AP+gvaeTAAAB7UlEQVRYw+2VPWhUQRSFv/NcloTFxCRCsBItlNiksrQxtUIKC7W2tFOwEIIoapFCtFFsokmRQmzSJ4WxVgsVF1kkEUkwKqgxPyQem1kYhk3eIiEozIHHm3vveffOvDl3BjIyMjIy/nWoObB9EOiJYuuS3qQf2O4CDgEF4OBuSPoe4gKOAh1RjSVJ87RIVtget70QPXXbZxJep+37Ib4Y3nO2z0ecHtuzSa7xtGYlGu8F+iO7H7hi+4Wk92ElF4CzQFfEWwGqkV0AfVEuA7W0cFGyFYPAiO0acAK4mBT9a1RK4nuAYeA1cBI4vFPiqrTBqQGXw0qL3SwM0FtGsN0dFNwZd0tT2bb3Bf+KpNXtCv8Moqkm/i9AdzJpAbeBA8HuS2IDwBjwG5iyPbbdr/sETAdyPJnHwHq6YKAODAGngP1J/EjwDwIfJLkoOVxuAo1gbwBPgtDUgj8BzGwRE7AK3JU0U9pOkp4BN4AFYBa4lfyBmPsZGAHetQhvAk+Bh+32McAk8AC4Kqlewn0J3AO+Jf63wKikX20XlrQGXJf0vA2ugUdhSzaC+ytwTdKrrdrpB7CYqLeZcDO+PIClSO1rsdgkLdu+AxwHjgUxTu3k7aRo/xqSlhPeOeA0cEnSx127b21Xw6GSkZGRkfGf4g8tS8n281i76AAAAABJRU5ErkJggg==",
-        "ui_button.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADNSURBVEiJ7ZQxCsJAEEX/hhSeQhux9gSSe3gBwcIDeDGx9CYWNvYRi8CzMAlr3M0uWYsI+d3A7Pt/ZmClSf8joABK3iqBIhXYQhp4KpC+2qcsyXV0QL7lPhawtC7aKsLAfSzgAhy6aWJT+0YZtM8usIE8JG2GAH0uRWeH26EJXQ1r4A7MfwKsm47AGTAhWCwwqy+/T05nNa9CH4ILGBwpZGyM+WDkoQeSbpIqqz4ZY3Y+wxhgJWlh1bO+5hhgLulq1U9fOilxh939TRqpXsa932DLVhSzAAAAAElFTkSuQmCC",
-        "ui_chart.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADVSURBVEiJ7dQva0JhFAdg2bJYZGUywzQNs7DkBxismvwkC8Mug0XrwG6xmtYWjWZZUIMG94ftMWi4iPd6r/c2/cUD5+Ec3sOby51zIkExa1BW1kWKIe5CN0s6IfIY4z0xiKs9tTf84j4RiCI+UQ/UWjZ5ilohDOxsmycoo4IFhrhMBKKEFQaYY4QPTHEdikWAXXzhBg184x+Pkdg+EFX84CVQa+L1IBYC9rDcfWHEu9sgiBr+0I7VHAPsY4ZCVuAtHo7GdsG0OfpzOAhKl+esBzvnpLIGJQw3hKYULUMAAAAASUVORK5CYII=",
-        "ui_colour_picker.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AwQFgsvH/cw7AAAAhdJREFUSMftlU1LlFEYhq/zopVgMuEipA8IAyGKIpOQIDAiamO0ahFUq/oDBf2Cdi2CCIQg6C9ELVr0SQW5iAxs00bQrEgwGct0Zq42z9jrNOI70Sq6V+frvs9znvN8wH/kobbMSQVEEyBASqk1QZWUEmoHcAIYBHYAs8Bb4BkwllKq1M+u+Tz1gPpUrfo7vqg31Z2FXKIOqJNBrqn31RtquUF4Sj20lliX+ipHeqxuVFGvxQU1dTb2Z9SjjTpZEACGgf7c3hwwH36aDH8/SCmVgJNACbiubmtm3Tr1Sdz8Ta2o8+oF9ZT6Pvauxvn16lysjTQT7Ak/vVOPqGdD8If6PeeGCfWgelFdzD29t1Fwr7qkXqnHnvrS4rgcHLLQ7AIyYEvMS0BHCwkyDLSllGiLhSWgCpxXNwFbgd0tCPaFUTN1Cz8BFaATOANsB8aAWkHBTqBDbcsLfo3xa2AIOAw8LCiYRVgtCy4Ad2M8nlKaSCmVgdHV8gC4DdyLeTleU83/9L5c6PSrfeqLVX51Ud2jHo/5m8i0rDF8RuLAR3U6Uq0ZFtRBtVt9rl6KMrey0tRqtR51vEDcVdWh4Har7XlnLte1LMumgXPAhwIfsSu4MxF2vwRXVNyURoHTwOc1CnM1xylUaHvVW7mczaOsbi7cU3KtoB3YDxwDBoANwBRwB3jUzLJUsPvlXZOllCp/tZX+SXv9h/ET4N13p8IOyEcAAAAASUVORK5CYII=",
-        "ui_date_picker.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABmJLR0QA/wD/AP+gvaeTAAAATklEQVRIx2NgGAUjFPz///8/uWoYSTEEH2BkZGTEaSOpLsSqnhIXIutloZahNHMhE7VTCBO5gU/QR0PLy8R4cwR6eegmbNrl5VEwCogHAB0Cc6jSgYOVAAAAAElFTkSuQmCC",
-        "ui_dropdown.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABpSURBVEiJ7ZS7CoAwEARnRfxrK//awrU6CRYhkLNQM9UVy9wjEBh8HwHY3lNk0jJliErShXO2OIQHsHW61qvKeJRwPHbDspMBJCnqGpJUFZaBe7iFsXI/f17Z9loLthIT9n4MWY7BKzgBTP0qup60jeAAAAAASUVORK5CYII=",
-        "ui_form.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIpJREFUeNpiYBgFgw4w/v//vwFI/6KSeWwgA/8DGdVUMrCVAWogVQDILBYoo4FahjJRPVao7WVwpDACAbrXgUINxAYFSC3MQEJerifCvHqivUxMcCCrIcbLcDm84YbQ/5++sTzqZaK8zIIm2YAlsTZQMy83EmFGI03zMqz4qhq0VcBorToIAUCAAQDBm54wNDH87wAAAABJRU5ErkJggg==",
-        "ui_gauge.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAF4SURBVEiJ7ZTPK0RRHMXPnUSywGgshpXxLxgW2LBTytLKgoUiRcmOLJSyY6dEyX8wmq2FhYU1hfzYSGpmYzTNLHws5jtczzM/rOfU69s953vO/d7Xu09qoIG64SqJQJekIUlxo54lXTjnMnXtAiSBUyAPFANPHkgBA1UnBCKStiStmFaQdC7p3lr6JA1LapGEpB1J6865j78mO7ApcsAG0B7S0wFsAu/Wu/9X2II1ZICRGl7LKJA1z3xQjAKvJk5WC/N8U+Z5ATp9YcmEVK1hnjdt3kVJihg/YfWo3kBJh4EMCXiyXeLhnh8TDQLT3rrHvI9+U87I5hoCr4B+b91i3jfp+8hZq9EqYXOS2pxzdx5d9mT9wFuroV+/hbVKWpZ0FpCSVm/8wLTVmQoDbqt0U44DfNmT/mKAbvtIC8BYyHS9wANwDTR5/Lh3GWJB05qJl0DwjqcoIeVxznqLwOqv8wARYA9IhGgx4ASYDfAJYNd+Kg008F98AoTJY9ZKCu6sAAAAAElFTkSuQmCC",
-        "ui_numeric.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEUSURBVEiJ7dK9LgRhFIfxsz4SttgaEZ1CJEoNCYVoRUeLRqfYGxCJULoFoZNIFLqtRKFQuQFBrbIivn4K7zKZ3UVCoZinOjln/s97ZuaNKCgoaAa96Go3HMAtNjO9ZVzjAWcYTf0KjvCMe6zlZfO49M5m6g2mwC5mcYVamlXxiDns4QVDWeELdnLCPqw0HkQNF6nuwXCq1/GE/qxwGJ1ZYe4NZlJoI9ffTZlqq2/YUogp1HGKcm42ntlw+lshJnCHE1Qy/RFMprqcclutf/dnqBIRBxHRHRGHEbGAeqlU2o+I5YhYxWJEjKXI+ZcbYkkzN43DcIzXdKW2UfpqwR/h/WJ3/1rUjo8V4S+EHX8hKSj4b7wBmFxhytCBdoQAAAAASUVORK5CYII=",
-        "ui_slider.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABVSURBVEiJ7dNBCgAgCARA7f9/tlOQIiJpJOEcQ0oXA2j/Q+2QiIgVIap1mhHtSGIvy87cl2wT3O1wKZVhOvcoAL4oem1sTzJMZ4588mN6bbgSGba4CZuaJByfIWmXAAAAAElFTkSuQmCC",
-        "ui_switch.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEJSURBVEiJ7ZNNSsNQFEbPc9AKLkAHgh35M3QLLYK0W7HqetyK0q7BUn8GohRxasBWhE6Og6byDHlpx5oDGeTm3pOb5AvU1PwH1E31Qh2rM3WeOGZ5z7naXM6HgmwXuAG2ga2S+30CE2CYn7eBI+AZ6IQQ3oqbPapfiY3e1dOSJ+qqH+pDvCnqpZolZFmZrCCdq/0QFcfAfmLmLoRwnBLm8yMgbES1VkX/sOLakgHQioWuMbSSWDip6Guv4WoDL7HwikUsythTuymT2gMOc8dPsbkiNlmZVO3lsblXG2XBvgZ2SAf7lcUHAOgAB8ATcPIr2JG0ofbVkTqt+PWm6q16pjZSr6Om5k/wDYhUJfwAsEtnAAAAAElFTkSuQmCC",
-        "ui_template.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEaSURBVEiJ7dE/L4NRGAXw90W6EKMahEGMoh2wqUVC7d3EZjdZjGb1GXwIk6WpiVHMJEQwNUHjT+JncCXN9bZCGomkZ7r3nPOce3OeJOmhh38I7GC4W2GDeMLkb4b7MrgV3CBt5/lCBONEkiQnKEfSUpIkh2maCtoxxr/7WQl3eMRMpJ1iPZwLaAbvQruwDbzgErORNoo3jLVwBZzjFVtxWNUHahjJeGwNZxl8HvUwW20VGrhvt0HsY6+NNoUHNFrJSujkFqVoIMU1VjPCFkOPTVRisYCLuBNM4xlDkf+z8yvMZf0+7mQ5cJuoRb5y8NSRzwxrMefCkorhfoDtyFPELnIdwzLC+8Ky5n802CFwAEfo70pgDz38Ad4Br8tc7FtGcAwAAAAASUVORK5CYII=",
-        "ui_text.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEWSURBVEiJ7ZMhS0RBFEbPyDMYhGXB5poFm2GNJpHFplXQ32AVYYO4xSIGQTAqGhQ0mGwmDQYRZJPYXGQRMYnwjsFZGQyy4YUN75SB716Gc+8wUFJSUgBqU/3qt3+oaIHfC9W62vaHN3UlbVTX1Xv1SB2L2ZR6oT6qp2otNVwGOsAi0Aa2kloG1IAW0AB21BHgEqgAm8A0sJ8aDKtz6rb6pOZqiDvM4wWoB+qLOhOnacS8qmap4TGwBzwD1wAhBJN6iGfvgbI/eQUYTw3f1TN1Ur1V85g3o8muOq921BN1VH1Vr9SFuMeb1HADmAXOgTsgqBNJ/RM4BB6AtRDCB7AEVON0XWCVgae3UFT/a+yXwn9KSckg8A2LRsxzeZWjFAAAAABJRU5ErkJggg==",
-        "ui_toast.png": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADeSURBVEiJ7ZKxCQJBFERnRQ5BUCzAxEB7sAB7EGzB6EJzE0OLsAGbMDW0AROTM9E70GcyyiknihiI3MDn/52dP8vuX6lEiT9EkCQg+4pZCFHFdfoFv1SSroYdSRNJW69PbxicnXeSZpK6tx0gBlpABAyBFZABB+d8XLmVtZF747xhBiTAHOiZ6wMLG6SOg7m+NT33JHdzyJ1+dOMSGAABaANTR9vcwJrUPdkzw8drbYAxUAdqwAhYP3sO6fW3wZq966aHUSkShxCi6otJBudGjis0e2vzE/y+YYkSf4kLDcYTu4mDJeQAAAAASUVORK5CYII=",
-        "ff-logo.svg": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+PHNjcmlwdCB4bWxucz0iIi8+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNmZmYiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+",
+        'alert.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjE2Ljc0IC00MTUuMDQpIHNjYWxlKC42MjE0MykiIGZpbGw9IiNmZmYiPjxwYXRoIGQ9Ik0zNzEuMyA2ODMuOTdsMS42MS0xLjYxSDM4OWwxLjYxIDEuNjEtMy4yMTkgNDAuMjMtMy4yMTggMy4yMThoLTYuNDM3bC0zLjIxOS0zLjIxOHoiLz48cmVjdCB4PSIzNzIuOTEiIHk9IjczNS40NyIgd2lkdGg9IjE2LjA5MiIgaGVpZ2h0PSIxNi4wOTIiIHJ5PSIzLjAxNyIgY29sb3I9IiMwMDAiLz48L2c+PC9zdmc+Cg==',
+        'arduino.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAHYSURBVEiJ7ZTBq4xRGMZ/77kzC6XuWN26V8qNdAsbyoI/AvU5u7tB3SihZMGClIVSlhSShb4zN5uxoGYplMWNbCjlkjuUmjKjKXdm3sfCN2NY6i6keVbnvOf0e9/zPuccy/OctVRYU9oYOAb+r8DSkBzCRJZlR4EzwCzSquChmZ1NKb0BiDEacA2YByrAV+BWs9m8WK/XWwDkeY6k0O/3b+qXGpJ6kuTuS5ImJVm/3z8/2ODuDZe+F+NXkibzPB8e+VAI4TDwGdifUpput9tTwFUz2wEsuvuJEMIl4BEwV61Wpw3mJD0xs+3AjdEKL0j6Jmmm+H0MsGLt1EjlL4rYlKT3q9LuYv5ckkYrBOimlFayLDsuySV5jHErcAfoShJwJcZYAR4Dm8pwEsDdnw69GAFOxBg3hBDuApuBWWDZ3SNQMjMDFoBWt9vNJDV6vd7twtBdfwI/AOv1sw9bUkrLwCdgPoSwACwBi8A+4HS5XG6a2cFSqfQuxnhZ0h7g2W8uS3owMFDSS0mdQd8kzRQ34XoR60p67e5fCpffdjqdjcMeppQcOODu54AWsBNYV2Q9klJaSSl5COGYu98DHNhmZhVJ981sb61W+8jAybXUv/+Wx8Ax8C/0A+UBSZXw25H1AAAAAElFTkSuQmCC',
+        'arrow-in.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTggNXYxMkg3djI2aDExdjEybDE0LTI1eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo=',
+        'batch.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii42MTIiPjxwYXRoIGQ9Ik0zNC4wMDEgMjcuOTg3bC00IC4wMDR2My45OTdsNC0uMDFNNDAuMDAxIDI3Ljk4N2wtNCAuMDA0djMuOTk3bDQtLjAxTTI2LjAwMSAyOS45ODdsLTctNy45ODZ2MTUuOTg2TTM0LjAwMSAxMy45ODdsLTQgLjAwNHYzLjk5N2w0LS4wMU00MC4wMDEgMTMuOTg3bC00IC4wMDR2My45OTdsNC0uMDFNMzQuMDAxIDQxLjk4OGwtNCAuMDAzdjMuOTk3bDQtLjAxTTQwLjAwMSA0MS45ODhsLTQgLjAwM3YzLjk5N2w0LS4wMU04LjAwMSAyNy45ODdsLTQgLjAwNHYzLjk5N2w0LS4wMU0xNC4wMDEgMjcuOTg3bC00IC4wMDR2My45OTdsNC0uMDFNOC4wMDEgMTkuOTg3bC00IC4wMDR2My45OTdsNC0uMDFNMTQuMDAxIDE5Ljk4N2wtNCAuMDA0djMuOTk3bDQtLjAxTTguMDAxIDM1Ljk4N2wtNCAuMDA0djMuOTk3bDQtLjAxTTE0LjAwMSAzNS45ODdsLTQgLjAwNHYzLjk5N2w0LS4wMSIvPjwvZz48L3N2Zz4K',
+        'bluetooth.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAuCAQAAADjedMPAAAAAXNSR0IArs4c6QAAAAJiS0dEAACqjSMyAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gYEFSkDI2AawgAACLlJREFUSMeNVm1wFeUZPe/H7t7szZIbAkRirsqtCtGEBEQjesGULymKBiLCVYRq60csHWvb0Tqj/Zg60zpjp2WKf0oLgiiCtFhERSUSmPIRQhC4EQU0FZIKwcSb5JLN3bv7vk9/LNQ6g9Pun3d3Z8+zZ87zPGcOuySCi1weinjCO8grWVzC7HQ/VxnDutiH4Bd9C43r3HJrW/VTkzb4Rh4oE8VqCN7/W8BDoSoqaQ2+iM9+a091jwDixUnDBy5S4hsYjNLHs11q1CAvqt79i6tM1ZnZ7F1nDCpTef+7gAehIFpV0vIZYJnj9z5VW6Wm2Ifcb7EyVmkEX+Mhv4JZ509AiRv9QvscjABgsMzpbw6bPuNwtWDWEZ/lytGFQRECrZCBB8UNcB+QQdxw/V/6+2Pl6kCOBAAwIDbp/c2Tanzy5vBKFmMTItXa5DUG0K+Eywq4oyN+rd/F63Wxsq0Jkf2209cLi9VfWr6UwEDgkcsWWjs/6P3YP6FW6Ga6Uo8PpFEouOKPBlk12e41ovYtzn7rqGmpDYNlQ0M28CUxA8QAcBCkM2XHM2Pr1EJnAQM+4a8YEPtyM31+yHgo0p2t0h3B1mxBUIJtfp1+SxsukPQzEowAqCwARMxJ78+ftCFbLuIyzat0d/ahyCGDL1Cr3FCQGVa1fDr4rT7Iq3S51Qtt2woaAA48MHQMIAin7r13J4yxusR4A5BY5S5Q/DnU2L59WCXkDv9us+D518SU4SNlazDCas2fszVnRMBAutZPA4B0anb/qGq/S95h5ds19nNAo4gZSbPCTJobSt0PSZ9+rQExYxlrQCrWMp2IiKjl2yl7eZmXDp/8ge21jqgwk2bMaBRImklzGYsZFWb/Pk1EmjJrUqZlNoqkeb6AbplVYSbN5WX5I5o0Ka0yeyfFjGUsaSZNvoc+kyv5/GE19tFHqR9gFFuyYvUN1joATAMaYD77nLcRurPtDABjymR6/rCV/DO5h+Q8f5RuFifyh9zY4cFbp21DjGH4PRvNJ5cCFI4RDDWNR3hq5fAUwIj6d83+y8ddIiHqvLMKc5wGLLFLjZR9hT3afvcmlSEirenklgJj3wwiIk1vzG1A75rwXmc23dqAokipscRuwByHt+Wi9qA7zegMJuBKsfHoXxfofjDgsrldL+ZNQIOhUL3wavESAoH635j/hx1Ru9afZgy6Ubsth208ZSbNCnNWiSmSZirmiH013mD4t3ynJtKaQvFIBwN7J05xro40IOxCytzG+THWibg8yX/dZyEuxw78DPPT22dTP4FBlDOAAaKKAaD+trr6NHnjI1PFZc5JHpedOMZElPJ2k/qNv84abqWpB5/w4QW7zlRuLVtEkdAsGBgI1N90288//Z27i4/JbRIVg9+jF/hl5tmcgBmRNe7fCj70Rhk351iQxuTIzqGjZ8a+F7+bWWAAAAqGdsx+7EAkfyw4JbJ8CFXWWjl1KGudBC8BeVNFeVBjr3VPO91mQmzI3mG04okj+2cSAxQIxD5INrTUyCrVbXYpZo2wdvrlwVRBXkloKG0WUOk+7oi+ExSX86zNXtSIy6t+CAACDIzKnpkcKxlqFsDt1u5cuTipQxQg6qwZ/m4k5EY1TB3iyZFv9x/n49nVBStWjrwXIDACI1ZUcfulm7Ye5Muoq6god1DdbhTzjmCBypmIGctF0kyaZSJppmxHJM0GNIqzL58fm/AgIk09r5YaMcMRS+xwAZPmchEzxCTZGwyKhBxnN+Wulcf5meC49ebq4fey84NMCE0FKLhm6TWntrTTteIYSiMJltG9QVQiZjSKJXbMiBn1MUdMcRrFl+vC8VHn9j0bbmPTs9SjiUhR78vLxTSRcpJmzAiZ8EqWFh3BaDZRN2Wjxhj1q7WxexnA0Hegju8KByHa3HQb+gCO4nsWv+TbN7rdNJp1BGlRyXiXXKCA62VezBpxpf79n0beAxB0f+vMnxzRmkAEAL/8oHWazmowFKc2r3zd/gLXS2CB6pJI2TFjbukssVw4IrOWSBNpNbC9tsKc47w9N5SxZVaBMc/eN1H3EREp6l/TKGaJuaUxI2Xzd8TCSGHWFR/jn6uL7gMAPbB/2vfTJWjLFQ8BDCCoekMX3N/eslJDg8NZvOR+VxRmF0beEfLv7i38JjZSNqPlyGwAgds8Z/WRGrvJA3ImgwZnjHUGI9TqRbU/DU2mb8Pzb42UncEef6fmc3lUVykHNcVPLt/+Y9Z78JaPWjpR3m/z6Y41BHBonHFO0OMLb1gTtrN7083fxecOqlRUz+UypYG0KHWz+bx88c+n3nisa6IAOgoLVI/LDYAAGjmw8aGpKwCA0LM+9fAYK6PgdpiLFTQfJ1YBiNo76awahYdPLvWrFHC5OxkJCaUB4uyKR6auIGgAfS+tv++Md7l7J6I2sArjhOh0zuVnUqFlGuOsT3Nx9hH/B13Cz/KE969IXXn5fYyBoteGUSKz9sGlrYXD5GndG5RGRuQ/xCeFfGqWG+vQlY2rHhcASlAtAGANH/A8QaGPgwHoXzuzcZQg7/KhNuo227w+S/C6vHyRR1BsKbPDBYCEBDqCMHLEbRMMFzZyYO3kB0+TK+L6FEliNnld4jvBFs2LhKl69Z5cCOoILsBfo043H8JBLPPS9MbT9AQbYe2lvFiMQ+6QbHHf4+fAASYksqqdgPawT0hIYJEwFYFAADLrG35wgzeavW2lc/Osp4P1vFac9KOGhBVmJAsQpIBKlpAXGEyI7M1ZAQPQ+3L9A3GZFnG9112MNXpgGAbbOM5nqv+kNCbaKSE7gnYKVTiaqzc8CWReqX+AWTd6jgyoWtxJsyJNOSksWF+PeRYAJTqCkAUA3GVs9Sz64pWxjyTkXe7rdrPfiiq1SPS4UPK/Yh77Kit7IFXJLqgQ9Y7GHpUbu0eJdnuMGnS7TWaRl5Bb/Ij4xqCpREICVapKDZhpobJ/zETtZpHOAd0mQN4w6x3/DuPrsfTf18syu360MqUAAAAASUVORK5CYII=',
+        'bridge-dash.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTkuOTI0IDYuNjFjNC4zNzIgNS40MzMgNy4xODIgMTMuODkzIDcuMTgyIDIzLjM5NyAwIDkuNDkzLTIuODA0IDE3Ljk0Ni03LjE2NyAyMy4zNzltLTQuMjk0LTM4LjM5YzUuNjQ1IDkuNDE3IDcuMTcyIDIwLjk0NC4wMjQgMjkuOTkzbS00LjM2LTIxLjY2MWMxLjMzOCAxLjQ1OSAyLjIxNSAzLjkwNiAyLjIxNSA2LjY4IDAgMi41NzEtLjc1NSA0Ljg2My0xLjkzMSA2LjM0NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2UtZGFzaGFycmF5PSIxNC4wOTYsIDMuNTI0IiBzdHJva2Utd2lkdGg9IjMuNTI0Ii8+PC9zdmc+Cg==',
+        'bridge.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTkuOTI0IDYuNjFjNC4zNzIgNS40MzMgNy4xODIgMTMuODkzIDcuMTgyIDIzLjM5NyAwIDkuNDkzLTIuODA0IDE3Ljk0Ni03LjE2NyAyMy4zNzltLTQuMjk0LTM4LjM5YzUuNjQ1IDkuNDE3IDcuMTcyIDIwLjk0NC4wMjQgMjkuOTkzbS00LjM2LTIxLjY2MWMxLjMzOCAxLjQ1OSAyLjIxNSAzLjkwNiAyLjIxNSA2LjY4IDAgMi41NzEtLjc1NSA0Ljg2My0xLjkzMSA2LjM0NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMuMjI0Ii8+PC9zdmc+',
+        'cog.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMTJhMTggMTggMCAwIDAtMy40OTQuMzZsLTEuNDI4IDUuNzE1LTUuMDYtMy4wMzZhMTggMTggMCAwIDAtNC45NDYgNC45MTdsMy4wNDUgNS4wNzgtNS43NjUgMS40NDJBMTggMTggMCAwIDAgMiAzMGExOCAxOCAwIDAgMCAuMzQ1IDMuNDM0bDUuNzc1IDEuNDQ0LTMuMDcyIDUuMTJhMTggMTggMCAwIDAgNC44OTMgNC45MjRsNS4xMzctMy4wODMgMS40NTUgNS44MkExOCAxOCAwIDAgMCAyMCA0OGExOCAxOCAwIDAgMCAzLjQ3LS4zNTNsMS40NTItNS44MDcgNS4xMjggMy4wNzZhMTggMTggMCAwIDAgNC45MDUtNC45MTNsLTMuMDc0LTUuMTI0IDUuNzgzLTEuNDQ2QTE4IDE4IDAgMCAwIDM4IDMwYTE4IDE4IDAgMCAwLS4zNjctMy41MjlsLTUuNzUtMS40MzcgMy4wNDEtNS4wNjlhMTggMTggMCAwIDAtNC45MzctNC45MjhsLTUuMDY1IDMuMDM4LTEuNDMzLTUuNzI4QTE4IDE4IDAgMCAwIDIwIDEyem0wIDlhOSA5IDAgMCAxIDkgOSA5IDkgMCAwIDEtOSA5IDkgOSAwIDAgMS05LTkgOSA5IDAgMCAxIDktOXoiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTgiIHN0eWxlPSJpc29sYXRpb246YXV0bzttaXgtYmxlbmQtbW9kZTpub3JtYWwiLz48L3N2Zz4K',
+        'comment.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzYuMTkgMjguNmMwIDYuMDg4LTcuMjg5IDExLjAyNC0xNi4yOCAxMS4wMjRhMjMuOTggMjMuOTggMCAwIDEtMi45ODItLjE4NWMtMS4yNzItLjE1OS03LjkzMyA3LjUyNi0xMy4xMTMgNi41My4xOC0yLjAwNCA4LjE4LTYuMDA0IDUuODctOC43OUM1Ljk5MyAzNS4xNiAzLjYzIDMyLjA2NiAzLjYzIDI4LjZjMC02LjA4OCA3LjI4OS0xMS4wMjQgMTYuMjgtMTEuMDI0IDguOTkxIDAgMTYuMjggNC45MzYgMTYuMjggMTEuMDI0eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjYmFiYWJhIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41IiBzdHlsZT0iaXNvbGF0aW9uOmF1dG87bWl4LWJsZW5kLW1vZGU6bm9ybWFsIi8+PC9zdmc+Cg==',
+        'db.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzU1IC03MDQuMzYpIj48ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCgxLjI4NjggMCAwIDEuOTI2MyAtNjQuNDQ0IC02MDcuNTYpIiBjeD0iMzQxLjI1IiBjeT0iNjg4LjYxIiByeD0iOS44NCIgcnk9IjMuMjUiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTM4Ny4zMiA3NTAuNDhjMCAxLjk0OS01LjY2OSA1Ljg3OS0xMi42NjIgNS44NzlzLTEyLjY2Mi0zLjkzLTEyLjY2Mi01Ljg3OXYtMjcuMDQzYzAgMS45NDkgNS42NjkgNi4yNDIgMTIuNjYyIDYuMjQyczEyLjY2Mi00LjI5MyAxMi42NjItNi4yNDJ2MjcuMDQzIiBjb2xvcj0iIzAwMCIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4K',
+        'debug.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAuMDA0IDE0LjQ5OWgyME0xMC4wMDQgNDYuNTAzaDIwTTEwLjAwNCAyMi41aDIwTTEwLjAwNCAzMC41MDFoMjBNMTAuMDA0IDM4LjUwMmgyMCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuOTk5NzAwMDAwMDAwMDAwMyIvPjwvc3ZnPgo=',
+        'envelope.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNMjAgMzIuOTZsLTE4LTE4aDM2eiIvPjxwYXRoIGQ9Ik0yIDIwLjM2bDE4IDE4IDE4LTE4djI2LjFIMnoiLz48L2c+PC9zdmc+Cg==',
+        'feed.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjYjg1YzVjIiBzdHJva2U9IiMwMDAiPjxwYXRoIGNvbG9yPSIjMDAwIiBkPSJNLS4wMS0uMDA0aDM5Ljk5OHY2MEgtLjAxeiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ1MC4yNjYgLTU4NS4zNykiPjxyZWN0IHg9IjQ2NC4yNyIgeT0iNjI1LjM3IiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ5PSIyLjQiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIiBzdHJva2U9Im5vbmUiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNCI+PHBhdGggZD0iTTQ2MS4yNyA2MTguODdsNS41LTIuNWg3bDUuNSAyLjVNNDU5LjI3IDYwOC44N2w1LjUtMi41aDExbDUuNSAyLjVNNDU3LjI3IDU5OC44N2w1LjUtMi41aDE1bDUuNSAyLjUiLz48L2c+PC9nPjwvZz48L3N2Zz4=',
+        'file-in.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmg5djdIMTh2MTBoMTB2N0g1eiIvPjxwYXRoIGQ9Ik0yMiA5Ljk2bDEzIDEzSDIyeiIvPjxwYXRoIGQ9Ik0yOCAyNS45Nmg3djZsNSA2LTQuOTg3IDYtLjAxMyA2aC03bDEwLTEyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjwvc3ZnPg==',
+        'file.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmgxNnYyNEg1di03aDV2N2wxMC0xMi0xMC0xMnY3SDV6Ii8+PHBhdGggZD0iTTIyIDkuOTZsMTMgMTNIMjJ6Ii8+PC9nPjxwYXRoIGQ9Ik01IDMwLjk2SDB2MTRoNXYtMkgydi0xMGgzeiIgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+',
+        'function.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAuOTk5IDMxLjAwNXYtM2gtNi43NjJzLjgxMi0xMi4zOTcgMS4xNjItMTQgLjU5Ny0zLjM1IDIuNjI4LTMuMTAzIDEuOTcxIDMuMTAzIDEuOTcxIDMuMTAzbDQuODYyLS4wMTZzLS43ODMtMy45ODQtMi43ODMtNS45ODQtNy45NDYtMS43LTkuNjMzLjAzYy0xLjY4NyAxLjczLTIuMzAyIDUuMDY1LTIuNTk3IDYuNDIyLS41ODggNC41LS44NTQgOS4wMjctMS4yNDggMTMuNTQ3aC04LjZ2M0gxOC4xcy0uODEyIDEyLjM5OC0xLjE2MiAxNC0uNTk3IDMuMzUtMi42MjggMy4xMDMtMS45NzItMy4xMDItMS45NzItMy4xMDJsLTQuODYyLjAxNXMuNzgzIDMuOTg1IDIuNzgzIDUuOTg1YzIgMiA3Ljk0NiAxLjY5OSA5LjYzNC0uMDMxIDEuNjg3LTEuNzMgMi4zMDItNS4wNjUgMi41OTctNi40MjIuNTg3LTQuNS44NTQtOS4wMjcgMS4yNDgtMTMuNTQ3eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo=',
+        'hash.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii44NTciPjxwYXRoIGQ9Ik0xNy45OTcgOC45OThsLTUuOTcyLjA3Mi00LjAyOCA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik02IDE2Ljk5OWwtMSA2IDMxIDEgMS02eiIvPjxwYXRoIGQ9Ik0zMS45OTYgOC45OThsLTUuOTcxLjA3Mi00LjAyOSA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik0zLjk5OCAzNy4wMDRsLTEgNiAzMSAxIDEtNnoiLz48L2c+PC9zdmc+Cg==',
+        'inject.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTggNXYxMkg3djloMTV2LTdsNiAxMS02IDEydi04SDd2OWgxMXYxMmwxNC0yNXoiIGZpbGw9IiNmZmYiLz48L3N2Zz4K',
+        'join.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNDAuMDAxIDM5Ljk5bC0uMDMyLTE5Ljk1NS0xMS45NjcuMDE3djE5Ljk4M2wxMi0uMDQ2TTguMDAxIDI4LjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxTTE0LjAwMSAyOC4wMjdsLTQgLjAwNHYzLjk5N2w0LS4wMU0yNS4wMDEgMzAuMDI3bC03LTcuOTg2djE1Ljk4Nk04LjAwMSAyMC4wMjdsLTQgLjAwNHYzLjk5Nmw0LS4wMU0xNC4wMDEgMjAuMDI3bC00IC4wMDR2My45OTZsNC0uMDFNOC4wMDEgMzYuMDI3bC00IC4wMDR2My45OTdsNC0uMDFNMTQuMDAxIDM2LjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxIiBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii42MTIiLz48L3N2Zz4K',
+        'leveldb.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAyCAYAAADWU2JnAAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAALEwAACxMBAJqcGAAABh9JREFUWMPtWFtsXNUVXfuO52XjJ8GxMRBI0oAhgBJCCI9IpSppRVErVKmI9wdCQiAM4qGqjUDqRyWQEI+qIPGQ+KiUFEFLAAFVixCRGqUBSoIDcV6O7Tjx+BHb4xnP3OfZqx9jx46ZO34wjoSa/Xnu3eeus886a+17gDNxJn7AIfNNOLiDF5x3ORoDDyuqz0b9qU8pJOi70t+5k3su/YkcBUTLAmYFGNnZhfVi4ed1zXiyIspk4GM4UiFpEZrAQzsARqLw1SBCFUuEzSZAsiKOczVAM0SQG+FfIXh75Ci+WH611Tuv1R/exab0AF9z80oTcE/Xbn3QGN680PJnhvQ3gc9/kqQzrnuzJ/jTWZNIWnZWHyPJ3Kj+tpx8ICkA4Lt6rzHakxvVd0lNhiY4Od5nAu0DgIFBlcUka+9ePum77C6BXrn/EzbNd2Inx3+pkvk03yH5up3h6t0fal3qgFaWylOjB3Z/pK1hpeTAET6x0NXms/pI4LFflSSVpNIYsnMXX9r/b2480cOLssOs3gSV0RS3GKOvknwotDK+p1s8m0z3c2M+o9GFAnPz+r4qnQKwQqhSCyALYANfX1HVByZzrCKnXaIJoKYR25PV8FQ51L2bvyI11rmLFnVuXIpXWr+0LEnkRvC4GnqFmSGl1KQiVIAmEkWw5IIruY0ELrqaVMLYGR5S5XsjvdjbcpmsfOMB/u3mR9Ha0orVGsDyXNkUT+IqCCMAISKygOOn9D1uZcnQ0LHpXCn+3qk5qvonz9aHZ63M/ERbJqu5EIeRopxxsuJbFmOnwxRP9OC4iESmj1kzj7abQ4oEy/95YnJekqxdij6AVigYANGnNqDNHsNHhaTygHKyuGmsX1oHj/DGvg48AeBtUO4EJB4uWmN60u7dHJebgH/0HOanCKqzsbIoUZ2sriuqwKpvera2FSVwJDpFpniVHAGwGcDm7v+yuaaRl0pEliWrcVfgM1lVLxsATvCP0xYkXjSBvBp8nU7hPRrp1IDfhHM3pPjGKPNjfH6wawrt3EKlr0Mb5vq2neG9To6dpL48vTLF7GArSfquOr7DLaMp3lgO3oyPcO3IMf4+8Dk8seWTOtNWQmcKO1URkziA2+uacLubZ8aKYB+AHc44D8Ur0dH9pfSt2iiHZ2YHnl5LlWjgAZEof2ECWUnl6mQNVlXVF05SmBbNSfRiSdQA2EDymrMaCtL2oxsAkiA500YAEBUT5yQ6QyhLWcO8FLjYRAuxnbD4rmsL5XQocGEREg7GswXZQdm/OAo8/aCAXp7HRRBuB8Yn7TT+TGUai4aH0IDqZPEzAJUlt6nlMjnhHZOlvisfTgIqZ6WcLLa/sxnVtU3WtzPJP9MOzMyxoW7eRmW3qo4GntrTrKFIzzLzmVKVaTV6JPD12e/aAcPtIJaE9cXfed2y9fi68TzJAcA5F8pbAN46uZUB173waziPb5Mfj/VzSeAyPu3vFg3LeFxErPtr+eYbGStbVACzjI904R6RQjs6S6entDP6wWgXz2pF+f6fSE2mU3wsTIGtMANLVMsttcuY3UeoMZpW5dPtH2tssIsRNYyU+qgJNOK7jJIa7dmjt3o2P5tQ3nzNUjz3vXvgiZVMthFKPWXoZFCnmmCdaorD5pvNm0qJ1PSG9xSRL5UjIX8fABA/2o4Ds2zT6QkTSLBiPZaHgBE4GX6+2CBI0BnH6yBb0/1oLwomN8I/kFjb286nFhMIQHuoC+8SsrG+2dpRognSTz1btx/v4CW+q3mWKQpsVo7189bsMH9XuBTQVbNd6sRSB/W+CfXc+vGLer6b021Tijr/ptwEmkqnuO7T17hJVXs9R7vtLBvmfKeXHdaWwMVdlfV4JpaQg0M9fL+2EUP5Meyra5I78mk0VCS4JpZA42Rj7dkYjSZQnxnEC91fyT/6DyO96jquOf9y3G1FcH3gyc7cGNsamq0vF3zbOdCpa+pb0AZirYhcQXA0GsfQQCcOnXMh4ibAgBXBEt8VJ1GF5cZnQyQqLQChBp9A8Bd3HP+prLUOlvXqFQDWgJWf27g48LnSd2GpL1ZtM+qOfcuOqgbJ1zfTEbHaz9xsn4n/q/gfqTGjd49vU6gAAAAASUVORK5CYII=',
+        'light.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCguNzg3MzcgMCAwIC43ODc5MyAtMjcxLjI5NCAtNTI5Ljk5KSIgc3Ryb2tlPSIjZmZmIiBmaWxsPSJub25lIj48ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCgxLjQ5MjQgMCAwIDEuNDYxNiAtNTkuNDkxIC0zNDMuNDYpIiBjeD0iMjg3Ljc1IiBjeT0iNzE1Ljg2IiByeD0iMTAuNzUiIHJ5PSIxMiIgY29sb3I9IiMwMDAiIHN0cm9rZS13aWR0aD0iNC4wNzEiLz48cGF0aCBkPSJNMzYyLjUgNzE3Ljg2djE1LjVjNi4zNzEgMi4xMjggOC43MTIgMi4wMDMgMTUgMHYtMTUuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1LjAxIi8+PHBhdGggZD0iTTM2Ni41IDcxNy44NmwxLTEyaDVsMSAxMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjMuMDA2Ii8+PC9nPjwvc3ZnPgo=',
+        'link-call.svg': 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBDcmVhdGVkIHdpdGggSW5rc2NhcGUgKGh0dHA6Ly93d3cuaW5rc2NhcGUub3JnLykgLS0+Cjxzdmcgd2lkdGg9IjEwLjU4M21tIiBoZWlnaHQ9IjE1Ljg3NW1tIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMC41ODMgMTUuODc1IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogPHBhdGggZD0ibTguMjAyMSAyLjM4MTItNC44OTIyIDAuNTM2MTIgMS42MDQgMC45MjYwNC0xLjAzOTUgMS44MDA0YzAuNzM3MTktMC4zNzQwMiAxLjY0MzctMC4zODIyNyAyLjQwOTUgMC4wNTk4OTIgMC43NjUxMSAwLjQ0MTc0IDEuMjExOCAxLjIzMDEgMS4yNTc3IDIuMDU1bDEuMDM4NC0xLjc5ODYgMS42MDQgMC45MjYwNHptLTIuMzgxMyA0LjEyNDRjLTAuNzcwMTYtMC40NDQ2NS0xLjc0MDItMC4xODQ3NC0yLjE4NDggMC41ODU0Mi0wLjQ0NDY1IDAuNzcwMTYtMC4xODUgMS43NDA2IDAuNTg1MTYgMi4xODUzIDAuNzcwMTYgMC40NDQ2NSAxLjc0MjIgMC4xODUzMyAyLjE4NjktMC41ODQ4MyAwLjQ0NDY1LTAuNzcwMTYgMC4xODI5NS0xLjc0MTItMC41ODcyMS0yLjE4NTh6bS0zLjMxOTMgMS41MTU5LTEuODIxMSAzLjE1NDIgMy42NjYyIDIuMTE2NyAxLjgyLTMuMTUyNGMtMC43MzczMSAwLjM3MjY2LTEuNjQzMSAwLjM3OTYxLTIuNDA4Mi0wLjA2MjEyOS0wLjc2NTg1LTAuNDQyMTYtMS4yMTIyLTEuMjMwOS0xLjI1NjktMi4wNTYzeiIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4K',
+        'link-out.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNyAzOC45OHYzLjk4M2gxMXYxMmwxMy0yM0gxOWwtLjQ2My4wMTdjLTEuMjggNC4wNDgtNS4wNjYgNi45ODMtOS41MzcgNi45ODN6bTEyLTExLjAxN2gxMmwtMTMtMjN2MTJIN1YyMC45bDIgLjA2NGM0LjQ2NyAwIDguMjUgMi45MyA5LjUzNCA2Ljk3MnpNNi45NSAyNC4yMmE2IDYgMCAxIDEtLjA4MyAxMS40NTYiIGZpbGw9IiNmZmYiIHN0eWxlPSJpc29sYXRpb246YXV0bzttaXgtYmxlbmQtbW9kZTpub3JtYWwiLz48L3N2Zz4K',
+        'link-return.svg': 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBDcmVhdGVkIHdpdGggSW5rc2NhcGUgKGh0dHA6Ly93d3cuaW5rc2NhcGUub3JnLykgLS0+Cjxzdmcgd2lkdGg9IjEwLjU4M21tIiBoZWlnaHQ9IjE1Ljg3NW1tIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMC41ODMgMTUuODc1IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogPHBhdGggZD0ibTIuNjYyMyAxMy4yOTIgNC44OTIyLTAuNTM2MTItMS42MDQtMC45MjYwNCAxLjAzOTUtMS44MDA0Yy0wLjczNzE5IDAuMzc0MDItMS42NDM3IDAuMzgyMjctMi40MDk1LTAuMDU5ODkyLTAuNzY1MTEtMC40NDE3NC0xLjIxMTgtMS4yMzAxLTEuMjU3Ny0yLjA1NWwtMS4wMzg0IDEuNzk4Ni0xLjYwNC0wLjkyNjA0em0yLjM4MTMtNC4xMjQ0YzAuNzcwMTYgMC40NDQ2NSAxLjc0MDIgMC4xODQ3NCAyLjE4NDgtMC41ODU0MiAwLjQ0NDY1LTAuNzcwMTYgMC4xODUtMS43NDA2LTAuNTg1MTYtMi4xODUzLTAuNzcwMTYtMC40NDQ2NS0xLjc0MjItMC4xODUzMy0yLjE4NjkgMC41ODQ4My0wLjQ0NDY1IDAuNzcwMTYtMC4xODI5NSAxLjc0MTIgMC41ODcyMSAyLjE4NTh6bTMuMzE5My0xLjUxNTkgMS44MjExLTMuMTU0Mi0zLjY2NjItMi4xMTY3LTEuODIgMy4xNTI0YzAuNzM3MzEtMC4zNzI2NiAxLjY0MzEtMC4zNzk2MSAyLjQwODIgMC4wNjIxMjkgMC43NjU4NSAwLjQ0MjE2IDEuMjEyMiAxLjIzMDkgMS4yNTY5IDIuMDU2M3oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+Cg==',
+        'mongodb.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEbSURBVEiJ7davSwRBGMbx76rJ4Gky62EThNOmWfwL7mlm0WAw2U2mK3aDwj5gMBgEi8FmEbGIWYMGwR8gJssGhb2dmdsNIr5t5n3nMy8TZibL85wmY6hR7e+AkmYlTTUCSpoAjoEjSa1aoKRhIAfaQAc4kTRap8NtYPnbeAnYHQiUNAZslaTWJS0O0uEGMF4ynwG9JFBSBmxWbLYgqZPSYRuYrAABVlPA+QAGMJcCTkeAMyngcwT4mQI+RYCPKeAZ8BYAL6JB2y/AQQB0NFjEXkXu0PZlEmj7BjgtSd0Ca/3WhS6HLj/P6gPo2u57vpWg7VdgBbgrpnZsX1etCV6wtt+Bh2J4H6r//Y/USGTdPnAOXIUKs/+fQ+34AkBdPov8hXWQAAAAAElFTkSuQmCC',
+        'mouse.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB98CBBcXKYRGaWIAAAIfSURBVEjHrVY9a1RBFD33bjAhNqYTBW0kpBErawPpjIq4RWyEYG2hiIWdnY3+Aiut/GhiYyeIhb/AJGgQFAtTpFlWCYjnHIvMw3XzXvI2m1vNx50zc7/OHaClSLLtB2WMsUXSkiSRfHgYYAAA29clmeSZJt0cBdh2pwz7h/HKm9qRJ2OD2Z4vpi7vF5SJOn9lZgV0SdKk7bsAEBEXbSeALdtvIuLPoP4uIVmBzktyMdG2RdJlooH1hcFzTaDvCtgLSfNl7bgkD1gxK+lWccPzRjeQXC5gdwaVSJ4eBKxeZPt20e8OO726+ZOkrzUX/Qc4tLci6WN1SRZnV/uzth+3jT5JZOYqgJkskdkVnsxcbwvY6XRgmxExASCaKiVGzNG9S8/2WFQyUbN2VdIvAOuZ2Ss+/l1z8REAc7bnALiR86qELolsSZ9tr5REfkTytaSfA4lu2z8q4ohhQABd25sRcTIiFm1fADATEZOl7PoANgA8i4g1Sd3MXAJwIiK4y+SI6GfmhzJ91YInFw7MhzUpNh7BHijKto+OAhARYVtVPuYwU0TE5REBp2z3M1N1Tn5q+9uIreELydWmzRsl9061LLtzhRPP79nQSXq4hQ7PSR4juW37ZSNr24akqfLK7ySvNdDWFUnbRW+61U9C0lo5sCnpHslFSfclbXmnsbytY5s9fwqSzkra8L/OZJLvq59DK7A635EM29O9Xm/fc38BtSAs2DgLlw8AAAAASUVORK5CYII=',
+        'parser-csv.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDcuMDM0bC0yMiAuMDQzdjQ1Ljk1OGgzMnYtMzZ6bS0xNC44MzggMTRoMi44Mzh2MTUuMDAxaC0zVjI1LjczOGMtMS4wMjcuOTYtMi42MDYgMS4xMTQtNCAxLjU3NFYyNC43NmMuNzM0LS4yNCAxLjUzLS43MDYgMi4zOS0xLjM3My44NjEtLjY3MyAxLjQ1Mi0xLjQ1NyAxLjc3Mi0yLjM1MXptMTUuOTQ4IDBjMS40NDggMCAyLjgyNC4zOTIgMy42NSAxLjE3My44MjguNzggMS4yNCAxLjc1MSAxLjI0IDIuOTEyIDAgLjY2LS4xMiAxLjI5LS4zNiAxLjg5YTcuMTQzIDcuMTQzIDAgMCAxLTEuMDUgMS44NzJjLS4zNC40MzMtLjk1MiAxLjA1Ny0xLjg0IDEuODctLjg4Ni44MTUtMS42ODcgMS4zNTUtMS45MjcgMS42MjItLjIzMy4yNjctLjQyMy40MDgtLjU3LjY2Mmg1Ljc0OHYzSDIxLjk4Yy4xMDctLjk4Ny40MjctMi4xOTIuOTYtMy4wNzIuNTM0LS44ODcgMS44MjUtMi4wNiAzLjQtMy41MjIgMS4yNjctMS4xOCAxLjk3Mi0xLjk4MiAyLjI1OS0yLjQwMi4zODctLjU4LjQwMi0xLjE1NC40MDItMS43MjEgMC0uNjI3LjAwOC0xLjEwOC0uMzMyLTEuNDQxLS4zMzMtLjM0LTEuMDM1LS41MS0xLjYyOS0uNTEtLjU4NyAwLTEuMDUzLjE3OC0xLjQuNTMxLS4zNDcuMzU0LS41NDYgMS4zMTYtLjYgMi4xMzdoLTMuMDM5Yy4xNjctMS41NDguOTI4LTMuMzE1IDEuODA5LTMuOTg5Ljg4LS42NzMgMS45OC0xLjAxMSAzLjMtMS4wMTF6TTE3LjAwMiAzMy4wMzZoM3YxLjkyOGMwIC44MTQtLjA3MyAxLjQ1NS0uMjEzIDEuOTIyLS4xNC40NzMtLjQwNy44OTgtLjggMS4yNzEtLjM4Ny4zNzQtLjg4LjY2Ni0xLjQ4MS44OGwtLjU0OS0xLjE2MWMuNTY3LS4xODcuOTY5LS40NDMgMS4yMS0uNzcuMjQtLjMyNy4zNjctLjUwMy4zOC0xLjA3aC0xLjU0N3oiIGZpbGw9IiNmZmYiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIuNjEyIi8+PC9zdmc+Cg==',
+        'parser-html.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDcuMDM0bC0yMiAuMDQzdjQ1Ljk1OGgzMnYtMzZ6bS0xMyAxM2wzIDItNiA4IDYgOC4wMDEtMyAyLTctMTB6bTEzIDBsNyAxMC03IDEwLjAwMS0zLTIgNi04LTYtOHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIuNjEyIi8+PC9zdmc+Cg==',
+        'parser-json.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDcuMDM0bC0yMiAuMDQzdjQ1Ljk1OGgzMnYtMzZ6bS05LjE3IDEwLjAwMmgxLjE5N3YzLjExYy0uOTc0IDAtMi4xLjA1Ny0yLjM4MS4xN2ExLjE0NiAxLjE0NiAwIDAgMC0uNjA2LjQ5M2MtLjEzMS4yMTctLjE5Ny41OTMtLjE5NyAxLjEzMSAwIC41NDYtLjA0IDEuNTgzLS4xMTkgMy4xMS0uMDQ0Ljg1OC0uMTU4IDEuNTU2LS4zNDIgMi4wOTMtLjE4NC41My0uNDIxLjk2OC0uNzEgMS4zMTUtLjI4MS4zNDctLjcxNi43MDUtMS4zMDMgMS4wNzguNTE3LjI5NS45MzkuNjQyIDEuMjYzIDEuMDQuMzM0LjM5MS41ODguODY5Ljc2NCAxLjQzMy4xNzUuNTYzLjI5IDEuMzE4LjM0MiAyLjI2M2E4Ni45IDg2LjkgMCAwIDEgLjA5MiAyLjc1NmMwIC41NzMuMDcuOTcyLjIxIDEuMTk4LjE0LjIyNS4zNS4zOTUuNjMxLjUwNy4yOS4xMjIgMS40MDguMTgyIDIuMzU2LjE4MnYzLjEyMUgxNi44M2MtMS4xODUgMC0yLjA5My0uMDk1LTIuNzI1LS4yODVhMy42OSAzLjY5IDAgMCAxLTEuNjA0LS45MjQgMy4zIDMuMyAwIDAgMS0uODY5LTEuNjEzYy0uMTQ5LS42MzMtLjIyNC0xLjYzNC0uMjI0LTMuMDA0IDAtMS41OTYtLjA3LTIuNjMzLS4yMS0zLjExLS4xOTItLjY5My0uNDg3LTEuMTg3LS44ODItMS40ODItLjM4Ni0uMzAzLTIuNTA5LS41MzktMy4zMTYtLjU4MnYtM2MuNjQtLjAzNSAyLjY0OS0uMTkgMi45NzQtLjM0Ni4zMjQtLjE1Ni42MDUtLjQxNy44NDItLjc4MS4yMzctLjM3My4zOTgtLjgzNi40ODYtMS4zOS4wNy0uNDE3LjEwNi0xLjE0My4xMDYtMi4xNzUgMC0xLjY4Mi4wOC0yLjg1Mi4yMzgtMy41MTEuMTU4LS42NjguNDQzLTEuMjAxLjg1NS0xLjYuNDEzLS40MDggMS4wMTItLjcyOSAxLjgwMS0uOTYzLjUzNS0uMTU2IDMuNjc3LS4yMzQgMi41MjctLjIzNHptNS4xNTcgMGgxLjE5N2MxLjE1IDAgMS45OTMuMDc4IDIuNTI4LjIzNC43OS4yMzQgMS4zODguNTU1IDEuOC45NjMuNDEzLjM5OS42OTguOTMyLjg1NiAxLjYuMTU4LjY1OS4yMzggMS44My4yMzggMy41MTEgMCAxLjAzMi4wMzYgMS43NTguMTA2IDIuMTc0LjA4Ny41NTUuMjUgMS4wMTguNDg2IDEuMzkuMjM3LjM2NS41MTcuNjI2Ljg0Mi43ODIuMzI0LjE1NiAyLjMzMy4zMTEgMi45NzMuMzQ2djNjLS44MDcuMDQzLTIuOTMuMjc4LTMuMzE1LjU4Mi0uMzk1LjI5NS0uNjkuNzg5LS44ODMgMS40ODItLjE0LjQ3Ny0uMjA5IDEuNTE0LS4yMDkgMy4xMSAwIDEuMzctLjA3NSAyLjM3LS4yMjQgMy4wMDQtLjE1LjY0MS0uNDQgMS4xOC0uODcgMS42MTNhMy42OSAzLjY5IDAgMCAxLTEuNjAzLjkyNGMtLjYzMi4xOS0zLjkwOS4yODUtMi43MjUuMjg1aC0xLjE5N3YtMy4xMjFjLjk0NyAwIDIuMDY2LS4wNiAyLjM1Ni0uMTgyLjI4LS4xMTIuNDktLjI4Mi42My0uNTA4LjE0LS4yMjUuMjExLS42MjUuMjExLTEuMTk3IDAtLjM5OS4wMy0xLjMxNi4wOTItMi43NTYuMDUzLS45NDUuMTY2LTEuNy4zNDItMi4yNjQuMTc1LS41NjMuNDMtMS4wNDEuNzY0LTEuNDMxYTQuNDM0IDQuNDM0IDAgMCAxIDEuMjYzLTEuMDQxYy0uNTg3LS4zNzMtMS4wMjItLjczMS0xLjMwMi0xLjA3OC0uMjktLjM0Ny0uNTI3LS43ODYtLjcxMS0xLjMxNS0uMTg1LS41MzctLjI5OC0xLjIzNS0uMzQyLTIuMDk0LS4wOC0xLjUyNi0uMTItMi41NjMtLjEyLTMuMTA5IDAtLjUzOC0uMDY1LS45MTQtLjE5Ny0xLjEzYTEuMTQ2IDEuMTQ2IDAgMCAwLS42MDUtLjQ5NWMtLjI4LS4xMTMtMS40MDctLjE3LTIuMzgtLjE3eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9Ii42MTIiLz48L3N2Zz4K',
+        'parser-xml.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDcuMDM0bC0yMiAuMDQzdjQ1Ljk1OGgzMnYtMzZ6bS0xMyAxM2wzIDItNiA4IDYgOC4wMDEtMyAyLTctMTB6bTEzIDBsNyAxMC03IDEwLjAwMS0zLTIgNi04LTYtOHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIuNjEyIi8+PC9zdmc+Cg==',
+        'parser-yaml.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjYuMDAxIDYuOTg3bC0yMiAuMDQzdjQ1Ljk1OGgzMlYxNi45ODd6TTEwLjU2NyAxOS4zNjJoNS4zNTJjLjc2OCAwIDEuMjgyLjEwNCAxLjU0My4zMTMuMjczLjIwOC40MS41NzMuNDEgMS4wOTMgMCAuNTIxLS4xNjMuODg2LS40ODggMS4wOTQtLjMxMy4yMDktLjg5Mi4zMTMtMS43MzkuMzEzaC0uNjQ0bDQuNzI2IDguNDc3IDQuOTAzLTguNDc3aC0uODAxYy0uNzAzIDAtMS4xOTEtLjEwNC0xLjQ2NS0uMzEzLS4yNzMtLjIwOC0uNDEtLjU3My0uNDEtMS4wOTQgMC0uNTQ2LjExNy0uOTE4LjM1Mi0xLjExMy4yMzQtLjE5NS44MjYtLjI5MyAxLjc3Ny0uMjkzaDMuNTk0Yy45OSAwIDEuNjIuMTA0IDEuODk0LjMxMy4yODcuMTk1LjQzLjU2LjQzIDEuMDkzIDAgLjUyMS0uMTQzLjg4Ni0uNDMgMS4wOTQtLjI3My4yMDktLjguMzEzLTEuNTgyLjMxM2gtLjMxMmwtNi42NCAxMS4zODd2Ni4yMTFoMi44NWMxLjAwMyAwIDEuNjQxLjA5OCAxLjkxNS4yOTMuMjg2LjE4Mi40My41MzQuNDMgMS4wNTUgMCAuNTM0LS4xNDQuOTA1LS40MyAxLjExMy0uMjc0LjE5NS0uODM0LjI5My0xLjY4LjI5M2gtOS4yNzdjLS44NDcgMC0xLjQwNi0uMDk4LTEuNjgtLjI5My0uMjczLS4yMDgtLjQxLS41OC0uNDEtMS4xMTMgMC0uNTIxLjE1LS44NzMuNDUtMS4wNTUuMzEyLS4xOTUuOTUtLjI5MyAxLjkxMy0uMjkzaDIuODMyVjMzLjI5bC02LjUwNC0xMS4xMTRoLS4zMzJjLS43ODEgMC0xLjMxNS0uMTA0LTEuNjAxLS4zMTItLjI4Ny0uMjA5LS40My0uNTczLS40My0xLjA5NCAwLS40ODIuMTE3LS44MzMuMzUxLTEuMDU1LjI0OC0uMjM0LjYyNi0uMzUxIDEuMTMzLS4zNTF6IiBmaWxsPSIjZmZmIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iLjYxMiIvPjwvc3ZnPgo=',
+        'range.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOC4wMDMgNDIuMDA3aDV2LTE4aC01ek04LjAwMyAyMC4wMDZoNXYtNWgtNXpNMjUgNTIuMDA3aDh2LTI5aC04ek0yNSAxNS4wMWg4di04aC04eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSJub25lIi8+PHBhdGggZD0iTTE1LjgxOSAxNS42MzlsNi4yOTMtMi41MTdNMTUuMTkgNDIuMzg1bDcuMjM2IDMuNzc1IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS4yNTg2MiIvPjwvc3ZnPgo=',
+        'rbe.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wcPFiwJnbnE1AAAAIlJREFUWMPtl7sJgEAQRGcPYwMbELQni7AJW7QYEzEYYwX1vog4L13YeWw0CwjxR0hOjKCEiC8LyZXkTLIvIWIBMiPJ1ne3xVzlsMDMrubn2RMu5UqhYUVlciMZyUhGMpKRjGQk87ZMauGuPAIaABuADsCQMzyoA6eExVRSd/eKRHrUubuxEJ9gB2tHwAJpckKMAAAAAElFTkSuQmCC',
+        'redis.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAJdSURBVEiJ7ZVNSFVREMd/zxQL2kSBQl+4qSgoKVxKrSoo+lgNLdUylSzaJLWpNhG0SPuwoIW0sTvRIhShTSRRELTQQEOjoiCoJLEPi1Ly3+KdZ+c9nwbiIqiBw+XMnf/vMnPmzE0lScJcWsGc0v4D58QK/xRgZkXA0rD94u7DswKa2QrgIFADlAT3TzPrAJrd/X4+XSruQzNLAduBemAH6ZK8B7qAcWA1sCWE9wAtwA13H5uEJEmCpCWSjkl6od/WLckkFSVJQmZJ2iCpTdL3EPdO0klJJUmSTKb8BigGPgOXgCvu/jRfSu7+BKgys6aQST1wCjgOzM8Ai4FeoNLdR6eraw54CDhtZmeBh8AmyD6UcuCRmTUD7e7+bSagmRUCVUAdsDHjzwAvA/uAdcA14JyZXQeuuvtADmgRcAA4BCwP7g/ATWDyUBSK3CHpoqRX0eHcldQoqU5Sq6TR4B+WdEvSPUljkpQkSRbwmaSKsC+QtFNSl6SfyrZ+SbWSFoTYckmDucC+SNAjqToSlEnaE1Zl9MHdkh5Eur4YOBi9GA/PEUnnJa2KenChpMOSnoeYiUg3mJvygKQKSSWSTkh6HYn6JfVK+hR8X0M91wTNQCbleNqsDC2wzN3PAGXALuAOsBgoBd4CTSGmIehqgjarbRpJd3w1UG1mj4HWdP96Z54e3GpmR4FtQAp4CVyAqcNhM9AA7AWKgBGgDbhNejisB44Aa4OkG2gGOt19YgowApcC+4HaqHkz9gNoB1rCvc6yvMAIPI/0GMtcrY+kr+XQdJoZgbOxv/8n9Q8CfwE7dg5XDmjPIwAAAABJRU5ErkJggg==',
+        'rpi.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii4xMzgiPjxwYXRoIGQ9Ik0yMC4yMSAyMC45OGMyLjA5Ni0uMDIzIDQuNjk0IDEuNTYyIDQuNjgzIDMuMDU4LS4wMSAxLjMyLTEuODI0IDIuMzktNC42NjcgMi4zNy0yLjc4NC0uMDM0LTQuNjU2LTEuMzQ0LTQuNjUtMi42MjMuMDA1LTEuMDUzIDIuMjcxLTIuODY2IDQuNjM0LTIuODA1ek0xMy4wNyAyMS44N2MuNDY5LS4wMDkuOTU0LjAyOCAxLjQ0OS4xMTEgMS40NTguMjQ1LTYuOTkgNy42MjMtNy4xMiA1Ljk3Ny0uMTE2LTMuNzU2IDIuMzktNi4wMjcgNS42NzEtNi4wODh6TTI2LjkxIDIxLjk5YzMuMjguMDYxIDUuNzg3IDIuMzMgNS42NyA2LjA4Ni0uMTMgMS42NDUtOC41NzctNS43My03LjExOS01Ljk3NWE3LjgzIDcuODMgMCAwIDEgMS40NDktLjExMXpNMjUuNzYgMjYuNTljMS41Ni4xNDMgMy4xNDMgMS4wOCA0LjE3NSAyLjY0MyAxLjY1MiAyLjUgMS4yNyA1LjY1Ni0uODU1IDcuMDQ4LTIuMTI1IDEuMzkyLTUuMTg1LjQ5Mi02LjgzNy0yLjAwOC0xLjY1Mi0yLjUtMS4yNjktNS42NTYuODU1LTcuMDQ4Ljc5Ny0uNTIyIDEuNzI1LS43MiAyLjY2Mi0uNjM1ek0xNC43IDI2Ljg0Yy45MzctLjA4NiAxLjg2NS4xMTMgMi42NjEuNjM1IDIuMTI1IDEuMzkyIDIuNTA4IDQuNTQ4Ljg1NiA3LjA0OC0xLjY1MiAyLjUtNC43MTIgMy4zOTctNi44MzcgMi4wMDUtMi4xMjQtMS4zOTItMi41MDctNC41NDUtLjg1NS03LjA0NSAxLjAzMi0xLjU2MyAyLjYxNC0yLjUgNC4xNzUtMi42NDN6TTMzLjA1IDI5LjZhLjcyOC43MjggMCAwIDEgLjIwNC4wMjZjMy44MDYgMi4xNzMgMy4xNDUgNy4wMSAxLjA5MiA4LjY2LTEuODA4LjgwNC0zLjI5LTguNjUzLTEuMjk2LTguNjg2ek02Ljk1IDI5LjczYzEuOTk0LjAzMy41MTIgOS40OS0xLjI5NiA4LjY4Ny0yLjA1My0xLjY1MS0yLjcxNC02LjQ4NiAxLjA5Mi04LjY2YS43MzguNzM4IDAgMCAxIC4yMDQtLjAyN3pNMjAuMyAzNi4yM2MyLjgzMi0uMDE0IDUuMTQxIDIuMDkzIDUuMTU2IDQuNzA0di4wNDljLjAxNSAyLjYxLTIuMjY5IDQuNzM4LTUuMSA0Ljc1Mi0yLjgzMi4wMTQtNS4xNDEtMi4wOS01LjE1Ni00LjcwMWEyLjk5NiAyLjk5NiAwIDAgMSAwLS4wNTFjLS4wMTUtMi42MTEgMi4yNjgtNC43NCA1LjEtNC43NTN6TTMxLjY2IDM4LjAyYy40LS4wMTEuNzc3LjEwMiAxLjExNS4zNjQuOTEuOTA3IDEuNDQzIDQuMzItLjE1IDYuMzY2LTIuMTk1IDMuMDQ1LTUuMTY1IDMuMTY0LTYuMjcyIDIuMzE2LTEuMTU3LTEuMDkyLS4yNzQtNC40ODIgMS4zMTMtNi4zNCAxLjM2MS0xLjUzOCAyLjc5My0yLjY3NSAzLjk5NC0yLjcwNnpNOC42NSAzOC43NGMxLjI5LjA1NSAyLjgzNiAxLjA3NiA0LjA5OSAyLjU0IDEuNDY2IDEuNzY4IDIuMTM1IDQuODcyLjkxIDUuNzg4LTEuMTU3LjY5OC0zLjk2OC40MDktNS45NjctMi40NjMtMS4zNDctMi40MDktMS4xNzUtNC44Ni0uMjI5LTUuNThhMi4wNyAyLjA3IDAgMCAxIDEuMTg3LS4yODV6TTIwLjM1IDQ3LjIxYzIuMDYtLjA5IDQuODI0LjY2MyA0LjgzIDEuNjYyLjAzMy45Ny0yLjUwOCAzLjE2My00Ljk2NyAzLjEyLTIuNTQ3LjExLTUuMDQ1LTIuMDg1LTUuMDEyLTIuODQ2LS4wMzgtMS4xMTYgMy4xMDItMS45ODcgNS4xNDktMS45MzZ6TTM1LjEzIDExLjAzYy0uNTY5IDcuMzU2LTcuNDA5IDE0LjEyOC0xMS42MjkgNi45NzEgMS4zNjMtMS41MiAzLjg1My0zLjMwNiA4LjEzMy01LjUxMy0zLjMzIDEuMTMyLTYuMzM1IDIuNjQtOC44NSA0LjcxNi01LjgzOC00LjI5NiA0LjczNC05LjY3NSAxMi4zNDYtNi4xNzR6Ii8+PHBhdGggZD0iTTUuNDIgMTEuMDNjLjU2OSA3LjM1NiA3LjQwOSAxNC4xMjggMTEuNjI5IDYuOTcxLTEuMzYzLTEuNTItMy44NTMtMy4zMDYtOC4xMzMtNS41MTMgMy4zMyAxLjEzMiA2LjMzNSAyLjY0IDguODUgNC43MTYgNS44MzgtNC4yOTYtNC43MzQtOS42NzUtMTIuMzQ2LTYuMTc0eiIvPjwvZz48L3N2Zz4=',
+        'serial.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNC41IDQ3LjVoNGwuMDQtMzQuOTk1TDE5LjUgMTIuNXYzNWgxMXYtMzVoNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIiBzdHJva2Utd2lkdGg9IjUiLz48L3N2Zz4K',
+        'sort.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAuMDAxIDE5Ljk1NWwtNy41LTguMTc4LTcuNSA4LjE3OGg1djI4aDV2LTI4ek0zNS4wMDEgMzkuOTU1bC03LjUgOC4xNzctNy41LTguMTc3aDV2LTI4aDV2Mjh6IiBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii41MzEiLz48L3N2Zz4K',
+        'split.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYuMDAxIDM5Ljk5bC0uMDMyLTE5Ljk1Ny0xMS45NjguMDE3djE5Ljk4M2wxMi0uMDQ1TTM0LjAwMSAyOC4wMjdsLTQgLjAwNHYzLjk5N2w0LS4wMU00MC4wMDEgMjguMDI3bC00IC4wMDR2My45OTdsNC0uMDFNMjcuMDAxIDMwLjAyN2wtNy03Ljk4NnYxNS45ODZNMzQuMDAxIDIwLjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxTTQwLjAwMSAyMC4wMjdsLTQgLjAwNHYzLjk5N2w0LS4wMU0zNC4wMDEgMzYuMDI3bC00IC4wMDR2My45OTdsNC0uMDFNNDAuMDAxIDM2LjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxIiBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii42MTIiLz48L3N2Zz4K',
+        'status.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAzMGg5bDMuNS0xMCA1IDI1IDUuMTI1LTMwTDI3LjUgNDAgMzEgMzBoOSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2UtbWl0ZXJsaW1pdD0iNi41IiBzdHJva2Utd2lkdGg9IjQiLz48L3N2Zz4K',
+        'subflow.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjUgMjUuOTRoN2MuNTggMCAxLS40MiAxLTF2LTJjMC0uNTgtLjQyLTEtMS0xaC03Yy0uNTggMC0xIC40Mi0xIDF2MmMwIC41OC40MiAxIDEgMXptLTE3IDEyaDdjLjU4IDAgMS0uNDIgMS0xdi0yYzAtLjU4LS40Mi0xLTEtMUg4Yy0uNTggMC0xIC40Mi0xIDF2MmMwIC41OC40MiAxIDEgMXptLS40MTYgMTFDNS42MjQgNDguOTQgNCA0Ny4zMTUgNCA0NS4zNTZWMTQuNTIyYzAtMS45NiAxLjYyNS0zLjU4MiAzLjU4NC0zLjU4MmgyNC44MzJjMS45NiAwIDMuNTg0IDEuNjIzIDMuNTg0IDMuNTgydjMwLjgzNGMwIDEuOTYtMS42MjUgMy41ODQtMy41ODQgMy41ODR6TTMyIDM2Ljk0SDE5YzAgMi4xOS0xLjgxIDQtNCA0SDd2NC40MTZjMCAuMzUuMjM1LjU4NC41ODQuNTg0aDI0LjgzMmMuMzUgMCAuNTg0LS4yMzUuNTg0LS41ODR2LTguNDE3em0xLTJ2LTZoLThjLTIuMTkgMC00LTEuODEtNC00aC0xYy00LjMzMy0uMDAyLTguNjY3LjAwNC0xMyAwdjZoOGMyLjE5IDAgNCAxLjgxIDQgNGgxM3ptMC0xNnYtNC40MThjMC0uMzUtLjIzNS0uNTgyLS41ODQtLjU4Mkg3LjU4NGMtLjM1IDAtLjU4NC4yMzMtLjU4NC41ODJ2OC40MTdjNC4zMzMuMDAyIDguNjY3LjAwMSAxMyAuMDAxaDFjMC0yLjE5IDEuODEtNCA0LTRoOHoiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIi8+PC9zdmc+Cg==',
+        'swap.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNMTIuNzg3IDI2LjQzMkw5LjUgMTguMDAzaC00LjV2LTVoOGwyLjI4NiA2LjI4Nm01LjM1NyAxNC4yODZsMy4zNTcgOC40MjhoNHYtOGw3IDEwLjUtNyAxMC41di04aC03LjVsLTIuMzU3LTYuMjg2Ii8+PHBhdGggZD0iTTEzLjAwMSA0Ny4wMDNsMTAuODU3LTI5aDQuMTQzdjhsNy0xMC41LTctMTAuNXY4aC03LjVsLTExIDI5aC00LjV2NXoiLz48L2c+PC9zdmc+',
+        'switch.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS4wMDEgMjcuMDA2djZsMTAuMTItLjAxNCAzLjAyMyA3LjcyOCAyLjM1NyA2LjI4Nmg3LjV2OGw3LTEwLjUtNy0xMC41djhoLTRsLTMuMzU3LTguNDI5Yy0uNDc1LTEuMjY3LS45My0yLjQzNS0xLjI5NS0zLjYwMWw0LjUxLTExLjk3SDI4djhsNy0xMC41LTctMTAuNXY4aC03LjVMMTUuMDk4IDI3eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSJub25lIi8+PC9zdmc+Cg==',
+        'template.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAuMDQxIDQ3LjkxdjMuNDg1aC0xLjVxLTYuMDI3IDAtOC4wODQtMS43OS0yLjAzMy0xLjc5Mi0yLjAzMy03LjE0VjM2LjY4cTAtMy42NTUtMS4zMDctNS4wNTgtMS4zMDYtMS40MDQtNC43NDMtMS40MDRoLTEuNDc2di0zLjQ2aDEuNDc2cTMuNDYgMCA0Ljc0My0xLjM4IDEuMzA3LTEuNDA0IDEuMzA3LTUuMDF2LTUuODA4cTAtNS4zNDkgMi4wMzMtNy4xMTYgMi4wNTctMS43OSA4LjA4My0xLjc5aDEuNTAxdjMuNDZoLTEuNjQ2cS0zLjQxMiAwLTQuNDUzIDEuMDY1LTEuMDQgMS4wNjUtMS4wNCA0LjQ3N3Y2LjAwMnEwIDMuOC0xLjExNCA1LjUxOC0xLjA4OSAxLjcxOS0zLjc1IDIuMzI0IDIuNjg1LjY1MyAzLjc3NSAyLjM3MSAxLjA4OSAxLjcxOSAxLjA4OSA1LjQ5NHY2LjAwMnEwIDMuNDEyIDEuMDQgNC40Nzd0NC40NTMgMS4wNjV6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iLjcxOSIvPjwvc3ZnPgo=',
+        'timer.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBjb2xvcj0iIzAwMCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTU0MCAtOTg3LjM2KSI+PHBhdGggZD0iTTU2NS40MyAxMDAxLjljNi41NjIgMi4wODkgMTEuMzE2IDguMjMzIDExLjMxNiAxNS40ODggMCA4Ljk3NS03LjI3NSAxNi4yNS0xNi4yNSAxNi4yNXMtMTYuMjUtNy4yNzUtMTYuMjUtMTYuMjVjMC0yLjgwMi43MS01LjQzOCAxLjk1OC03Ljc0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIzIiBzdHlsZT0iaXNvbGF0aW9uOmF1dG87bWl4LWJsZW5kLW1vZGU6bm9ybWFsIi8+PGNpcmNsZSBjeD0iNTYwIiBjeT0iMTAwMS40IiByPSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjMiIHN0eWxlPSJpc29sYXRpb246YXV0bzttaXgtYmxlbmQtbW9kZTpub3JtYWwiLz48cGF0aCBkPSJNNTYwIDEwMTQuNGMtMS4yMDYgMC0xMS0xMC45OTktMTIuMzU0LTkuOTc1UzU1NyAxMDE2LjE0OCA1NTcgMTAxNy40czEuMzYgMyAzIDMgMy0xLjM2MSAzLTMtMS43OTQtMy0zLTN6IiBmaWxsPSIjZmZmIi8+PC9nPjwvc3ZnPgo=',
+        'trigger.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNC41IDQ3LjQ2aDRsLjA0LTM0Ljk5NSAxMC45Ni0uMDA1djM1aDE2IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIHN0cm9rZS13aWR0aD0iNSIgZmlsbD0ibm9uZSIvPjwvc3ZnPgo=',
+        'watch.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzU1IC03MDQuMzYpIj48Y2lyY2xlIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00My4wOTEgLTQ0Ljc1Mikgc2NhbGUoLjgxODE4KSIgY3g9IjUwNS41IiBjeT0iOTQxLjg2IiByPSIxNC41IiBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNMzc3LjYyIDczNy44Nmw4Ljg3NyAxNS41IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI2Ii8+PC9nPjwvc3ZnPgo=',
+        'white-globe.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMTJhMTggMTggMCAwIDAtMTQuMjQ2IDcuMDMzbDIuNTI3Ljg0NCAxLjk4My0xLjc5NyA0Ljg5LTMuNzE1Ljk5LjkzLTQuMDg1IDEuOTE4LS4wNjMgMi40MTYgMy4yMi0uODA1Yy45NS0uNjggMS44OTktMS4zNjQgMi44NDktMi4wNDVsLS4yNDktMi4yOWgxLjM2NGMxLjUwNi0uNTE3IDMuMDEzLTEuMDMyIDQuNTItMS41NDhsMS4zNDEgMS4zMjUtLjM1MSAxLjk1Ny0yLjA0My0uMTg2IDEuOTgyIDIuNjYyLTIuNDc3IDEuODU4di0xLjYxbC0yLjI5LjEyM2MtLjg2OC42Ni0xLjczNSAxLjMyMi0yLjYwMiAxLjk4M2wtLjM3MSAzLjM0My0zLjA5Ni40OTctMS4wNTMgMi40MTQuNDk0LjQ5NiAxLjE3OC0uMzEgMS4yMzgtMS40MjUgMi4xMDYuMzcxIDEuMTEzIDEuMjM5YzEuNTY5LjY5MSAzLjEzOSAxLjM4MiA0LjcwNyAyLjA3NEgxMS4wNjhsLTEuNjcyIDEuNDU1LS4zMSAyLjY2MiAxLjc5NyAyLjg1IDQuNTgyLjg2Ny45OSAyLjY2Mi0uMzcxIDMuMDk2IDIuMTA1IDEuNjEgMy4yODEuMzFMMjUgNDMuMTU4bC4zNy0xLjYxLjU2LTIuMDQ0Yy40OTUtLjQ5NS45ODgtLjk5MSAxLjQ4NC0xLjQ4NmwuMTI1LTEuNjctMi44NS0xLjY3Mi0xLjQ4NC0yLjE2OCAxLjU0Ny40OTYgMi40MTYgMi40MTQgMi4zNTEtMS4zLjE4Ni0yLjY2My0yLjQxNC0uMzcxLjEyMy0xLjMzMmg0LjY0NGwxLjQyNCAyLjJjLjU3OC4zMDkgMS4xNTcuNjE3IDEuNzM1LjkyN2wtLjI0OS0zLjEyN2gxLjIzOWwxLjMgMy40MzcuNDA1LTEuNDJBMTggMTggMCAwIDAgMzggMzBhMTggMTggMCAwIDAtMTgtMTh6TTIuOTU3IDMzLjgwOWwtLjUxOC4wNDNhMTggMTggMCAwIDAgMi42NzYgNi4yMzhjLjIxLS42MjguNDE4LTEuMjU2LjYyNy0xLjg4NXYtMi4yOUw1IDM0LjI0MmwtMi4wNDMtLjQzNHptMjUuNTI3IDEyLjA0OWwtNS40OTYgMS44ODlhMTggMTggMCAwIDAgNS40OTYtMS44ODl6IiBjb2xvcj0iIzAwMCIgZmlsbD0iI2ZmZiIgc3R5bGU9Imlzb2xhdGlvbjphdXRvO21peC1ibGVuZC1tb2RlOm5vcm1hbCIvPjwvc3ZnPg==',
+        'parser-markdown.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAoCAYAAADpE0oSAAAABmJLR0QA/wD/AP+gvaeTAAAB7UlEQVRYw+2VPWhUQRSFv/NcloTFxCRCsBItlNiksrQxtUIKC7W2tFOwEIIoapFCtFFsokmRQmzSJ4WxVgsVF1kkEUkwKqgxPyQem1kYhk3eIiEozIHHm3vveffOvDl3BjIyMjIy/nWoObB9EOiJYuuS3qQf2O4CDgEF4OBuSPoe4gKOAh1RjSVJ87RIVtget70QPXXbZxJep+37Ib4Y3nO2z0ecHtuzSa7xtGYlGu8F+iO7H7hi+4Wk92ElF4CzQFfEWwGqkV0AfVEuA7W0cFGyFYPAiO0acAK4mBT9a1RK4nuAYeA1cBI4vFPiqrTBqQGXw0qL3SwM0FtGsN0dFNwZd0tT2bb3Bf+KpNXtCv8Moqkm/i9AdzJpAbeBA8HuS2IDwBjwG5iyPbbdr/sETAdyPJnHwHq6YKAODAGngP1J/EjwDwIfJLkoOVxuAo1gbwBPgtDUgj8BzGwRE7AK3JU0U9pOkp4BN4AFYBa4lfyBmPsZGAHetQhvAk+Bh+32McAk8AC4Kqlewn0J3AO+Jf63wKikX20XlrQGXJf0vA2ugUdhSzaC+ytwTdKrrdrpB7CYqLeZcDO+PIClSO1rsdgkLdu+AxwHjgUxTu3k7aRo/xqSlhPeOeA0cEnSx127b21Xw6GSkZGRkfGf4g8tS8n281i76AAAAABJRU5ErkJggg==',
+        'ui_button.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADNSURBVEiJ7ZQxCsJAEEX/hhSeQhux9gSSe3gBwcIDeDGx9CYWNvYRi8CzMAlr3M0uWYsI+d3A7Pt/ZmClSf8joABK3iqBIhXYQhp4KpC+2qcsyXV0QL7lPhawtC7aKsLAfSzgAhy6aWJT+0YZtM8usIE8JG2GAH0uRWeH26EJXQ1r4A7MfwKsm47AGTAhWCwwqy+/T05nNa9CH4ILGBwpZGyM+WDkoQeSbpIqqz4ZY3Y+wxhgJWlh1bO+5hhgLulq1U9fOilxh939TRqpXsa932DLVhSzAAAAAElFTkSuQmCC',
+        'ui_chart.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADVSURBVEiJ7dQva0JhFAdg2bJYZGUywzQNs7DkBxismvwkC8Mug0XrwG6xmtYWjWZZUIMG94ftMWi4iPd6r/c2/cUD5+Ec3sOby51zIkExa1BW1kWKIe5CN0s6IfIY4z0xiKs9tTf84j4RiCI+UQ/UWjZ5ilohDOxsmycoo4IFhrhMBKKEFQaYY4QPTHEdikWAXXzhBg184x+Pkdg+EFX84CVQa+L1IBYC9rDcfWHEu9sgiBr+0I7VHAPsY4ZCVuAtHo7GdsG0OfpzOAhKl+esBzvnpLIGJQw3hKYULUMAAAAASUVORK5CYII=',
+        'ui_colour_picker.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AwQFgsvH/cw7AAAAhdJREFUSMftlU1LlFEYhq/zopVgMuEipA8IAyGKIpOQIDAiamO0ahFUq/oDBf2Cdi2CCIQg6C9ELVr0SQW5iAxs00bQrEgwGct0Zq42z9jrNOI70Sq6V+frvs9znvN8wH/kobbMSQVEEyBASqk1QZWUEmoHcAIYBHYAs8Bb4BkwllKq1M+u+Tz1gPpUrfo7vqg31Z2FXKIOqJNBrqn31RtquUF4Sj20lliX+ipHeqxuVFGvxQU1dTb2Z9SjjTpZEACGgf7c3hwwH36aDH8/SCmVgJNACbiubmtm3Tr1Sdz8Ta2o8+oF9ZT6Pvauxvn16lysjTQT7Ak/vVOPqGdD8If6PeeGCfWgelFdzD29t1Fwr7qkXqnHnvrS4rgcHLLQ7AIyYEvMS0BHCwkyDLSllGiLhSWgCpxXNwFbgd0tCPaFUTN1Cz8BFaATOANsB8aAWkHBTqBDbcsLfo3xa2AIOAw8LCiYRVgtCy4Ad2M8nlKaSCmVgdHV8gC4DdyLeTleU83/9L5c6PSrfeqLVX51Ud2jHo/5m8i0rDF8RuLAR3U6Uq0ZFtRBtVt9rl6KMrey0tRqtR51vEDcVdWh4Har7XlnLte1LMumgXPAhwIfsSu4MxF2vwRXVNyURoHTwOc1CnM1xylUaHvVW7mczaOsbi7cU3KtoB3YDxwDBoANwBRwB3jUzLJUsPvlXZOllCp/tZX+SXv9h/ET4N13p8IOyEcAAAAASUVORK5CYII=',
+        'ui_date_picker.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABmJLR0QA/wD/AP+gvaeTAAAATklEQVRIx2NgGAUjFPz///8/uWoYSTEEH2BkZGTEaSOpLsSqnhIXIutloZahNHMhE7VTCBO5gU/QR0PLy8R4cwR6eegmbNrl5VEwCogHAB0Cc6jSgYOVAAAAAElFTkSuQmCC',
+        'ui_dropdown.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABpSURBVEiJ7ZS7CoAwEARnRfxrK//awrU6CRYhkLNQM9UVy9wjEBh8HwHY3lNk0jJliErShXO2OIQHsHW61qvKeJRwPHbDspMBJCnqGpJUFZaBe7iFsXI/f17Z9loLthIT9n4MWY7BKzgBTP0qup60jeAAAAAASUVORK5CYII=',
+        'ui_form.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIpJREFUeNpiYBgFgw4w/v//vwFI/6KSeWwgA/8DGdVUMrCVAWogVQDILBYoo4FahjJRPVao7WVwpDACAbrXgUINxAYFSC3MQEJerifCvHqivUxMcCCrIcbLcDm84YbQ/5++sTzqZaK8zIIm2YAlsTZQMy83EmFGI03zMqz4qhq0VcBorToIAUCAAQDBm54wNDH87wAAAABJRU5ErkJggg==',
+        'ui_gauge.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAF4SURBVEiJ7ZTPK0RRHMXPnUSywGgshpXxLxgW2LBTytLKgoUiRcmOLJSyY6dEyX8wmq2FhYU1hfzYSGpmYzTNLHws5jtczzM/rOfU69s953vO/d7Xu09qoIG64SqJQJekIUlxo54lXTjnMnXtAiSBUyAPFANPHkgBA1UnBCKStiStmFaQdC7p3lr6JA1LapGEpB1J6865j78mO7ApcsAG0B7S0wFsAu/Wu/9X2II1ZICRGl7LKJA1z3xQjAKvJk5WC/N8U+Z5ATp9YcmEVK1hnjdt3kVJihg/YfWo3kBJh4EMCXiyXeLhnh8TDQLT3rrHvI9+U87I5hoCr4B+b91i3jfp+8hZq9EqYXOS2pxzdx5d9mT9wFuroV+/hbVKWpZ0FpCSVm/8wLTVmQoDbqt0U44DfNmT/mKAbvtIC8BYyHS9wANwDTR5/Lh3GWJB05qJl0DwjqcoIeVxznqLwOqv8wARYA9IhGgx4ASYDfAJYNd+Kg008F98AoTJY9ZKCu6sAAAAAElFTkSuQmCC',
+        'ui_numeric.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEUSURBVEiJ7dK9LgRhFIfxsz4SttgaEZ1CJEoNCYVoRUeLRqfYGxCJULoFoZNIFLqtRKFQuQFBrbIivn4K7zKZ3UVCoZinOjln/s97ZuaNKCgoaAa96Go3HMAtNjO9ZVzjAWcYTf0KjvCMe6zlZfO49M5m6g2mwC5mcYVamlXxiDns4QVDWeELdnLCPqw0HkQNF6nuwXCq1/GE/qxwGJ1ZYe4NZlJoI9ffTZlqq2/YUogp1HGKcm42ntlw+lshJnCHE1Qy/RFMprqcclutf/dnqBIRBxHRHRGHEbGAeqlU2o+I5YhYxWJEjKXI+ZcbYkkzN43DcIzXdKW2UfpqwR/h/WJ3/1rUjo8V4S+EHX8hKSj4b7wBmFxhytCBdoQAAAAASUVORK5CYII=',
+        'ui_slider.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABVSURBVEiJ7dNBCgAgCARA7f9/tlOQIiJpJOEcQ0oXA2j/Q+2QiIgVIap1mhHtSGIvy87cl2wT3O1wKZVhOvcoAL4oem1sTzJMZ4588mN6bbgSGba4CZuaJByfIWmXAAAAAElFTkSuQmCC',
+        'ui_switch.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEJSURBVEiJ7ZNNSsNQFEbPc9AKLkAHgh35M3QLLYK0W7HqetyK0q7BUn8GohRxasBWhE6Og6byDHlpx5oDGeTm3pOb5AvU1PwH1E31Qh2rM3WeOGZ5z7naXM6HgmwXuAG2ga2S+30CE2CYn7eBI+AZ6IQQ3oqbPapfiY3e1dOSJ+qqH+pDvCnqpZolZFmZrCCdq/0QFcfAfmLmLoRwnBLm8yMgbES1VkX/sOLakgHQioWuMbSSWDip6Guv4WoDL7HwikUsythTuymT2gMOc8dPsbkiNlmZVO3lsblXG2XBvgZ2SAf7lcUHAOgAB8ATcPIr2JG0ofbVkTqt+PWm6q16pjZSr6Om5k/wDYhUJfwAsEtnAAAAAElFTkSuQmCC',
+        'ui_template.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEaSURBVEiJ7dE/L4NRGAXw90W6EKMahEGMoh2wqUVC7d3EZjdZjGb1GXwIk6WpiVHMJEQwNUHjT+JncCXN9bZCGomkZ7r3nPOce3OeJOmhh38I7GC4W2GDeMLkb4b7MrgV3CBt5/lCBONEkiQnKEfSUpIkh2maCtoxxr/7WQl3eMRMpJ1iPZwLaAbvQruwDbzgErORNoo3jLVwBZzjFVtxWNUHahjJeGwNZxl8HvUwW20VGrhvt0HsY6+NNoUHNFrJSujkFqVoIMU1VjPCFkOPTVRisYCLuBNM4xlDkf+z8yvMZf0+7mQ5cJuoRb5y8NSRzwxrMefCkorhfoDtyFPELnIdwzLC+8Ky5n802CFwAEfo70pgDz38Ad4Br8tc7FtGcAwAAAAASUVORK5CYII=',
+        'ui_text.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEWSURBVEiJ7ZMhS0RBFEbPyDMYhGXB5poFm2GNJpHFplXQ32AVYYO4xSIGQTAqGhQ0mGwmDQYRZJPYXGQRMYnwjsFZGQyy4YUN75SB716Gc+8wUFJSUgBqU/3qt3+oaIHfC9W62vaHN3UlbVTX1Xv1SB2L2ZR6oT6qp2otNVwGOsAi0Aa2kloG1IAW0AB21BHgEqgAm8A0sJ8aDKtz6rb6pOZqiDvM4wWoB+qLOhOnacS8qmap4TGwBzwD1wAhBJN6iGfvgbI/eQUYTw3f1TN1Ur1V85g3o8muOq921BN1VH1Vr9SFuMeb1HADmAXOgTsgqBNJ/RM4BB6AtRDCB7AEVON0XWCVgae3UFT/a+yXwn9KSckg8A2LRsxzeZWjFAAAAABJRU5ErkJggg==',
+        'ui_toast.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADeSURBVEiJ7ZKxCQJBFERnRQ5BUCzAxEB7sAB7EGzB6EJzE0OLsAGbMDW0AROTM9E70GcyyiknihiI3MDn/52dP8vuX6lEiT9EkCQg+4pZCFHFdfoFv1SSroYdSRNJW69PbxicnXeSZpK6tx0gBlpABAyBFZABB+d8XLmVtZF747xhBiTAHOiZ6wMLG6SOg7m+NT33JHdzyJ1+dOMSGAABaANTR9vcwJrUPdkzw8drbYAxUAdqwAhYP3sO6fW3wZq966aHUSkShxCi6otJBudGjis0e2vzE/y+YYkSf4kLDcYTu4mDJeQAAAAASUVORK5CYII=',
+        'ff-logo.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+PHNjcmlwdCB4bWxucz0iIi8+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNmZmYiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+'
     }
 
     const colorByType = {
-        "base64": _hshClr("#DEBD5C"),
-        "batch": _hshClr("#E2D96E"),
-        "catch": _hshClr("#e49191"),
-        "change": _hshClr("#E2D96E"),
-        "rbe": _hshClr("#E2D96E"),
-        "complete": _hshClr("#C0EDC0"),
-        "comment": _hshClr(),
-        "csv": _hshClr("#DEBD5C"),
-        "debug": _hshClr("#87a980"),
-        "delay": _hshClr("#E6E0F8"),
-        "exec": _hshClr("darksalmon"),
-        "feedparse": _hshClr("#C0DEED"),
-        "file": _hshClr("BurlyWood"),
-        "file in": _hshClr("BurlyWood"),
-        "function": _hshClr("#fdd0a2"),
-        "html": _hshClr("#DEBD5C"),
-        "http response": _hshClr("rgb(231, 231, 174)"),
-        "http in": _hshClr("rgb(231, 231, 174)"),
-        "http request": _hshClr("rgb(231, 231, 174)"),
-        "inject": _hshClr("#a6bbcf"),
-        "join": _hshClr("#E2D96E"),
-        "json": _hshClr("#DEBD5C"),
-        "junction": _hshClr('rgb(217, 217, 217)'),
-        "link in": _hshClr("#ddd"),
-        "link out": _hshClr("#ddd"),
-        "link call": _hshClr("#ddd"),
-        "mqtt in": _hshClr("#d8bfd8"),
-        "mqtt out": _hshClr("#d8bfd8"),
-        "tcp in": _hshClr("silver"),
-        "tcp out": _hshClr("silver"),
-        "tcp request": _hshClr("silver"),
-        "udp in": _hshClr("silver"),
-        "udp out": _hshClr("silver"),
-        "markdown": _hshClr("#DEBD5C"),
-        "postgresql": _hshClr("#5b85a7"),
-        "range": _hshClr("#E2D96E"),
-        "sort": _hshClr("#E2D96E"),
-        "split": _hshClr("#E2D96E"),
-        "subflow": _hshClr("#ddd"),
-        "switch": _hshClr("#E2D96E"),
-        "trigger": _hshClr("#E6E0F8"),
-        "template": _hshClr("rgb(243, 181, 103)"),
+        base64: _hshClr('#DEBD5C'),
+        batch: _hshClr('#E2D96E'),
+        catch: _hshClr('#e49191'),
+        change: _hshClr('#E2D96E'),
+        rbe: _hshClr('#E2D96E'),
+        complete: _hshClr('#C0EDC0'),
+        comment: _hshClr(),
+        csv: _hshClr('#DEBD5C'),
+        debug: _hshClr('#87a980'),
+        delay: _hshClr('#E6E0F8'),
+        exec: _hshClr('darksalmon'),
+        feedparse: _hshClr('#C0DEED'),
+        file: _hshClr('BurlyWood'),
+        'file in': _hshClr('BurlyWood'),
+        function: _hshClr('#fdd0a2'),
+        html: _hshClr('#DEBD5C'),
+        'http response': _hshClr('rgb(231, 231, 174)'),
+        'http in': _hshClr('rgb(231, 231, 174)'),
+        'http request': _hshClr('rgb(231, 231, 174)'),
+        inject: _hshClr('#a6bbcf'),
+        join: _hshClr('#E2D96E'),
+        json: _hshClr('#DEBD5C'),
+        junction: _hshClr('rgb(217, 217, 217)'),
+        'link in': _hshClr('#ddd'),
+        'link out': _hshClr('#ddd'),
+        'link call': _hshClr('#ddd'),
+        'mqtt in': _hshClr('#d8bfd8'),
+        'mqtt out': _hshClr('#d8bfd8'),
+        'tcp in': _hshClr('silver'),
+        'tcp out': _hshClr('silver'),
+        'tcp request': _hshClr('silver'),
+        'udp in': _hshClr('silver'),
+        'udp out': _hshClr('silver'),
+        markdown: _hshClr('#DEBD5C'),
+        postgresql: _hshClr('#5b85a7'),
+        range: _hshClr('#E2D96E'),
+        sort: _hshClr('#E2D96E'),
+        split: _hshClr('#E2D96E'),
+        subflow: _hshClr('#ddd'),
+        switch: _hshClr('#E2D96E'),
+        trigger: _hshClr('#E6E0F8'),
+        template: _hshClr('rgb(243, 181, 103)'),
 
         // Dashboard 1.0
-        ui_button: _hshClr("rgb(176, 223, 227)"),
-        ui_list: _hshClr("rgb( 63, 173, 181)"),
-        ui_svg_graphics: _hshClr("rgb( 63, 173, 181)"),
-        ui_template: _hshClr("rgb( 63, 173, 181)"),
-        ui_toast: _hshClr("rgb(119, 198, 204)"),
-        ui_upload: _hshClr("rgb( 63, 173, 181)"),
-        ui_audio: _hshClr("rgb(119, 198, 204)"),
-        ui_chart: _hshClr("rgb(119, 198, 204)"),
-        ui_gauge: _hshClr("rgb(119, 198, 204)"),
-        ui_text: _hshClr("rgb(119, 198, 204)"),
-        ui_date_picker: _hshClr("rgb(176, 223, 227)"),
-        ui_dropdown: _hshClr("rgb(176, 223, 227)"),
-        ui_form: _hshClr("rgb(176, 223, 227)"),
-        ui_numeric: _hshClr("rgb(176, 223, 227)"),
-        ui_slider: _hshClr("rgb(176, 223, 227)"),
-        ui_switch: _hshClr("rgb(176, 223, 227)"),
-        ui_text_input: _hshClr("rgb(176, 223, 227)"),
-        ui_colour_picker: _hshClr("rgb(176, 223, 227)"),
+        ui_button: _hshClr('rgb(176, 223, 227)'),
+        ui_list: _hshClr('rgb( 63, 173, 181)'),
+        ui_svg_graphics: _hshClr('rgb( 63, 173, 181)'),
+        ui_template: _hshClr('rgb( 63, 173, 181)'),
+        ui_toast: _hshClr('rgb(119, 198, 204)'),
+        ui_upload: _hshClr('rgb( 63, 173, 181)'),
+        ui_audio: _hshClr('rgb(119, 198, 204)'),
+        ui_chart: _hshClr('rgb(119, 198, 204)'),
+        ui_gauge: _hshClr('rgb(119, 198, 204)'),
+        ui_text: _hshClr('rgb(119, 198, 204)'),
+        ui_date_picker: _hshClr('rgb(176, 223, 227)'),
+        ui_dropdown: _hshClr('rgb(176, 223, 227)'),
+        ui_form: _hshClr('rgb(176, 223, 227)'),
+        ui_numeric: _hshClr('rgb(176, 223, 227)'),
+        ui_slider: _hshClr('rgb(176, 223, 227)'),
+        ui_switch: _hshClr('rgb(176, 223, 227)'),
+        ui_text_input: _hshClr('rgb(176, 223, 227)'),
+        ui_colour_picker: _hshClr('rgb(176, 223, 227)'),
 
         // Dashboard 2.0
-        "ui-button": _hshClr("rgb(160, 230, 236)"),
-        "ui-button-group": _hshClr("rgb(160, 230, 236)"),
-        "ui-chart": _hshClr("rgb(90, 210, 220)"),
-        "ui-control": _hshClr("rgb(32, 160, 170)"),
-        "ui-dropdown": _hshClr("rgb(160, 230, 236)"),
-        "ui-event": _hshClr("rgb(32, 160, 170)"),
-        "ui-form": _hshClr("rgb(160, 230, 236)"),
-        "ui-gauge": _hshClr("rgb(90, 210, 220)"),
-        "ui-markdown": _hshClr("rgb(39, 183, 195)"),
-        "ui-notification": _hshClr("rgb(90, 210, 220)"),
-        "ui-radio-group": _hshClr("rgb(160, 230, 236)"),
-        "ui-slider": _hshClr("rgb(160, 230, 236)"),
-        "ui-switch": _hshClr("rgb(160, 230, 236)"),
-        "ui-table": _hshClr("rgb(90, 210, 220)"),
-        "ui-template": _hshClr("rgb(39, 183, 195)"),
-        "ui-text": _hshClr("rgb(90, 210, 220)"),
-        "ui-text-input": _hshClr("rgb(160, 230, 236)"),
+        'ui-button': _hshClr('rgb(160, 230, 236)'),
+        'ui-button-group': _hshClr('rgb(160, 230, 236)'),
+        'ui-chart': _hshClr('rgb(90, 210, 220)'),
+        'ui-control': _hshClr('rgb(32, 160, 170)'),
+        'ui-dropdown': _hshClr('rgb(160, 230, 236)'),
+        'ui-event': _hshClr('rgb(32, 160, 170)'),
+        'ui-form': _hshClr('rgb(160, 230, 236)'),
+        'ui-gauge': _hshClr('rgb(90, 210, 220)'),
+        'ui-markdown': _hshClr('rgb(39, 183, 195)'),
+        'ui-notification': _hshClr('rgb(90, 210, 220)'),
+        'ui-radio-group': _hshClr('rgb(160, 230, 236)'),
+        'ui-slider': _hshClr('rgb(160, 230, 236)'),
+        'ui-switch': _hshClr('rgb(160, 230, 236)'),
+        'ui-table': _hshClr('rgb(90, 210, 220)'),
+        'ui-template': _hshClr('rgb(39, 183, 195)'),
+        'ui-text': _hshClr('rgb(90, 210, 220)'),
+        'ui-text-input': _hshClr('rgb(160, 230, 236)'),
 
-        "websocket in": _hshClr("rgb(215, 215, 160)"),
-        "websocket out": _hshClr("rgb(215, 215, 160)"),
-        "yaml": _hshClr("#DEBD5C"),
-        "xml": _hshClr("#DEBD5C"),
+        'websocket in': _hshClr('rgb(215, 215, 160)'),
+        'websocket out': _hshClr('rgb(215, 215, 160)'),
+        yaml: _hshClr('#DEBD5C'),
+        xml: _hshClr('#DEBD5C'),
 
         /* private nodes for this instane */
-        'BlogPages': _hshClr("#ddeeff"),
-        'BlogDetails': _hshClr("#ddeeff"),
-        'BlogPageInfo': _hshClr("#ddeeff"),
-        'BlogChanges': _hshClr("#ddeeff"),
-        'PubMedium': _hshClr("#ddee44"),
+        BlogPages: _hshClr('#ddeeff'),
+        BlogDetails: _hshClr('#ddeeff'),
+        BlogPageInfo: _hshClr('#ddeeff'),
+        BlogChanges: _hshClr('#ddeeff'),
+        PubMedium: _hshClr('#ddee44'),
 
-        "Topic": _hshClr('#d0c9f6'),
-        "Observation": _hshClr('#f4adf3'),
-        "Question": _hshClr('#e0a4f3'),
-        "Thought": _hshClr('#cb9cf3'),
-        "Idea": _hshClr('#88baff'),
-        "Analogy": _hshClr('#86bfff'),
-        "Aphorism": _hshClr('#84c3ff'),
-        "Poesie": _hshClr('#83c7ff'),
-        "Humour": _hshClr('#81ccff'),
-        "Treasure": _hshClr('#7fd0ff'),
-        "Consequence": _hshClr('#f6c1cc'),
-        "Advantage": _hshClr('#efacbf'),
-        "Disadvantage": _hshClr('#e796b1'),
-        "Text": _hshClr('#c8ffb5'),
-        "Blog-Post": _hshClr('#d0fdc2'),
-        "Comment": _hshClr('#d9fcce'),
-        "Code-Base": _hshClr('#e1fbda'),
-        "Sketch": _hshClr('#e1fbda'),
-        "Inspiration": _hshClr('#dfdfb6'),
-        "Quote": _hshClr('#e5e5c0'),
-        "Definition": _hshClr('#eaebca'),
-        "Book": _hshClr('#f0f0d4'),
-        "Author": _hshClr('#f5f6de'),
+        Topic: _hshClr('#d0c9f6'),
+        Observation: _hshClr('#f4adf3'),
+        Question: _hshClr('#e0a4f3'),
+        Thought: _hshClr('#cb9cf3'),
+        Idea: _hshClr('#88baff'),
+        Analogy: _hshClr('#86bfff'),
+        Aphorism: _hshClr('#84c3ff'),
+        Poesie: _hshClr('#83c7ff'),
+        Humour: _hshClr('#81ccff'),
+        Treasure: _hshClr('#7fd0ff'),
+        Consequence: _hshClr('#f6c1cc'),
+        Advantage: _hshClr('#efacbf'),
+        Disadvantage: _hshClr('#e796b1'),
+        Text: _hshClr('#c8ffb5'),
+        'Blog-Post': _hshClr('#d0fdc2'),
+        Comment: _hshClr('#d9fcce'),
+        'Code-Base': _hshClr('#e1fbda'),
+        Sketch: _hshClr('#e1fbda'),
+        Inspiration: _hshClr('#dfdfb6'),
+        Quote: _hshClr('#e5e5c0'),
+        Definition: _hshClr('#eaebca'),
+        Book: _hshClr('#f0f0d4'),
+        Author: _hshClr('#f5f6de'),
 
         'nnb-input-node': _hshClr('#ffefef'),
         'nnb-layer-node': _hshClr('#ffffef'),
@@ -372,22 +373,22 @@ const FlowRenderer = (function () {
         'nnb-backprop': _hshClr('#e3edef'),
         'nnb-trainer': _hshClr('#e5e4ef'),
 
-        'Seeker': _hshClr('#e5e4ef'),
-        'Sink': _hshClr('#e5e4ef'),
-        'Screenshot': _hshClr('#e5e4ef'),
-        'Orphans': _hshClr('#e5e4ef'),
-        'IsMobile': _hshClr('#e5e4ef'),
-        'Navigator': _hshClr('#e5e4ef'),
-        'DrawSVG': _hshClr('#e5e4ef'),
-        'GetFlows': _hshClr('#e5e4ef'),
-        'SendFlow': _hshClr('#e5e4ef'),
-        'TriggerImport': _hshClr('#e5e4ef'),
+        Seeker: _hshClr('#e5e4ef'),
+        Sink: _hshClr('#e5e4ef'),
+        Screenshot: _hshClr('#e5e4ef'),
+        Orphans: _hshClr('#e5e4ef'),
+        IsMobile: _hshClr('#e5e4ef'),
+        Navigator: _hshClr('#e5e4ef'),
+        DrawSVG: _hshClr('#e5e4ef'),
+        GetFlows: _hshClr('#e5e4ef'),
+        SendFlow: _hshClr('#e5e4ef'),
+        TriggerImport: _hshClr('#e5e4ef'),
 
-        "i2c scan": _hshClr('rgb(227, 82, 83)'),
-        "i2c in": _hshClr('rgb(227, 82, 83)'),
-        "i2c out": _hshClr('rgb(227, 82, 83)'),
+        'i2c scan': _hshClr('rgb(227, 82, 83)'),
+        'i2c in': _hshClr('rgb(227, 82, 83)'),
+        'i2c out': _hshClr('rgb(227, 82, 83)'),
 
-        'cronplus': _hshClr('#a6bbcf'),
+        cronplus: _hshClr('#a6bbcf'),
 
         'buffer-maker': _hshClr('#0090d4'),
         'buffer-parser': _hshClr('#0090d4'),
@@ -401,7 +402,7 @@ const FlowRenderer = (function () {
 
         'MC Read': _hshClr('#0090d4'),
         'MC Write': _hshClr('#0090d4'),
-        
+
         'modbus-response': _hshClr('#E9967A'),
         'modbus-read': _hshClr('#E9967A'),
         'modbus-getter': _hshClr('#E9967A'),
@@ -413,7 +414,7 @@ const FlowRenderer = (function () {
         'modbus-response-filter': _hshClr('#E9967A'),
         'modbus-flex-sequencer': _hshClr('#E9967A'),
         'modbus-flex-fc': _hshClr('#E9967A'),
-        
+
         'OpcUa-Item': _hshClr('#3FADB5'),
         'OpcUa-Client': _hshClr('#3FADB5'),
         'OpcUa-Browser': _hshClr('#3FADB5'),
@@ -428,55 +429,62 @@ const FlowRenderer = (function () {
         's7 control': _hshClr('#3FADB5'),
 
         // FlowFuse specific
-        "project link out":  _hshClr('#87D8CF'),
-        "project link in":  _hshClr('#87D8CF'),
-        "project link call":  _hshClr('#87D8CF'),
+        'project link out': _hshClr('#87D8CF'),
+        'project link in': _hshClr('#87D8CF'),
+        'project link call': _hshClr('#87D8CF'),
 
-        "_default": _hshClr(),
+        _default: _hshClr()
     }
 
     // #endregion
 
     // #region "Helper Functions"
 
+    function hasProperty (obj, prop) {
+        if (obj === null || obj === undefined) {
+            return false
+        }
+        return Object.prototype.hasOwnProperty.call(obj, prop)
+    }
+
     function getNodeImage (type) {
         let imgName = imgByType[type]
         if (!imgName) {
-            if (type.startsWith("subflow:")) {
-                imgName = imgByType["subflow"]
-            } else if (type.startsWith("ui-")) {
-                imgName = imgByType["ui-template"]
-            } else if (type.startsWith("ui_")) {
-                imgName = imgByType["ui_template"]
+            if (type.startsWith('subflow:')) {
+                imgName = imgByType.subflow
+            } else if (type.startsWith('ui-')) {
+                imgName = imgByType['ui-template']
+            } else if (type.startsWith('ui_')) {
+                imgName = imgByType.ui_template
             }
         }
-        return imgName ? imageNameToContent[imgName] || "" : ""
+        return imgName ? imageNameToContent[imgName] || '' : ''
     }
 
     function getNodeColor (type) {
-        type = type || "_default"
+        type = type || '_default'
         let colors = colorByType[type]
         if (!colors) {
-            if (type.startsWith("subflow:")) {
-                colors = colorByType["subflow"]
-            } else if (type.startsWith("ui-")) {
-                colors = colorByType["ui-template"]
-            } else if (type.startsWith("ui_")) {
-                colors = colorByType["ui_template"]
+            if (type.startsWith('subflow:')) {
+                colors = colorByType.subflow
+            } else if (type.startsWith('ui-')) {
+                colors = colorByType['ui-template']
+            } else if (type.startsWith('ui_')) {
+                colors = colorByType.ui_template
             }
         }
-        return colors || colorByType["_default"]
+        return colors || colorByType._default
     }
 
     function getNodeDimensions (node) {
-        let dimensions = widthHeightByType[node.type] || widthHeightByType["_default"];
+        let dimensions = widthHeightByType[node.type] || widthHeightByType._default
         // label hidden?
         if (node.type !== 'junction') {
             // override if l is a boolean
             if (node.l === false) {
-                dimensions = widthHeightByType['_default_no_label']
+                dimensions = widthHeightByType._default_no_label
             } else if (node.l === true) {
-                dimensions = widthHeightByType['_default']
+                dimensions = widthHeightByType._default
             }
         }
         return dimensions
@@ -500,19 +508,19 @@ const FlowRenderer = (function () {
 
     function _hshClr (fill, stroke) {
         return {
-            fill: fill || "#ffffff",
-            stroke: stroke || "rgb(153, 153, 153)"
+            fill: fill || '#ffffff',
+            stroke: stroke || 'rgb(153, 153, 153)'
         }
     }
 
-    function getDocument() {
-        if (typeof document !== "undefined") {
+    function getDocument () {
+        if (typeof document !== 'undefined') {
             return document
         }
-        if (typeof __document !== "undefined") {
-            return __document
+        if (typeof globalThis.__document !== 'undefined') {
+            return globalThis.__document
         }
-        
+
         const args = Array.prototype.slice.call(arguments) || [this]
         for (const arg of args) {
             const argClassName = arg && arg.constructor && arg.constructor.name
@@ -525,7 +533,7 @@ const FlowRenderer = (function () {
             }
         }
         // if we reach here, return see if window is available
-        if (typeof window !== "undefined") {
+        if (typeof window !== 'undefined') {
             return window.document
         }
         // if we reach here, return null
@@ -533,14 +541,14 @@ const FlowRenderer = (function () {
     }
 
     function clamp (val, min, max, def) {
-        const isNumber = (typeof val === "number") && !isNaN(val)
+        const isNumber = (typeof val === 'number') && !isNaN(val)
         if (!isNumber) {
             return def || min
         }
         return Math.min(Math.max(val, min), max)
     }
 
-    function hasScrollbars(container) {
+    function hasScrollbars (container) {
         const hasHorizontalScrollbar = container.scrollWidth > container.clientWidth
         const hasVerticalScrollbar = container.scrollHeight > container.clientHeight
         return {
@@ -550,20 +558,20 @@ const FlowRenderer = (function () {
     }
 
     /**
-     * 
-     * @param {SVGSVGElement} svg 
-     * @param {HTMLElement} container 
+     *
+     * @param {SVGSVGElement} svg
+     * @param {HTMLElement} container
      */
-    function setupZoom(svg, container) {
+    function setupZoom (svg, container) {
         let originalScale = 1
-        const transform = svg.getAttribute('transform');
+        const transform = svg.getAttribute('transform')
         if (transform) {
-            const scale = transform.match(/scale\(([^,]+)\)/);
+            const scale = transform.match(/scale\(([^,]+)\)/)
             if (scale) {
                 originalScale = clamp(parseFloat(scale[1] || 1), 0.25, 3, 1)
             }
         }
-        
+
         // get the first child g element of the svg element
         const mainSvgGroup = svg.querySelector('g.outerContainer')
 
@@ -598,11 +606,11 @@ const FlowRenderer = (function () {
         }
     }
 
-    function getScale(svg) {
+    function getScale (svg) {
         return parseFloat(svg.getAttribute('_scale_current') || 1)
     }
 
-    function updateScale(mainSvgGroup, scale, setAsDefault = false) {
+    function updateScale (mainSvgGroup, scale, setAsDefault = false) {
         mainSvgGroup.setAttribute('transform', `scale(${scale})`)
         const svg = mainSvgGroup.ownerSVGElement || mainSvgGroup
         svg.style.width = `${workspaceSize.width * scale}px` // cause scrollbars to size correctly
@@ -613,7 +621,7 @@ const FlowRenderer = (function () {
         }
     }
 
-    function updateScroll(container, scrollX, scrollY, setAsDefault = false) {
+    function updateScroll (container, scrollX, scrollY, setAsDefault = false) {
         container.scrollLeft = scrollX
         container.scrollTop = scrollY
         if (setAsDefault) {
@@ -622,72 +630,72 @@ const FlowRenderer = (function () {
         }
     }
 
-    function resetScroll(container) {
+    function resetScroll (container) {
         container.scrollLeft = container.getAttribute('_scroll_x') || 0
         container.scrollTop = container.getAttribute('_scroll_y') || 0
     }
-    function resetScale(svg) {
+    function resetScale (svg) {
         const scale = svg.getAttribute('_scale_original') || 1
         updateScale(svg, scale)
     }
 
-    function autoLayout(svg, flow, renderOpts) {
-        const computedAutoScaleAndScroll = (renderOpts.autoZoom || renderOpts.autoScroll) ?  computeAutoLayout(flow, renderOpts) : null
+    function autoLayout (svg, flow, renderOpts) {
+        const computedAutoScaleAndScroll = (renderOpts.autoZoom || renderOpts.autoScroll) ? computeAutoLayout(flow, renderOpts) : null
         svg = svg.ownerSVGElement || svg
         if (renderOpts.zoom) {
             if (computedAutoScaleAndScroll && renderOpts.autoZoom) {
                 const mainSvgGroup = svg.querySelector('g.outerContainer')
-                updateScale(mainSvgGroup, computedAutoScaleAndScroll.scale, true);
+                updateScale(mainSvgGroup, computedAutoScaleAndScroll.scale, true)
             }
         }
         if (computedAutoScaleAndScroll && renderOpts.autoScroll) {
-            updateScroll(svg.parentElement, computedAutoScaleAndScroll.scrollX, computedAutoScaleAndScroll.scrollY, true);
+            updateScroll(svg.parentElement, computedAutoScaleAndScroll.scrollX, computedAutoScaleAndScroll.scrollY, true)
         }
         return computedAutoScaleAndScroll
     }
 
-    function saveLayout(svg, renderOpts, flowid) {
+    function saveLayout (svg, renderOpts, flowid) {
         // save the current scroll and scale values in the container as attributes
         const container = svg.parentElement
         const outerContainer = svg.querySelector('g.outerContainer')
         const scrollX = container.scrollLeft
         const scrollY = container.scrollTop
         const scale = getScale(outerContainer)
-        const id = flowid || renderOpts.flowId || "global"
+        const id = flowid || renderOpts.flowId || 'global'
         // console.log("Saving layout", { id, scrollX, scrollY, scale })
         container.setAttribute(`data-tab-${id}-x`, scrollX)
         container.setAttribute(`data-tab-${id}-y`, scrollY)
         container.setAttribute(`data-tab-${id}-scale`, scale)
     }
 
-    function restoreLayout(svg, renderOpts, flowid) {
+    function restoreLayout (svg, renderOpts, flowid) {
         // restore the scroll and scale values from the container attributes
         const container = svg.parentElement
         const outerContainer = svg.querySelector('g.outerContainer')
-        const id = flowid || renderOpts.flowId || "global"
+        const id = flowid || renderOpts.flowId || 'global'
         const scrollX = container.getAttribute(`data-tab-${id}-x`)
         const scrollY = container.getAttribute(`data-tab-${id}-y`)
         const scale = container.getAttribute(`data-tab-${id}-scale`)
         // console.log("Restoring layout", { id, scrollX, scrollY, scale })
-        if (typeof scrollX === "string" && typeof scrollY === "string") {
+        if (typeof scrollX === 'string' && typeof scrollY === 'string') {
             updateScroll(container, scrollX, scrollY)
         }
-        if (typeof scale === "string") {
+        if (typeof scale === 'string') {
             updateScale(outerContainer, scale)
         }
     }
 
-    function clearSavedLayout(svg) {
+    function clearSavedLayout (svg) {
         const container = svg.parentElement
         const outerContainer = svg.querySelector('g.outerContainer')
-        for(const key in outerContainer.dataset) {
+        for (const key in outerContainer.dataset) {
             if (/^tab-\w+-.*/.test(key)) {
                 container.removeAttribute(key)
             }
         }
     }
 
-    function computeAutoLayout(flow, renderOpts) {
+    function computeAutoLayout (flow, renderOpts) {
         // compute the Scale and Scroll values best suited to put the flow into view
         // by scanning for most extreme node positions (taking into account node size)
         const SCALE_MIN = 0.2
@@ -702,11 +710,11 @@ const FlowRenderer = (function () {
         let maxX = 0
         let maxY = 0
         const flowId = renderOpts.flowId
-        const flowNodes = flow.filter((node) => node.type !== 'tab' && node.type !== 'subflow' && node.z == flowId)
+        const flowNodes = flow.filter((node) => node.type !== 'tab' && node.type !== 'subflow' && node.z === flowId)
         if (flowNodes.length === 0) {
             return { scale: 1, scrollX: 0, scrollY: 0 }
         }
-        for (let node of flowNodes) {
+        for (const node of flowNodes) {
             if (node.type === 'tab' || node.type === 'subflow' || node.type === 'junction') {
                 continue
             }
@@ -762,13 +770,13 @@ const FlowRenderer = (function () {
 
     /**
      * Creates a container which is an outer div for containing the SVG
-     * @param {HTMLElement} container 
+     * @param {HTMLElement} container
      * @returns {HTMLDivElement}
      */
-    function createWorkspaceContainer(container) {
+    function createWorkspaceContainer (container) {
         const doc = getDocument(container, this)
-        const div = doc.createElement("div")
-        div.classList.add("red-ui-workspace-chart")
+        const div = doc.createElement('div')
+        div.classList.add('red-ui-workspace-chart')
         if (!container) {
             return div
         }
@@ -776,70 +784,70 @@ const FlowRenderer = (function () {
         return div
     }
 
-    function createToolbar(container) {
+    function createToolbar (container) {
         const doc = getDocument(container, this)
         if (!doc) {
             return null
         }
-        let toolbar = container.querySelector(".toolbar")
+        let toolbar = container.querySelector('.toolbar')
         if (toolbar) {
             return toolbar
         }
-        toolbar = doc.createElement("div")
-        toolbar.classList.add("toolbar")
+        toolbar = doc.createElement('div')
+        toolbar.classList.add('toolbar')
         if (container) {
             container.appendChild(toolbar)
         }
         return toolbar
     }
 
-    function createCompareControls(container) {
+    function createCompareControls (container) {
         const doc = getDocument(container, this)
         if (!doc) { return null }
-        let toolbar = container.querySelector(".toolbar")
+        let toolbar = container.querySelector('.toolbar')
         if (!toolbar) {
             toolbar = createToolbar(container)
         }
-        let compareControls = toolbar.querySelector(".compare-controls")
+        let compareControls = toolbar.querySelector('.compare-controls')
         if (compareControls) {
-            return  toolbar.querySelector(".flow-compare-slider")
+            return toolbar.querySelector('.flow-compare-slider')
         }
-        compareControls = createHTMLElement("div", null, "button-group compare-controls", null, toolbar)
-        const slider = createHTMLElement("input", null, "flow-compare-slider", null, compareControls)
-        slider.type = "range"
-        slider.min = "0"
-        slider.max = "100"
+        compareControls = createHTMLElement('div', null, 'button-group compare-controls', null, toolbar)
+        const slider = createHTMLElement('input', null, 'flow-compare-slider', null, compareControls)
+        slider.type = 'range'
+        slider.min = '0'
+        slider.max = '100'
         return slider
     }
 
-    function createZoomControls(container) {
+    function createZoomControls (container) {
         const doc = getDocument(container, this)
         if (!doc) { return null }
-        let toolbar = container.querySelector(".toolbar")
+        let toolbar = container.querySelector('.toolbar')
         if (!toolbar) {
             toolbar = createToolbar(container)
         }
-        let zoomControls = toolbar.querySelector(".zoom-controls")
+        let zoomControls = toolbar.querySelector('.zoom-controls')
         if (zoomControls) {
             return {
-                zoomIn: toolbar.querySelector(".zoom-in"),
-                zoomOut: toolbar.querySelector(".zoom-out"),
-                zoomReset: toolbar.querySelector(".zoom-reset")
+                zoomIn: toolbar.querySelector('.zoom-in'),
+                zoomOut: toolbar.querySelector('.zoom-out'),
+                zoomReset: toolbar.querySelector('.zoom-reset')
             }
         }
-        zoomControls = doc.createElement("div")
-        zoomControls.classList.add("zoom-controls")
-        zoomControls.classList.add("button-group")
-        const zoomIn = doc.createElement("button")
-        zoomIn.classList.add("red-ui-footer-button", "zoom-in")
+        zoomControls = doc.createElement('div')
+        zoomControls.classList.add('zoom-controls')
+        zoomControls.classList.add('button-group')
+        const zoomIn = doc.createElement('button')
+        zoomIn.classList.add('red-ui-footer-button', 'zoom-in')
         zoomIn.innerHTML = '+'
-        const zoomReset = doc.createElement("button")
-        zoomReset.classList.add("red-ui-footer-button", "zoom-reset")
+        const zoomReset = doc.createElement('button')
+        zoomReset.classList.add('red-ui-footer-button', 'zoom-reset')
         zoomReset.innerHTML = '○'
-        const zoomOut = doc.createElement("button")
-        zoomOut.classList.add("red-ui-footer-button", "zoom-out")
+        const zoomOut = doc.createElement('button')
+        zoomOut.classList.add('red-ui-footer-button', 'zoom-out')
         zoomOut.innerHTML = '-'
-        
+
         zoomControls.appendChild(zoomOut)
         zoomControls.appendChild(zoomReset)
         zoomControls.appendChild(zoomIn)
@@ -854,30 +862,30 @@ const FlowRenderer = (function () {
         }
     }
 
-    function createCopyControls(container) {
+    function createCopyControls (container) {
         const doc = getDocument(container, this)
         if (!doc) { return null }
-        let toolbar = container.querySelector(".toolbar")
+        let toolbar = container.querySelector('.toolbar')
         if (!toolbar) {
             toolbar = createToolbar(container)
         }
-        let copyControls = toolbar.querySelector(".copy-controls")
+        let copyControls = toolbar.querySelector('.copy-controls')
         if (copyControls) {
             return {
-                copy: toolbar.querySelector(".copy-flow"),
-                download: toolbar.querySelector(".download-flow"),
+                copy: toolbar.querySelector('.copy-flow'),
+                download: toolbar.querySelector('.download-flow')
             }
         }
-        copyControls = doc.createElement("div")
-        copyControls.classList.add("copy-controls")
-        copyControls.classList.add("button-group")
-        const copyBtn = doc.createElement("button")
-        copyBtn.classList.add("red-ui-footer-button", "copy-flow")
+        copyControls = doc.createElement('div')
+        copyControls.classList.add('copy-controls')
+        copyControls.classList.add('button-group')
+        const copyBtn = doc.createElement('button')
+        copyBtn.classList.add('red-ui-footer-button', 'copy-flow')
         copyBtn.innerHTML = 'Copy'
-        const downloadBtn = doc.createElement("button")
-        downloadBtn.classList.add("red-ui-footer-button", "download-flow")
+        const downloadBtn = doc.createElement('button')
+        downloadBtn.classList.add('red-ui-footer-button', 'download-flow')
         downloadBtn.innerHTML = 'Download'
-        
+
         copyControls.appendChild(copyBtn)
         copyControls.appendChild(downloadBtn)
 
@@ -890,26 +898,26 @@ const FlowRenderer = (function () {
         }
     }
 
-    function download(event, data, mimeType, filename, callback) {
+    function download (event, data, mimeType, filename, callback) {
         // download the data as a file
         callback = callback || function () {}
         let dataString = data || []
-        if (typeof dataString === "object") {
+        if (typeof dataString === 'object') {
             dataString = JSON.stringify(dataString, null, 2)
-        } else if (typeof dataString !== "string") {
+        } else if (typeof dataString !== 'string') {
             dataString = dataString.toString()
         }
         const theEventDoc = event && event.target && event.target.ownerDocument
         const doc = getDocument(theEventDoc, this)
-        const blob = new Blob([dataString], {type: mimeType})
+        const blob = new Blob([dataString], { type: mimeType })
         const url = URL.createObjectURL(blob)
-        const el = doc.createElement("a")
-        el.style.display = "none"
+        const el = doc.createElement('a')
+        el.style.display = 'none'
         el.href = url
         el.download = filename
-        el.style.position = "fixed"
-        el.style.top = "0"
-        el.style.left = "0"
+        el.style.position = 'fixed'
+        el.style.top = '0'
+        el.style.left = '0'
         try {
             doc.body.appendChild(el)
             el.focus()
@@ -924,64 +932,62 @@ const FlowRenderer = (function () {
         }
     }
 
-    function copyToClipboard(event, data, callback) {
+    function copyToClipboard (event, data, callback) {
         callback = callback || function () {}
         let dataString = data || []
-        if (typeof dataString === "object") {
+        if (typeof dataString === 'object') {
             dataString = JSON.stringify(dataString, null, 0)
-        } else if (typeof dataString !== "string") {
+        } else if (typeof dataString !== 'string') {
             dataString = dataString.toString()
         }
         const theEventDoc = event && event.target && event.target.ownerDocument
         const doc = getDocument(theEventDoc, this)
-        if (typeof navigator !== "undefined" && navigator.clipboard) {
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
             navigator.clipboard.writeText(dataString)
-            .then(function() {
-                callback(null, true)
-            }).catch(function(err) {
-                callback(err, false)
-            })
+                .then(function () {
+                    callback(null, true)
+                }).catch(function (err) {
+                    callback(err, false)
+                })
             return
         }
         // fallback to execCommand
-        const el = doc.createElement("textarea")
+        const el = doc.createElement('textarea')
         el.value = dataString
-        el.style.position = "fixed"
-        el.style.top = "0"
-        el.style.left = "0"
+        el.style.position = 'fixed'
+        el.style.top = '0'
+        el.style.left = '0'
 
-        
         try {
             doc.body.appendChild(el)
             el.focus()
             el.select()
             const result = doc.execCommand('copy')
             callback(null, result)
-            console.log('failed to copy', result)
+            console.info('failed to copy', result)
         } catch (error) {
             console.error('failed to copy', error)
         } finally {
             doc.body.removeChild(el)
         }
-        return;
     }
 
     /**
      * Generates a default SVG element with the required groups:
-     * @param {Document} doc 
+     * @param {Document} doc
      * @param {HTMLElement} [container]
      * @param {Object} [options]
      * @param {Boolean} [options.addDefaultLayer] - whether to add the default layer group
      * @param {Number} [options.layer] - the layer index, used for visually comparing flows
      * @returns {SVGSVGElement}
      */
-    function createDefaultSVG(container, { addDefaultLayer = true, layer = 0 } = {}) {
+    function createDefaultSVG (container, { addDefaultLayer = true, layer = 0 } = {}) {
         const doc = getDocument(container, this)
-        const svg = doc.createElementNS("http://www.w3.org/2000/svg", "svg")
-        svg.setAttribute("style", `width:${workspaceSize.width}px; height:${workspaceSize.height}px;`)
+        const svg = doc.createElementNS('http://www.w3.org/2000/svg', 'svg')
+        svg.setAttribute('style', `width:${workspaceSize.width}px; height:${workspaceSize.height}px;`)
         container.appendChild(svg)
         // add defs
-        const defs = doc.createElementNS("http://www.w3.org/2000/svg", "defs")
+        const defs = doc.createElementNS('http://www.w3.org/2000/svg', 'defs')
         svg.appendChild(defs)
         // add the grid pattern and glow filter to defs
         const filterDef = `
@@ -1002,7 +1008,7 @@ const FlowRenderer = (function () {
         </filter>`
         defs.innerHTML = filterDef
 
-        const outerContainer = createSvgElement("g" , { class: "outerContainer" })
+        const outerContainer = createSvgElement('g', { class: 'outerContainer' })
         svg.appendChild(outerContainer)
         if (addDefaultLayer) {
             createSVGLayer(svg, { layer })
@@ -1015,12 +1021,12 @@ const FlowRenderer = (function () {
      * @param {Document} doc  - The document to create the SVG element in
      * @param {String} type - The type of the SVG element
      * @param {Object.<string, string>} [attributes] - An object with the attributes of the SVG element in the form {attr: value}
-     * @returns 
+     * @returns
      */
-    function createSvgElement(type, attributes, parent) {
+    function createSvgElement (type, attributes, parent) {
         const doc = getDocument(parent, this)
-        const el = doc.createElementNS.apply(doc, ["http://www.w3.org/2000/svg", type])
-        if (typeof attributes === "object") {
+        const el = doc.createElementNS('http://www.w3.org/2000/svg', type)
+        if (typeof attributes === 'object') {
             for (const attr in attributes) {
                 el.setAttribute(attr, attributes[attr])
             }
@@ -1033,20 +1039,20 @@ const FlowRenderer = (function () {
 
     /**
      * Adds an outer `g` to the SVG element with the required groups for generating a flow
-     * @param {SVGSVGElement} svg 
+     * @param {SVGSVGElement} svg
      * @param {Object} [options]
      * @param {Number} [options.layer] - the layer index, used for visually comparing flows
      * @returns {SVGGElement}
      */
-    function createSVGLayer(svg, { layer = 0, opacity = 1 } = {}) {
+    function createSVGLayer (svg, { layer = 0, opacity = 1 } = {}) {
         // check and create if necessary the outerContainer.
         // The grid will be added to this container alongside (but before) any layers
         let outerContainer = svg.querySelector('g.outerContainer')
         if (!outerContainer) {
-            outerContainer = createSvgElement('g' , { class: 'outerContainer' }, svg)
+            outerContainer = createSvgElement('g', { class: 'outerContainer' }, svg)
         }
 
-        if (!outerContainer.querySelector(`g.flow_grid`)) {
+        if (!outerContainer.querySelector('g.flow_grid')) {
             createSvgElement('g', { class: 'flow_grid' }, outerContainer)
         }
 
@@ -1073,15 +1079,15 @@ const FlowRenderer = (function () {
      * @param {SVGGElement} gEl The `g` element in which to draw the grid
      * @returns void
      */
-    function drawSVGGrid(gEl) {
+    function drawSVGGrid (gEl) {
         if (gEl.childNodes.length > 0) {
             return // grid already drawn
         }
-        // create <rect width="100%" height="100%" fill="url(#grid)" 
+        // create <rect width="100%" height="100%" fill="url(#grid)"
         const gridRect = createSvgElement('rect', {
-            width:  `${workspaceSize.width}px`,
+            width: `${workspaceSize.width}px`,
             height: `${workspaceSize.height}px`,
-            fill: "url(#grid)"
+            fill: 'url(#grid)'
         }, gEl)
         gridRect.style.transform = 'translate(-1px, -1px)'
     }
@@ -1095,20 +1101,20 @@ const FlowRenderer = (function () {
      * @param {HTMLElement} [parent] - The parent element to append the created element to
      * @returns {HTMLElement}
      */
-    function createHTMLElement(tag, attributes, classes, textContent, parent) {
+    function createHTMLElement (tag, attributes, classes, textContent, parent) {
         const doc = getDocument(parent, this)
         const el = doc.createElement(tag)
-        if (typeof attributes === "object") {
+        if (typeof attributes === 'object') {
             for (const attr in attributes) {
                 el.setAttribute(attr, attributes[attr])
             }
         }
-        if (classes && typeof classes === "string") {
-            el.classList.add(...classes.split(" "))
+        if (classes && typeof classes === 'string') {
+            el.classList.add(...classes.split(' '))
         } else if (Array.isArray(classes)) {
             el.classList.add(...classes)
         }
-        if (typeof textContent === "string") {
+        if (typeof textContent === 'string') {
             el.textContent = textContent
         }
         if (parent) {
@@ -1117,7 +1123,7 @@ const FlowRenderer = (function () {
         return el
     }
 
-    function diffProcessor(diff) {
+    function diffProcessor (diff) {
         const changeList = []
         const tabs = {}
         const keysChanged = new Set([...Object.keys(diff.changed), ...Object.keys(diff.added), ...Object.keys(diff.deleted), ...Object.keys(diff.moved), ...Object.keys(diff.positionChanged)])
@@ -1125,7 +1131,7 @@ const FlowRenderer = (function () {
         const v1 = diff.currentConfig
         const v2 = diff.newConfig
 
-        function getDifferences() {
+        function getDifferences () {
             const changes = []
             if (keysChanged.size === 0) {
                 return changes
@@ -1133,9 +1139,9 @@ const FlowRenderer = (function () {
 
             // Always start with a global tab
             tabs.global = {
-                id: "global",
-                v1: { tab: {nodes: v1.globals} },
-                v2: { tab: {nodes: v2.globals} }
+                id: 'global',
+                v1: { tab: { nodes: v1.globals } },
+                v2: { tab: { nodes: v2.globals } }
             }
 
             // Add the flow tabs
@@ -1173,7 +1179,7 @@ const FlowRenderer = (function () {
             // return unique entries
             const seen = new Set()
             return changes.filter(change => {
-                const movedZ = change.prop === "z" && change.diffType === "moved"
+                const movedZ = change.prop === 'z' && change.diffType === 'moved'
                 const key = `${movedZ ? '*' : change.tab}-${change.item}-${change.diffType}-${change.prop}-${change.value1}-${change.value2}`
                 if (seen.has(key)) { return false }
                 seen.add(key)
@@ -1182,19 +1188,19 @@ const FlowRenderer = (function () {
         }
 
         function formatChange (tab, item, diffType, prop, value1, value2) {
-            const change = {tab, item, diffType, prop, value1, value2, toString: () => ""}
-            const addQuotes = (v) => v ? `'${v}'` : `''`
+            const change = { tab, item, diffType, prop, value1, value2, toString: () => '' }
+            const addQuotes = (v) => v ? `'${v}'` : '\'\''
             const getName = (node) => node ? addQuotes(getNodeLabel(node)) : "'n/a'"
             const _tab = diff.currentConfig.all[tab] || diff.newConfig.all[tab]
             const tabName = getName(_tab)
             const _item = diff.currentConfig.all[item] || diff.newConfig.all[item]
             const v1node = item === 'tab' ? _tab : diff.currentConfig.all[item]
             const v2node = item === 'tab' ? _tab : diff.newConfig.all[item]
-            const v1orv2 = (v1node || v2node)
-            const type = v1node && v1node.type
+            // const v1orv2 = (v1node || v2node)
+            // const type = v1node && v1node.type
             const thisType = item === 'tab' ? 'tab' : 'node'
-            const v1NodeName = (v1node && (v1node.name || v1node.label || v1node.id)) || '-'
-            const v2NodeName = (v2node && (v2node.name || v2node.label || v2node.id)) || '-'
+            // const v1NodeName = (v1node && (v1node.name || v1node.label || v1node.id)) || '-'
+            // const v2NodeName = (v2node && (v2node.name || v2node.label || v2node.id)) || '-'
             const wireChange = /wires\[\d+\]/.test(prop)
             let wireText = ''
             if (wireChange) {
@@ -1206,85 +1212,85 @@ const FlowRenderer = (function () {
             }
             const movedFrom = value1 && (prop === 'z' || /wires\[\d+\]/.test(prop)) ? diff.currentConfig.all[value1] : null
             const movedTo = value2 && (prop === 'z' || /wires\[\d+\]/.test(prop)) ? diff.newConfig.all[value2] : null
-            
+
             change.toString = function () {
                 const stringBuilder = []
                 switch (diffType) {
-                    case "deleted":
-                        stringBuilder.push("deleted", thisType, getName(_item))
-                        break
-                    case "added":
-                        stringBuilder.push("added", thisType, getName(_item))
-                        break
-                    case "moved":
-                        stringBuilder.push(getName(_item), "moved from ", getName(movedFrom), "to", getName(movedTo))
-                        break
-                    case "changed":
-                        if (prop === 'g') {
-                            if (value1 && !value2) {
-                                stringBuilder.push(tabName, getName(_item), "was removed from group", addQuotes(getName(value1)))
-                            } else if (!value1 && value2) {
-                                stringBuilder.push(tabName, getName(_item), "was added to group", addQuotes(getName(value2)))
-                            } else {
-                                stringBuilder.push(tabName, getName(_item), "moved group from", addQuotes(value1), "to", addQuotes(value2))
-                            }
-                        } else if (wireChange) {
-                            stringBuilder.push(tabName, getName(_item), wireText)
-                        } else if (item === 'tab') {
-                            stringBuilder.push('tab', tabName, 'property', addQuotes(change.prop), "was", addQuotes(change.value1 || '') + ", now", addQuotes(change.value2 || ''))
+                case 'deleted':
+                    stringBuilder.push('deleted', thisType, getName(_item))
+                    break
+                case 'added':
+                    stringBuilder.push('added', thisType, getName(_item))
+                    break
+                case 'moved':
+                    stringBuilder.push(getName(_item), 'moved from ', getName(movedFrom), 'to', getName(movedTo))
+                    break
+                case 'changed':
+                    if (prop === 'g') {
+                        if (value1 && !value2) {
+                            stringBuilder.push(tabName, getName(_item), 'was removed from group', addQuotes(getName(value1)))
+                        } else if (!value1 && value2) {
+                            stringBuilder.push(tabName, getName(_item), 'was added to group', addQuotes(getName(value2)))
                         } else {
-                            stringBuilder.push(getName(_item), 'property', addQuotes(change.prop), "was", addQuotes(change.value1 || ''), "now", addQuotes(change.value2 || ''))
+                            stringBuilder.push(tabName, getName(_item), 'moved group from', addQuotes(value1), 'to', addQuotes(value2))
                         }
-                        break
-                    case "positionChanged":
-                        stringBuilder.push(getName(_item), "moved from", change.value1, "to", change.value2)
-                        break
-                    default:
-                        stringBuilder.push(tabName, getName(_item), addQuotes(change.prop), "was", addQuotes(change.value1 || ''), "now", addQuotes(change.value2 || ''))
-                        break
+                    } else if (wireChange) {
+                        stringBuilder.push(tabName, getName(_item), wireText)
+                    } else if (item === 'tab') {
+                        stringBuilder.push('tab', tabName, 'property', addQuotes(change.prop), 'was', addQuotes(change.value1 || '') + ', now', addQuotes(change.value2 || ''))
+                    } else {
+                        stringBuilder.push(getName(_item), 'property', addQuotes(change.prop), 'was', addQuotes(change.value1 || ''), 'now', addQuotes(change.value2 || ''))
+                    }
+                    break
+                case 'positionChanged':
+                    stringBuilder.push(getName(_item), 'moved from', change.value1, 'to', change.value2)
+                    break
+                default:
+                    stringBuilder.push(tabName, getName(_item), addQuotes(change.prop), 'was', addQuotes(change.value1 || ''), 'now', addQuotes(change.value2 || ''))
+                    break
                 }
-                return stringBuilder.join(" ")
+                return stringBuilder.join(' ')
             }
             return change
         }
 
         /**
-         * 
+         *
          * @param {*} diff - The diff containing the changes
-         * @param {*} tab 
-         * @returns 
+         * @param {*} tab
+         * @returns
          */
-        function getTabChanges(diff, tab) {
+        function getTabChanges (diff, tab) {
             /** A key-value pair of node id to node object */
             const v1Nodes = diff.currentConfig.all
             /** A key-value pair of node id to node object */
             const v2Nodes = diff.newConfig.all
-    
+
             const changes = []
             if (!tab.v1 || !tab.v2) {
                 if (tab.v1) {
-                    changes.push(formatChange(tab.id, tab.id, "tab", "deleted", tab.v1, null))
+                    changes.push(formatChange(tab.id, tab.id, 'tab', 'deleted', tab.v1, null))
                 }
                 if (tab.v2) {
-                    changes.push(formatChange(tab.id, tab.id, "tab", "added", null, tab.v2))
+                    changes.push(formatChange(tab.id, tab.id, 'tab', 'added', null, tab.v2))
                 }
                 return changes
             }
 
-            const t1props = tab.v1?.tab ? {...tab.v1.tab.n} : {}
-            t1props.order =  tab.v1?.order
-            const t2props = tab.v2?.tab ? {...tab.v2.tab.n} : {}
+            const t1props = tab.v1?.tab ? { ...tab.v1.tab.n } : {}
+            t1props.order = tab.v1?.order
+            const t2props = tab.v2?.tab ? { ...tab.v2.tab.n } : {}
             t2props.order = tab.v2?.order
             const t1nodes = tab.v1?.tab?.nodes || []
             const t2nodes = tab.v2?.tab?.nodes || []
 
-            changes.push(...getItemDifferences(tab.id, "tab", "", "changed", t1props, t2props))
+            changes.push(...getItemDifferences(tab.id, 'tab', '', 'changed', t1props, t2props))
             const t1NodeIds = t1nodes.map(n => n.id)
             const t2NodeIds = t2nodes.map(n => n.id)
             const tabKeysChanged = new Set([...t1NodeIds, ...t2NodeIds].filter(id => keysChanged.has(id)))
-            const numberOrNull = v => (typeof v !== "number" ? null : v)
+            const numberOrNull = v => (typeof v !== 'number' ? null : v)
             const copyObjectWithoutProps = (props, obj) => {
-                const newObj = {...obj}
+                const newObj = { ...obj }
                 for (const prop of props) {
                     delete newObj[prop]
                 }
@@ -1296,17 +1302,17 @@ const FlowRenderer = (function () {
                 const v1andv2 = !!(v1node && v2node)
 
                 if (diff.deleted[changeId]) {
-                    changes.push(...getItemDifferences(tab.id, changeId, "", "deleted", v1node, v2node))
+                    changes.push(...getItemDifferences(tab.id, changeId, '', 'deleted', v1node, v2node))
                     continue
                 }
                 if (diff.added[changeId]) {
-                    changes.push(...getItemDifferences(tab.id, changeId, "", "added", v1node, v2node))
+                    changes.push(...getItemDifferences(tab.id, changeId, '', 'added', v1node, v2node))
                     continue
                 }
                 if (v1andv2) {
                     let otherChanges = true
                     if (diff.moved[changeId]) {
-                        changes.push(...getItemDifferences(tab.id, changeId, "", "moved", { z: v1node.z }, { z: v2node.z }))
+                        changes.push(...getItemDifferences(tab.id, changeId, '', 'moved', { z: v1node.z }, { z: v2node.z }))
                     }
                     if (diff.positionChanged[changeId]) {
                         otherChanges = false // position changes indicate no other changes
@@ -1314,12 +1320,12 @@ const FlowRenderer = (function () {
                         const v2Obj = { x: numberOrNull(v2node.x), y: numberOrNull(v2node.y) }
                         const v1ObjStr = JSON.stringify(v1Obj)
                         const v2ObjStr = JSON.stringify(v2Obj)
-                        changes.push(...getItemDifferences(tab.id, changeId, "position", "positionChanged", v1ObjStr, v2ObjStr))
+                        changes.push(...getItemDifferences(tab.id, changeId, 'position', 'positionChanged', v1ObjStr, v2ObjStr))
                     }
                     if (otherChanges) {
-                        const v1obj = copyObjectWithoutProps(["x", "y", "z", "w", "h"], v1node)
-                        const v2obj = copyObjectWithoutProps(["x", "y", "z", "w", "h"], v2node)
-                        changes.push(...getItemDifferences(tab.id, changeId, "", "changed", v1obj, v2obj))
+                        const v1obj = copyObjectWithoutProps(['x', 'y', 'z', 'w', 'h'], v1node)
+                        const v2obj = copyObjectWithoutProps(['x', 'y', 'z', 'w', 'h'], v2node)
+                        changes.push(...getItemDifferences(tab.id, changeId, '', 'changed', v1obj, v2obj))
                     }
                 }
             }
@@ -1328,20 +1334,20 @@ const FlowRenderer = (function () {
 
         function getItemDifferences (tabId, itemId, prop, changeType, value1, value2) {
             const diffList = []
-            if (changeType === "deleted") {
+            if (changeType === 'deleted') {
                 diffList.push(formatChange(tabId, itemId, changeType, prop, value1 ? '' : 'deleted', value2 ? '' : 'deleted'))
-            } else if (changeType === "added") {
+            } else if (changeType === 'added') {
                 diffList.push(formatChange(tabId, itemId, changeType, prop, value1 ? 'added' : '', value2 ? 'added' : ''))
             } else if (typeof value1 !== typeof value2) {
                 diffList.push(formatChange(tabId, itemId, 'changed', prop, value1 || '', value2 || ''))
-            } else if(Array.isArray(value1)) {
+            } else if (Array.isArray(value1)) {
                 for (let i = 0; i < value1.length; i++) {
                     const thisProp = prop ? `${prop}[${i}]` : `[${i}]`
                     const v1val = value1[i]
                     const v2val = value2[i]
                     diffList.push(...getItemDifferences(tabId, itemId, thisProp, changeType || 'changed', v1val, v2val))
                 }
-            } else if (value1 && value2 && typeof value1 === "object" && typeof value2 === "object") {
+            } else if (value1 && value2 && typeof value1 === 'object' && typeof value2 === 'object') {
                 const keys = Object.keys(value1)
                 for (const key of keys) {
                     const keyNeedsBrackets = /[^a-zA-Z0-9_$]/.test(key)
@@ -1359,26 +1365,26 @@ const FlowRenderer = (function () {
         changeList.push(...getDifferences())
 
         return {
-            get changes() {
+            get changes () {
                 return changeList
             },
-            get diff() {
+            get diff () {
                 return diff
             },
-            get tabs() {
+            get tabs () {
                 return tabs
             },
-            getNodeInfo(nodeId) {
+            getNodeInfo (nodeId) {
                 return {
                     propertiesChanged: changeList.filter(c => c.itemId === nodeId && c.tab !== nodeId),
                     v1: v1.all[nodeId],
                     v2: v2.all[nodeId]
                 }
             },
-            getTabInfo(tabId) {
+            getTabInfo (tabId) {
                 return {
-                    propertiesChanged: changeList.filter(c => c.tab === tabId && c.itemId === "tab"),
-                    nodesChanged: changeList.filter(c => c.tab === tabId && c.itemId !== "tab"),
+                    propertiesChanged: changeList.filter(c => c.tab === tabId && c.itemId === 'tab'),
+                    nodesChanged: changeList.filter(c => c.tab === tabId && c.itemId !== 'tab'),
                     v1: tabs[tabId],
                     v2: tabs[tabId]
                 }
@@ -1386,62 +1392,62 @@ const FlowRenderer = (function () {
         }
     }
 
+    // TODO: Generating the diff table is disabled - requires more work
     /**
      * Renders a table of differences in the given container
      * @param {HTMLElement} container - the container to create the diff table in
      * @param {*} diff
-     * @returns 
+     * @returns
      */
-    function diffTableCreate(container, changes) {
-        const doc = getDocument(container, this)
-        let diffTbl = container.querySelector(".diff-table ")
-        if (!diffTbl) {
-            diffTbl = createHTMLElement('table', { class: 'diff-table' }, null, null, container)
-        }
-        while (diffTbl.firstChild) {
-            diffTbl.removeChild(diffTbl.firstChild)
-        }
+    // function diffTableCreate (container, changes) {
+    //     const doc = getDocument(container, this)
+    //     let diffTbl = container.querySelector('.diff-table ')
+    //     if (!diffTbl) {
+    //         diffTbl = createHTMLElement('table', { class: 'diff-table' }, null, null, container)
+    //     }
+    //     while (diffTbl.firstChild) {
+    //         diffTbl.removeChild(diffTbl.firstChild)
+    //     }
 
-        // add a row for each change in differ.changes
-        for (const change of changes) {
-            const tr = createHTMLElement('tr', null, null, null, diffTbl)
-            const tdItemInfo = createHTMLElement('td', null, null, null, tr)
-            const td1div = createHTMLElement('div', null, 'diff-info', null, tdItemInfo)
-            const spanType = createHTMLElement('span', { title: change.diffType }, `diff-type diff-type-${change.diffType}`, ' ', td1div)
-            const spanText = createHTMLElement('span', null, `diff-type-text diff-type-text-${change.diffType}`, change.item, td1div)
+    //     // add a row for each change in differ.changes
+    //     for (const change of changes) {
+    //         const tr = createHTMLElement('tr', null, null, null, diffTbl)
+    //         const tdItemInfo = createHTMLElement('td', null, null, null, tr)
+    //         const td1div = createHTMLElement('div', null, 'diff-info', null, tdItemInfo)
+    //         const spanType = createHTMLElement('span', { title: change.diffType }, `diff-type diff-type-${change.diffType}`, ' ', td1div)
+    //         const spanText = createHTMLElement('span', null, `diff-type-text diff-type-text-${change.diffType}`, change.item, td1div)
 
-            const tabDiv = container.parentElement.parentElement.querySelector('.red-ui-tabs')
-            const workspaceChart = container.parentElement.parentElement.querySelector('.red-ui-workspace-chart')
-            const slider = container.parentElement.parentElement.querySelector('.flow-compare-slider')
+    //         const tabDiv = container.parentElement.parentElement.querySelector('.red-ui-tabs')
+    //         const workspaceChart = container.parentElement.parentElement.querySelector('.red-ui-workspace-chart')
+    //         const slider = container.parentElement.parentElement.querySelector('.flow-compare-slider')
 
-            const tdProp = createHTMLElement('td', null, null, change.prop, tr)
-            const tdV1 = createHTMLElement('td', null, null, '', tr)
-            const t1V1Div = createHTMLElement('div', null, 'diff-value diff-value-1', null, tdV1)
-            const v1ItemButton = createHTMLElement('button', { 'data-item-id': change.item, 'data-tab-id': change.tab, 'data-diff-type': change.diffType }, null, 'v1', t1V1Div)
-            const t1V1Span = createHTMLElement('span', null, null, change.value1 || '', t1V1Div)
+    //         const tdProp = createHTMLElement('td', null, null, change.prop, tr)
+    //         const tdV1 = createHTMLElement('td', null, null, '', tr)
+    //         const t1V1Div = createHTMLElement('div', null, 'diff-value diff-value-1', null, tdV1)
+    //         const v1ItemButton = createHTMLElement('button', { 'data-item-id': change.item, 'data-tab-id': change.tab, 'data-diff-type': change.diffType }, null, 'v1', t1V1Div)
+    //         const t1V1Span = createHTMLElement('span', null, null, change.value1 || '', t1V1Div)
 
-            
-            const tdV2 = createHTMLElement('td', null, null, '', tr)
-            const t1V2Div = createHTMLElement('div', null, 'diff-value diff-value-2', null, tdV2)
-            const v2ItemButton = createHTMLElement('button', { 'data-item-id': change.item, 'data-tab-id': change.tab, 'data-diff-type': change.diffType }, null, 'v2', t1V2Div)
-            const t1V2Span = createHTMLElement('span', null, null, change.value2 || '', t1V2Div)
+    //         const tdV2 = createHTMLElement('td', null, null, '', tr)
+    //         const t1V2Div = createHTMLElement('div', null, 'diff-value diff-value-2', null, tdV2)
+    //         const v2ItemButton = createHTMLElement('button', { 'data-item-id': change.item, 'data-tab-id': change.tab, 'data-diff-type': change.diffType }, null, 'v2', t1V2Div)
+    //         const t1V2Span = createHTMLElement('span', null, null, change.value2 || '', t1V2Div)
 
-            if (change.diffType === 'added') {
-                v1ItemButton.disabled = true
-                v2ItemButton.onclick = function() { change.highlight(1) }
-            } else if (change.diffType === 'deleted') {
-                v2ItemButton.disabled = true
-                v1ItemButton.onclick = function() { change.highlight(0) }
-            } else {
-                v1ItemButton.onclick = function() { change.highlight(0) }
-                v2ItemButton.onclick = function() { change.highlight(1) }
-            }
-        }
-        return diffTbl
-    }
+    //         if (change.diffType === 'added') {
+    //             v1ItemButton.disabled = true
+    //             v2ItemButton.onclick = function () { change.highlight(1) }
+    //         } else if (change.diffType === 'deleted') {
+    //             v2ItemButton.disabled = true
+    //             v1ItemButton.onclick = function () { change.highlight(0) }
+    //         } else {
+    //             v1ItemButton.onclick = function () { change.highlight(0) }
+    //             v2ItemButton.onclick = function () { change.highlight(1) }
+    //         }
+    //     }
+    //     return diffTbl
+    // }
 
     /**
-     * 
+     *
      * @param {FlowRendererOptions} renderOpts - rendering options
      * @param {HTMLElement} [container] - the container element (if omitted, renderopts.container is used)
      * @returns {Array<string>}
@@ -1449,7 +1455,7 @@ const FlowRenderer = (function () {
     function getScope (renderOpts) {
         const container = renderOpts?.container
         const dtl = new Set()
-        let scope = renderOpts?.scope || ''
+        const scope = renderOpts?.scope || ''
         if (scope && typeof scope === 'string') {
             dtl.add(scope)
         } else if ((Array.isArray(scope) || scope instanceof DOMTokenList) && scope.length > 0) {
@@ -1458,24 +1464,24 @@ const FlowRenderer = (function () {
             dtl.add(...container.classList)
         }
         if (dtl.size === 0) {
-            dtl.add("flow-renderer")
+            dtl.add('flow-renderer')
         }
         return [...dtl]
     }
 
     /** @returns {SVGGElement} */
-    function getFlowLayer(svg, layer) {
+    function getFlowLayer (svg, layer) {
         return svg.querySelector(`g.flow-layer-${layer || 0}`)
     }
-    
-    function getCSS(scope) {
+
+    function getCSS (scope) {
         // normalize the scope(s)
-        if (scope && (scope.length && typeof scope !== "string" && typeof scope[0] === "string")) {
-            scope = [...scope].join(" ")
+        if (scope && (scope.length && typeof scope !== 'string' && typeof scope[0] === 'string')) {
+            scope = [...scope].join(' ')
         }
-        scope = scope || ".flow-renderer"
-        scope = scope.split(" ").map(s => `.${s}`).join(" ").trim()
-        const css =`
+        scope = scope || '.flow-renderer'
+        scope = scope.split(' ').map(s => `.${s}`).join(' ').trim()
+        const css = `
         :root {
             --red-ui-view-grid-color: #eee;
             --red-ui-view-border: 1px solid #bbbbbb;
@@ -1863,7 +1869,7 @@ const FlowRenderer = (function () {
         return css
     }
 
-    function addStyle(doc, scope) {
+    function addStyle (doc, scope) {
         const nameSafeId = styleId + (scope ? '--' + scope.toString() : '').replace(/[^a-z0-9]/gi, '-').toLowerCase()
         let style = doc.getElementById(nameSafeId)
         if (!style) {
@@ -1890,71 +1896,71 @@ const FlowRenderer = (function () {
     }
 
     // #endregion
-    
+
     // #region "Node-RED src code parts"
 
     // SRC: https://github.com/node-red/node-red/blob/3fd2d07c759be11395615f7b1d4c97190321021d/packages/node_modules/%40node-red/editor-client/src/js/ui/diff.js#L1145
-    function parseNodes(nodeList) {
-        var tabOrder = [];
-        var tabs = {};
-        var subflows = {};
-        var globals = [];
-        var all = {};
+    function parseNodes (nodeList) {
+        const tabOrder = []
+        const tabs = {}
+        const subflows = {}
+        const globals = []
+        const all = {}
 
-        nodeList.forEach(function(node) {
-            all[node.id] = node;
+        nodeList.forEach(function (node) {
+            all[node.id] = node
             if (node.type === 'tab') {
-                tabOrder.push(node.id);
-                tabs[node.id] = {n:node,nodes:[]};
+                tabOrder.push(node.id)
+                tabs[node.id] = { n: node, nodes: [] }
             } else if (node.type === 'subflow') {
-                subflows[node.id] = {n:node,nodes:[]};
+                subflows[node.id] = { n: node, nodes: [] }
             }
-        });
+        })
 
-        nodeList.forEach(function(node) {
+        nodeList.forEach(function (node) {
             if (node.type !== 'tab' && node.type !== 'subflow') {
                 if (tabs[node.z]) {
-                    tabs[node.z].nodes.push(node);
+                    tabs[node.z].nodes.push(node)
                 } else if (subflows[node.z]) {
-                    subflows[node.z].nodes.push(node);
+                    subflows[node.z].nodes.push(node)
                 } else {
-                    globals.push(node);
+                    globals.push(node)
                 }
             }
-        });
+        })
 
         return {
-            all: all,
-            tabOrder: tabOrder,
-            tabs: tabs,
-            subflows: subflows,
-            globals: globals
+            all,
+            tabOrder,
+            tabs,
+            subflows,
+            globals
         }
     }
 
     // SRC: https://github.com/node-red/node-red/blob/3fd2d07c759be11395615f7b1d4c97190321021d/packages/node_modules/%40node-red/editor-client/src/js/ui/diff.js#L1182
-    function generateDiff(currentNodes,newNodes) {
-        const currentConfig = parseNodes(currentNodes);
-        const newConfig = parseNodes(newNodes);
-        const added = {};
-        const deleted = {};
-        const changed = {};
-        const positionChanged = {};
-        const moved = {};
+    function generateDiff (currentNodes, newNodes) {
+        const currentConfig = parseNodes(currentNodes)
+        const newConfig = parseNodes(newNodes)
+        const added = {}
+        const deleted = {}
+        const changed = {}
+        const positionChanged = {}
+        const moved = {}
 
-        Object.keys(currentConfig.all).forEach(function(id) {
+        Object.keys(currentConfig.all).forEach(function (id) {
             // const node = RED.nodes.workspace(id)||RED.nodes.subflow(id)||RED.nodes.node(id); // redundant?
-            if (!newConfig.all.hasOwnProperty(id)) {
-                deleted[id] = true;
+            if (!hasProperty(newConfig.all, id)) {
+                deleted[id] = true
                 return
             }
             const currentConfigJSON = JSON.stringify(currentConfig.all[id])
             const newConfigJSON = JSON.stringify(newConfig.all[id])
-            
+
             if (currentConfigJSON !== newConfigJSON) {
-                changed[id] = true;
+                changed[id] = true
                 if (currentConfig.all[id].z !== newConfig.all[id].z) {
-                    moved[id] = true;
+                    moved[id] = true
                 } else if (
                     currentConfig.all[id].x !== newConfig.all[id].x ||
                     currentConfig.all[id].y !== newConfig.all[id].y ||
@@ -1974,20 +1980,19 @@ const FlowRenderer = (function () {
                     delete newNodeClone.y
                     delete newNodeClone.w
                     delete newNodeClone.h
-                    
+
                     if (JSON.stringify(currentNodeClone) === JSON.stringify(newNodeClone)) {
                         // Only the position has changed - everything else is the same
                         positionChanged[id] = true
                     }
                 }
-
             }
-        });
-        Object.keys(newConfig.all).forEach(function(id) {
-            if (!currentConfig.all.hasOwnProperty(id)) {
-                added[id] = true;
+        })
+        Object.keys(newConfig.all).forEach(function (id) {
+            if (!hasProperty(currentConfig.all, id)) {
+                added[id] = true
             }
-        });
+        })
 
         const diff = {
             currentConfig,
@@ -1997,129 +2002,129 @@ const FlowRenderer = (function () {
             changed,
             positionChanged,
             moved
-        };
-        return diff;
+        }
+        return diff
     }
 
     // SRC: https://github.com/node-red/node-red/blob/29ed5b27925e51185098a7fe3180faa4c8a734d7/packages/node_modules/%40node-red/editor-client/src/js/ui/view.js#L1057-L1179
-    function generateLinkPath(origX,origY, destX, destY, sc, hasStatus = false) {
-        var dy = destY-origY;
-        var dx = destX-origX;
-        var delta = Math.sqrt(dy*dy+dx*dx);
-        var scale = lineCurveScale;
-        var scaleY = 0;
-        if (dx*sc > 0) {
+    function generateLinkPath (origX, origY, destX, destY, sc, hasStatus = false) {
+        const dy = destY - origY
+        const dx = destX - origX
+        const delta = Math.sqrt(dy * dy + dx * dx)
+        let scale = lineCurveScale
+        const scaleY = 0
+        if (dx * sc > 0) {
             if (delta < node_width) {
-                scale = 0.75-0.75*((node_width-delta)/node_width);
+                scale = 0.75 - 0.75 * ((node_width - delta) / node_width)
                 // scale += 2*(Math.min(5*node_width,Math.abs(dx))/(5*node_width));
                 // if (Math.abs(dy) < 3*node_height) {
                 //     scaleY = ((dy>0)?0.5:-0.5)*(((3*node_height)-Math.abs(dy))/(3*node_height))*(Math.min(node_width,Math.abs(dx))/(node_width)) ;
                 // }
             }
         } else {
-            scale = 0.4-0.2*(Math.max(0,(node_width-Math.min(Math.abs(dx),Math.abs(dy)))/node_width));
+            scale = 0.4 - 0.2 * (Math.max(0, (node_width - Math.min(Math.abs(dx), Math.abs(dy))) / node_width))
         }
-        function genCP(cp) {
-            return ` M ${cp[0]-5} ${cp[1]} h 10 M ${cp[0]} ${cp[1]-5} v 10 `
-        }
-        if (dx*sc > 0) {
-            let cp = [
-                [(origX+sc*(node_width*scale)), (origY+scaleY*node_height)],
-                [(destX-sc*(scale)*node_width), (destY-scaleY*node_height)]
+        // function genCP (cp) {
+        //     return ` M ${cp[0] - 5} ${cp[1]} h 10 M ${cp[0]} ${cp[1] - 5} v 10 `
+        // }
+        if (dx * sc > 0) {
+            const cp = [
+                [(origX + sc * (node_width * scale)), (origY + scaleY * node_height)],
+                [(destX - sc * (scale) * node_width), (destY - scaleY * node_height)]
             ]
             return `M ${origX} ${origY} C ${cp[0][0]} ${cp[0][1]} ${cp[1][0]} ${cp[1][1]} ${destX} ${destY}`
-                //    + ` ${genCP(cp[0])} ${genCP(cp[1])}`
+            //    + ` ${genCP(cp[0])} ${genCP(cp[1])}`
         } else {
             let topX, topY, bottomX, bottomY
             let cp
-            let midX = Math.floor(destX-dx/2);
-            let midY = Math.floor(destY-dy/2);          
+            const midX = Math.floor(destX - dx / 2)
+            const midY = Math.floor(destY - dy / 2)
             if (Math.abs(dy) < 10) {
-                bottomY = Math.max(origY, destY) + (hasStatus?35:25)
-                let startCurveHeight = bottomY - origY
-                let endCurveHeight = bottomY - destY
+                bottomY = Math.max(origY, destY) + (hasStatus ? 35 : 25)
+                const startCurveHeight = bottomY - origY
+                const endCurveHeight = bottomY - destY
                 cp = [
-                    [ origX + sc*15 , origY ],
-                    [ origX + sc*25 , origY + 5 ],
-                    [ origX + sc*25 , origY + startCurveHeight/2 ],
+                    [origX + sc * 15, origY],
+                    [origX + sc * 25, origY + 5],
+                    [origX + sc * 25, origY + startCurveHeight / 2],
 
-                    [ origX + sc*25 , origY + startCurveHeight - 5 ],
-                    [ origX + sc*15 , origY + startCurveHeight ],
-                    [ origX , origY + startCurveHeight ],
+                    [origX + sc * 25, origY + startCurveHeight - 5],
+                    [origX + sc * 15, origY + startCurveHeight],
+                    [origX, origY + startCurveHeight],
 
-                    [ destX - sc*15, origY + startCurveHeight ],
-                    [ destX - sc*25, origY + startCurveHeight - 5 ],
-                    [ destX - sc*25, destY + endCurveHeight/2 ],
+                    [destX - sc * 15, origY + startCurveHeight],
+                    [destX - sc * 25, origY + startCurveHeight - 5],
+                    [destX - sc * 25, destY + endCurveHeight / 2],
 
-                    [ destX - sc*25, destY + 5 ],
-                    [ destX - sc*15, destY ],
-                    [ destX, destY ],
+                    [destX - sc * 25, destY + 5],
+                    [destX - sc * 15, destY],
+                    [destX, destY]
                 ]
 
-                return "M "+origX+" "+origY+
-                    " C "+
-                    cp[0][0]+" "+cp[0][1]+" "+
-                    cp[1][0]+" "+cp[1][1]+" "+
-                    cp[2][0]+" "+cp[2][1]+" "+
-                    " C " +
-                    cp[3][0]+" "+cp[3][1]+" "+
-                    cp[4][0]+" "+cp[4][1]+" "+
-                    cp[5][0]+" "+cp[5][1]+" "+
-                    " h "+dx+
-                    " C "+
-                    cp[6][0]+" "+cp[6][1]+" "+
-                    cp[7][0]+" "+cp[7][1]+" "+
-                    cp[8][0]+" "+cp[8][1]+" "+
-                    " C " +
-                    cp[9][0]+" "+cp[9][1]+" "+
-                    cp[10][0]+" "+cp[10][1]+" "+
-                    cp[11][0]+" "+cp[11][1]+" "
-                    // +genCP(cp[0])+genCP(cp[1])+genCP(cp[2])+genCP(cp[3])+genCP(cp[4])
-                    // +genCP(cp[5])+genCP(cp[6])+genCP(cp[7])+genCP(cp[8])+genCP(cp[9])+genCP(cp[10])
+                return 'M ' + origX + ' ' + origY +
+                    ' C ' +
+                    cp[0][0] + ' ' + cp[0][1] + ' ' +
+                    cp[1][0] + ' ' + cp[1][1] + ' ' +
+                    cp[2][0] + ' ' + cp[2][1] + ' ' +
+                    ' C ' +
+                    cp[3][0] + ' ' + cp[3][1] + ' ' +
+                    cp[4][0] + ' ' + cp[4][1] + ' ' +
+                    cp[5][0] + ' ' + cp[5][1] + ' ' +
+                    ' h ' + dx +
+                    ' C ' +
+                    cp[6][0] + ' ' + cp[6][1] + ' ' +
+                    cp[7][0] + ' ' + cp[7][1] + ' ' +
+                    cp[8][0] + ' ' + cp[8][1] + ' ' +
+                    ' C ' +
+                    cp[9][0] + ' ' + cp[9][1] + ' ' +
+                    cp[10][0] + ' ' + cp[10][1] + ' ' +
+                    cp[11][0] + ' ' + cp[11][1] + ' '
+                // +genCP(cp[0])+genCP(cp[1])+genCP(cp[2])+genCP(cp[3])+genCP(cp[4])
+                // +genCP(cp[5])+genCP(cp[6])+genCP(cp[7])+genCP(cp[8])+genCP(cp[9])+genCP(cp[10])
             } else {
-                var cp_height = node_height/2;
-                var y1 = (destY + midY)/2
-                topX = origX + sc*node_width*scale;
-                topY = dy>0?Math.min(y1 - dy/2 , origY+cp_height):Math.max(y1 - dy/2 , origY-cp_height);
-                bottomX = destX - sc*node_width*scale;
-                bottomY = dy>0?Math.max(y1, destY-cp_height):Math.min(y1, destY+cp_height);
-                var x1 = (origX+topX)/2;
-                var scy = dy>0?1:-1;
+                const cp_height = node_height / 2
+                const y1 = (destY + midY) / 2
+                topX = origX + sc * node_width * scale
+                topY = dy > 0 ? Math.min(y1 - dy / 2, origY + cp_height) : Math.max(y1 - dy / 2, origY - cp_height)
+                bottomX = destX - sc * node_width * scale
+                bottomY = dy > 0 ? Math.max(y1, destY - cp_height) : Math.min(y1, destY + cp_height)
+                const x1 = (origX + topX) / 2
+                const scy = dy > 0 ? 1 : -1
                 cp = [
                     // Orig -> Top
-                    [x1,origY],
-                    [topX,dy>0?Math.max(origY, topY-cp_height):Math.min(origY, topY+cp_height)],
+                    [x1, origY],
+                    [topX, dy > 0 ? Math.max(origY, topY - cp_height) : Math.min(origY, topY + cp_height)],
                     // Top -> Mid
                     // [Mirror previous cp]
-                    [x1,dy>0?Math.min(midY, topY+cp_height):Math.max(midY, topY-cp_height)],
+                    [x1, dy > 0 ? Math.min(midY, topY + cp_height) : Math.max(midY, topY - cp_height)],
                     // Mid -> Bottom
                     // [Mirror previous cp]
-                    [bottomX,dy>0?Math.max(midY, bottomY-cp_height):Math.min(midY, bottomY+cp_height)],
+                    [bottomX, dy > 0 ? Math.max(midY, bottomY - cp_height) : Math.min(midY, bottomY + cp_height)],
                     // Bottom -> Dest
                     // [Mirror previous cp]
-                    [(destX+bottomX)/2,destY]
-                ];
-                if (cp[2][1] === topY+scy*cp_height) {
-                    if (Math.abs(dy) < cp_height*10) {
-                        cp[1][1] = topY-scy*cp_height/2;
-                        cp[3][1] = bottomY-scy*cp_height/2;
+                    [(destX + bottomX) / 2, destY]
+                ]
+                if (cp[2][1] === topY + scy * cp_height) {
+                    if (Math.abs(dy) < cp_height * 10) {
+                        cp[1][1] = topY - scy * cp_height / 2
+                        cp[3][1] = bottomY - scy * cp_height / 2
                     }
-                    cp[2][0] = topX;
+                    cp[2][0] = topX
                 }
-                return "M "+origX+" "+origY+
-                    " C "+
-                    cp[0][0]+" "+cp[0][1]+" "+
-                    cp[1][0]+" "+cp[1][1]+" "+
-                    topX+" "+topY+
-                    " S "+
-                    cp[2][0]+" "+cp[2][1]+" "+
-                    midX+" "+midY+
-                " S "+
-                    cp[3][0]+" "+cp[3][1]+" "+
-                    bottomX+" "+bottomY+
-                    " S "+
-                        cp[4][0]+" "+cp[4][1]+" "+
-                        destX+" "+destY
+                return 'M ' + origX + ' ' + origY +
+                    ' C ' +
+                    cp[0][0] + ' ' + cp[0][1] + ' ' +
+                    cp[1][0] + ' ' + cp[1][1] + ' ' +
+                    topX + ' ' + topY +
+                    ' S ' +
+                    cp[2][0] + ' ' + cp[2][1] + ' ' +
+                    midX + ' ' + midY +
+                ' S ' +
+                    cp[3][0] + ' ' + cp[3][1] + ' ' +
+                    bottomX + ' ' + bottomY +
+                    ' S ' +
+                        cp[4][0] + ' ' + cp[4][1] + ' ' +
+                        destX + ' ' + destY
 
                 // +genCP(cp[0])+genCP(cp[1])+genCP(cp[2])+genCP(cp[3])+genCP(cp[4])
             }
@@ -2127,68 +2132,68 @@ const FlowRenderer = (function () {
     }
 
     // SRC: https://github.com/node-red/node-red/blob/29ed5b27925e51185098a7fe3180faa4c8a734d7/packages/node_modules/%40node-red/editor-client/src/js/ui/view.js#L3009C1-L3030C6
-    function convertLineBreakCharacter(str) {
-        var result = [];
-        var lines = str.split(/\\n /);
+    function convertLineBreakCharacter (str) {
+        let result = []
+        const lines = str.split(/\\n /)
         if (lines.length > 1) {
-            var i=0;
-            for (i=0;i<lines.length - 1;i++) {
+            let i = 0
+            for (i = 0; i < lines.length - 1; i++) {
                 if (/\\$/.test(lines[i])) {
-                    result.push(lines[i]+"\\n "+lines[i+1])
-                    i++;
+                    result.push(lines[i] + '\\n ' + lines[i + 1])
+                    i++
                 } else {
                     result.push(lines[i])
                 }
             }
-            if ( i === lines.length - 1) {
-                result.push(lines[lines.length-1]);
+            if (i === lines.length - 1) {
+                result.push(lines[lines.length - 1])
             }
         } else {
-            result = lines;
+            result = lines
         }
-        result = result.map(function(l) { return l.replace(/\\\\n /g,"\\n ").trim() })
-        return result;
+        result = result.map(function (l) { return l.replace(/\\\\n /g, '\\n ').trim() })
+        return result
     }
 
     // SRC: https://github.com/node-red/node-red/blob/29ed5b27925e51185098a7fe3180faa4c8a734d7/packages/node_modules/%40node-red/editor-client/src/js/ui/view.js#L2971-L2984
-    function getLabelParts(str, className) {
-        var lines = convertLineBreakCharacter(str);
-        var width = 0;
-        for (var i=0;i<lines.length;i++) {
-            var calculateTextW = calculateTextDimensions(lines[i],className)[0];
-            if (width<calculateTextW) {
-                width=calculateTextW;
+    function getLabelParts (str, className) {
+        const lines = convertLineBreakCharacter(str)
+        let width = 0
+        for (let i = 0; i < lines.length; i++) {
+            const calculateTextW = calculateTextDimensions(lines[i], className)[0]
+            if (width < calculateTextW) {
+                width = calculateTextW
             }
         }
         return {
-            lines:lines,
-            width: width
+            lines,
+            width
         }
     }
 
     // SRC: https://github.com/node-red/node-red/blob/29ed5b27925e51185098a7fe3180faa4c8a734d7/packages/node_modules/%40node-red/editor-client/src/js/ui/view.js#L2986-L3007
-    var textDimensionPlaceholder = {};
-    var textDimensionCache = {};
-    function calculateTextDimensions(str,className) {
+    const textDimensionPlaceholder = {}
+    const textDimensionCache = {}
+    function calculateTextDimensions (str, className) {
         const doc = getDocument(this)
-        var cacheKey = "!"+str;
+        const cacheKey = '!' + str
         if (!textDimensionPlaceholder[className]) {
-            textDimensionPlaceholder[className] = doc.createElement("span");
-            textDimensionPlaceholder[className].className = className;
-            textDimensionPlaceholder[className].style.position = "absolute";
-            textDimensionPlaceholder[className].style.top = "-1000px";
-            doc.querySelector("body").appendChild(textDimensionPlaceholder[className]); // changed to dcoument.body
-            textDimensionCache[className] = {};
+            textDimensionPlaceholder[className] = doc.createElement('span')
+            textDimensionPlaceholder[className].className = className
+            textDimensionPlaceholder[className].style.position = 'absolute'
+            textDimensionPlaceholder[className].style.top = '-1000px'
+            doc.querySelector('body').appendChild(textDimensionPlaceholder[className]) // changed to dcoument.body
+            textDimensionCache[className] = {}
         } else {
             if (textDimensionCache[className][cacheKey]) {
                 return textDimensionCache[className][cacheKey]
             }
         }
-        textDimensionPlaceholder[className].textContent = (str||"");
-        var w = textDimensionPlaceholder[className].offsetWidth;
-        var h = textDimensionPlaceholder[className].offsetHeight;
-        textDimensionCache[className][cacheKey] = [w,h];
-        return textDimensionCache[className][cacheKey];
+        textDimensionPlaceholder[className].textContent = (str || '')
+        const w = textDimensionPlaceholder[className].offsetWidth
+        const h = textDimensionPlaceholder[className].offsetHeight
+        textDimensionCache[className][cacheKey] = [w, h]
+        return textDimensionCache[className][cacheKey]
     }
 
     /**
@@ -2197,40 +2202,40 @@ const FlowRenderer = (function () {
      * @param {Object} [options] Options: `align` can be "nearest", "left" or "right"
      * @returns `{x:number, y:number}`  as the offsets to deduct from `x` and `y`
      */
-    function calculateGridSnapOffsets(node, options) {
+    function calculateGridSnapOffsets (node, options) {
         if (snapGrid === false) {
             return { x: 0, y: 0 }
         }
-        options = options || { align: "nearest" };
-        const gridOffset = { x: 0, y: 0 };
-        const gridSize = RED.view.gridSize();
-        const offsetLeft = node.x - (gridSize * Math.round((node.x - node.w / 2) / gridSize) + node.w / 2);
-        const offsetRight = node.x - (gridSize * Math.round((node.x + node.w / 2) / gridSize) - node.w / 2);
-        gridOffset.x = offsetRight;
-        if (options.align === "right") {
-            //skip - already set to right
-        } else if (options.align === "left" || Math.abs(offsetLeft) < Math.abs(offsetRight)) {
-            gridOffset.x = offsetLeft;
+        options = options || { align: 'nearest' }
+        const gridOffset = { x: 0, y: 0 }
+        const gridSize = RED.view.gridSize()
+        const offsetLeft = node.x - (gridSize * Math.round((node.x - node.w / 2) / gridSize) + node.w / 2)
+        const offsetRight = node.x - (gridSize * Math.round((node.x + node.w / 2) / gridSize) - node.w / 2)
+        gridOffset.x = offsetRight
+        if (options.align === 'right') {
+            // skip - already set to right
+        } else if (options.align === 'left' || Math.abs(offsetLeft) < Math.abs(offsetRight)) {
+            gridOffset.x = offsetLeft
         }
-        gridOffset.y = node.y - (gridSize * Math.round(node.y / gridSize));
-        return gridOffset;
+        gridOffset.y = node.y - (gridSize * Math.round(node.y / gridSize))
+        return gridOffset
     }
 
-    function parseContextKey(key, defaultStore) {
-        var parts = {};
-        var m = /^#:\((\S+?)\)::(.*)$/.exec(key);
+    function parseContextKey (key, defaultStore) {
+        const parts = {}
+        const m = /^#:\((\S+?)\)::(.*)$/.exec(key)
         if (m) {
-            parts.store = m[1];
-            parts.key = m[2];
+            parts.store = m[1]
+            parts.key = m[2]
         } else {
-            parts.key = key;
+            parts.key = key
             if (defaultStore) {
-                parts.store = defaultStore;
+                parts.store = defaultStore
             } /* else if (RED.settings.context) {
                 parts.store = RED.settings.context.default;
             } */
         }
-        return parts;
+        return parts
     }
 
     // #endregion
@@ -2238,323 +2243,323 @@ const FlowRenderer = (function () {
     // #region "Label Functions"
     const payloadTypeLabel = (pt) => {
         switch (pt) {
-            case "str": return "string";
-            case "num": return "number";
-            case "bool": return "boolean";
-            case "json": return "json";
-            case "date": return "timestamp";
-            case "bin": return "binary";
-            case "env": return "environment";
-            case "flow": return "flow";
-            case "global": return "global";
-            default: return pt;
+        case 'str': return 'string'
+        case 'num': return 'number'
+        case 'bool': return 'boolean'
+        case 'json': return 'json'
+        case 'date': return 'timestamp'
+        case 'bin': return 'binary'
+        case 'env': return 'environment'
+        case 'flow': return 'flow'
+        case 'global': return 'global'
+        default: return pt
         }
     }
 
     const CORE_NODES = ['inject', 'change', 'switch', 'function', 'template', 'delay', 'trigger', 'link in', 'link out', 'link call', 'watch', 'complete', 'catch', 'status', 'comment', 'debug', 'subflow', 'range', 'filter', 'rbe', 'mqtt in', 'mqtt out', 'http in', 'http response', 'http request', 'websocket in', 'websocket out', 'tcp in', 'tcp out', 'udp in', 'udp out', 'tcp request', 'split', 'join', 'sort', 'batch', 'csv', 'json', 'xml', 'yaml', 'html', 'file in', 'file', 'exec']
 
-    var defaultLabelFunct = (node, subflowObj, flowdata) => {
-        let label = (node.name || node.label || node.info || node.text || subflowObj.name) || ""
+    const defaultLabelFunct = (node, subflowObj, flowdata) => {
+        const label = (node.name || node.label || node.info || node.text || subflowObj.name) || ''
 
         let betterCandidate = ''
         let temp = ''
         let name = ''
-        let suffix = "";
+        let suffix = ''
         switch (node.type) {
-            case 'file':
-                name = 'write file'
-            case 'file in':
-                name = name || 'read file'
-                temp = node.filename;
-                if(node.filenameType != "str" && node.filenameType != "env" ) { temp = ""; }
-                if(node.filenameType === "env") { temp = "env."+temp; }
-                if (name === "write file" && node.overwriteFile === "delete") {
-                    return node.name||"delete " + temp;
-                } else {
-                    return node.name||temp||name;
-                }
-            case 'html':
-                betterCandidate = node.tag
-                break
-            case 'tcp in':
-            case 'tcp out':
-            case 'tcp request':
-                name = 'tcp:'
-            case 'udp in':
-            case 'udp out':
-                name = name || 'udp:'
-                temp = (node.host || node.addr || node.server || '')
-                return name+(temp?temp+":":"")+(node.port||'')
-            case 'debug':
-                if (node.console === true || node.console === "true") { suffix = "\t⇲"; }
-                if (node.targetType === "jsonata") {
-                    return (node.name || "JSONata") + suffix;
-                }
-                if (node.complete === true || node.complete === "true") {
-                    return (node.name||"msg") + suffix;
-                } else {
-                    return (node.name || "msg." + ((!node.complete || node.complete === "false") ? "payload" : this.complete)) + suffix;
-                }
+        case 'file':
+            name = 'write file'
+        // eslint-disable-next-line no-fallthrough
+        case 'file in':
+            name = name || 'read file'
+            temp = node.filename
+            if (node.filenameType !== 'str' && node.filenameType !== 'env') { temp = '' }
+            if (node.filenameType === 'env') { temp = 'env.' + temp }
+            if (name === 'write file' && node.overwriteFile === 'delete') {
+                return node.name || 'delete ' + temp
+            } else {
+                return node.name || temp || name
+            }
+        case 'html':
+            betterCandidate = node.tag
+            break
+        case 'tcp in':
+        case 'tcp out':
+        case 'tcp request':
+            name = 'tcp:'
+        // eslint-disable-next-line no-fallthrough
+        case 'udp in':
+        case 'udp out':
+            name = name || 'udp:'
+            temp = (node.host || node.addr || node.server || '')
+            return name + (temp ? temp + ':' : '') + (node.port || '')
+        case 'debug':
+            if (node.console === true || node.console === 'true') { suffix = '\t⇲' }
+            if (node.targetType === 'jsonata') {
+                return (node.name || 'JSONata') + suffix
+            }
+            if (node.complete === true || node.complete === 'true') {
+                return (node.name || 'msg') + suffix
+            } else {
+                return (node.name || 'msg.' + ((!node.complete || node.complete === 'false') ? 'payload' : this.complete)) + suffix
+            }
         }
-        if (node.type && node.type.startsWith("ui-")) {
+        if (node.type && node.type.startsWith('ui-')) {
             // dashboard 2 node
-            betterCandidate = node.type.replace(/^ui-/, "")
-        } else if (node.type && node.type.startsWith("ui_")) {
+            betterCandidate = node.type.replace(/^ui-/, '')
+        } else if (node.type && node.type.startsWith('ui_')) {
             // dashboard 1 node
-            betterCandidate = node.type.replace(/^ui_/, "")
+            betterCandidate = node.type.replace(/^ui_/, '')
         }
         if (betterCandidate && betterCandidate.length <= 32) {
             return betterCandidate
         }
-        if(label) { return label }
-        if(node.topic && node.topic.length <= 32 && CORE_NODES.includes(node.type)) {
-            return node.topic;
+        if (label) { return label }
+        if (node.topic && node.topic.length <= 32 && CORE_NODES.includes(node.type)) {
+            return node.topic
         } else {
             return node.type
         }
-    };
+    }
 
     const injectLabelFunc = (node) => {
-        var suffix = "";
+        let suffix = ''
         // if fire once then add small indication
         if (node.once) {
-            suffix = " ¹";
+            suffix = ' ¹'
         }
         // but replace with repeat one if set to repeat
+        // eslint-disable-next-line eqeqeq
         if ((node.repeat && node.repeat != 0) || node.crontab) {
-            suffix = "\t↻";
+            suffix = '\t↻'
         }
         if (node.name) {
-            return node.name+suffix;
+            return node.name + suffix
         }
-        var payload = "";
-        var payloadType = "str";
-        var topic = "";
+        let payload = ''
+        let payloadType = 'str'
+        let topic = ''
         // const hasKey = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key)
         // const hasPVPT = (obj) => hasKey(obj, 'p') && hasKey(obj, 'v')
         const customProps = node.props // && node.props.length ? node.props.filter(hasPVPT) : null;
         if (customProps) {
-            for (var i=0;i<customProps.length;i++) {
-                if (customProps[i].p === "payload") {
-                    payload = ((!customProps[i].vt || customProps[i].vt === "str") ? node.payload : customProps[i].v) || ""
-                    payloadType = customProps[i].vt || node.payloadType || "str"
+            for (let i = 0; i < customProps.length; i++) {
+                if (customProps[i].p === 'payload') {
+                    payload = ((!customProps[i].vt || customProps[i].vt === 'str') ? node.payload : customProps[i].v) || ''
+                    payloadType = customProps[i].vt || node.payloadType || 'str'
                 }
             }
         } else {
-            payload = node.payload || "";
-            payloadType = node.payloadType || "str";
+            payload = node.payload || ''
+            payloadType = node.payloadType || 'str'
         }
-        topic = node.topic || "";
+        topic = node.topic || ''
 
-        if (payloadType === "string" ||
-                payloadType === "str" ||
-                payloadType === "num" ||
-                payloadType === "bool" ||
-                payloadType === "json") {
-            if ((topic !== "") && ((topic.length + payload.length) <= 32)) {
-                return topic + ":" + payload+suffix;
+        if (payloadType === 'string' ||
+                payloadType === 'str' ||
+                payloadType === 'num' ||
+                payloadType === 'bool' ||
+                payloadType === 'json') {
+            if ((topic !== '') && ((topic.length + payload.length) <= 32)) {
+                return topic + ':' + payload + suffix
             } else if (payload.length > 0 && payload.length < 24) {
-                return payload+suffix;
+                return payload + suffix
             } else {
-                return 'inject'+suffix;
+                return 'inject' + suffix
             }
         } else if (payloadType === 'date' || payloadType === 'bin' || payloadType === 'env') {
-            if ((topic !== "") && (topic.length <= 16)) {
-                return topic + ":" + payloadTypeLabel(payloadType)+suffix;
+            if ((topic !== '') && (topic.length <= 16)) {
+                return topic + ':' + payloadTypeLabel(payloadType) + suffix
             } else {
-                return payloadTypeLabel(payloadType)+suffix;
+                return payloadTypeLabel(payloadType) + suffix
             }
         } else if (payloadType === 'flow' || payloadType === 'global') {
-            var key = RED.utils.parseContextKey(payload);
-            return payloadType+"."+key.key+suffix;
+            const key = RED.utils.parseContextKey(payload)
+            return payloadType + '.' + key.key + suffix
         } else {
-            return 'inject'+suffix;
+            return 'inject' + suffix
         }
     }
 
     const changeLabelFunc = (node) => {
-        function prop2name(type, key) {
-            var result = RED.utils.parseContextKey(key);
-            return type +"." +result.key;
+        function prop2name (type, key) {
+            const result = RED.utils.parseContextKey(key)
+            return type + '.' + result.key
         }
         if (node.name) {
-            return node.name;
+            return node.name
         }
-        node._ = node._ || function(a,b) {
-            let template = a;
+        node._ = node._ || function (a, b) {
+            let template = a
             switch (a) {
-                case "change.label.set": template = "set {{property}}"; break;
-                case "change.label.change": template = "change {{property}}"; break;
-                case "change.label.move": template = "move {{property}}"; break;
-                case "change.label.delete": template = "delete {{property}}"; break;
-                case "change.label.changeCount": template = "change {{count}} properties"; break;
+            case 'change.label.set': template = 'set {{property}}'; break
+            case 'change.label.change': template = 'change {{property}}'; break
+            case 'change.label.move': template = 'move {{property}}'; break
+            case 'change.label.delete': template = 'delete {{property}}'; break
+            case 'change.label.changeCount': template = 'change {{count}} properties'; break
             }
-            for (var prop in b) {
-                a = template.replace(new RegExp("\\{\\{"+prop+"\\}\\}","g"),b[prop]);
+            for (const prop in b) {
+                a = template.replace(new RegExp('\\{\\{' + prop + '\\}\\}', 'g'), b[prop])
             }
-            return a;
+            return a
         }
         if (!node.rules) {
-            if (node.action === "replace") {
-                return node._("change.label.set",{property:"msg."+node.property});
-            } else if (node.action === "change") {
-                return node._("change.label.change",{property:"msg."+node.property});
-            } else if (node.action === "move") {
-                return node._("change.label.move",{property:"msg."+node.property});
+            if (node.action === 'replace') {
+                return node._('change.label.set', { property: 'msg.' + node.property })
+            } else if (node.action === 'change') {
+                return node._('change.label.change', { property: 'msg.' + node.property })
+            } else if (node.action === 'move') {
+                return node._('change.label.move', { property: 'msg.' + node.property })
             } else {
-                return node._("change.label.delete",{property:"msg."+node.property});
+                return node._('change.label.delete', { property: 'msg.' + node.property })
             }
         } else {
-            if (node.rules.length == 1) {
-                if (node.rules[0].t === "set") {
-                    return node._("change.label.set",{property:prop2name((node.rules[0].pt||"msg"), node.rules[0].p)});
-                } else if (node.rules[0].t === "change") {
-                    return node._("change.label.change",{property:prop2name((node.rules[0].pt||"msg"), node.rules[0].p)});
-                } else if (node.rules[0].t === "move") {
-                    return node._("change.label.move",{property:prop2name((node.rules[0].pt||"msg"), node.rules[0].p)});
+            if (node.rules.length === 1) {
+                if (node.rules[0].t === 'set') {
+                    return node._('change.label.set', { property: prop2name((node.rules[0].pt || 'msg'), node.rules[0].p) })
+                } else if (node.rules[0].t === 'change') {
+                    return node._('change.label.change', { property: prop2name((node.rules[0].pt || 'msg'), node.rules[0].p) })
+                } else if (node.rules[0].t === 'move') {
+                    return node._('change.label.move', { property: prop2name((node.rules[0].pt || 'msg'), node.rules[0].p) })
                 } else {
-                    return node._("change.label.delete",{property:prop2name((node.rules[0].pt||"msg"), node.rules[0].p)});
+                    return node._('change.label.delete', { property: prop2name((node.rules[0].pt || 'msg'), node.rules[0].p) })
                 }
             } else {
-                return node._("change.label.changeCount",{count:node.rules.length});
+                return node._('change.label.changeCount', { count: node.rules.length })
             }
         }
     }
 
-    var emptyLabelFunct = (obj, subflowObj, flowdata) => {
-        return ""
-    };
+    const linkCallLabelFunct = (obj, subflowObj, flowdata) => {
+        if (!obj.links || obj.links.length === 0) { return obj.name || obj.type }
 
-    var linkCallLabelFunct = (obj, subflowObj, flowdata) => {
-        if (!obj.links || obj.links.length == 0) { return obj.name || obj.type }
-
-        var lbl = undefined;
+        let lbl
 
         flowdata.forEach(function (nde) {
-            if (lbl) return;
+            if (lbl) return
 
-            if (nde.id == obj.links[0]) {
-                lbl = (labelByFunct[nde.type] || defaultLabelFunct)(nde, subflowObj, flowdata);
+            if (nde.id === obj.links[0]) {
+                lbl = (labelByFunct[nde.type] || defaultLabelFunct)(nde, subflowObj, flowdata)
             }
-        });
+        })
 
         /* remember: link calls can reference nodes outside of the current flow, to solve that: given them names */
-        return obj.name || lbl || obj.type;
-    };
+        return obj.name || lbl || obj.type
+    }
 
-    var catchLabelFunct = (obj, subflowObj, flowdata) => {
-        var sublabel = "";
+    const catchLabelFunct = (obj, subflowObj, flowdata) => {
+        let sublabel = ''
 
-        if (obj.uncaught) { sublabel = ": uncaught" }
-        if (obj.scope) { sublabel = ": " + obj.scope.length }
-        if (!obj.scope && !obj.uncaught) { sublabel = ": all" }
+        if (obj.uncaught) { sublabel = ': uncaught' }
+        if (obj.scope) { sublabel = ': ' + obj.scope.length }
+        if (!obj.scope && !obj.uncaught) { sublabel = ': all' }
 
         return obj.name || (obj.type + sublabel)
-    };
+    }
 
-    var mindMapNodeLabelFunct = (obj, subflowObj, flowdata) => {
-        return (obj.name || obj.label || obj.info || obj.text || "").replace(/(.{40,60})([ \n\t])/g, "$1\\n$2") +
-            (obj.sumPass ? " ⭄" : "") +
-            (obj.sumPassPrio && parseInt(obj.sumPassPrio) != 0 ? " (" + obj.sumPassPrio + ")" : "");
-    };
+    const mindMapNodeLabelFunct = (obj, subflowObj, flowdata) => {
+        return (obj.name || obj.label || obj.info || obj.text || '').replace(/(.{40,60})([ \n\t])/g, '$1\\n$2') +
+            (obj.sumPass ? ' ⭄' : '') +
+            // eslint-disable-next-line eqeqeq
+            (obj.sumPassPrio && parseInt(obj.sumPassPrio) != 0 ? ' (' + obj.sumPassPrio + ')' : '')
+    }
 
-    var blogPageInfoLabel = (obj, subflowObj, flowdata) => {
+    const blogPageInfoLabel = (obj, subflowObj, flowdata) => {
         if (obj.name) { return obj.name }
 
-        var lbl = undefined;
+        let lbl
         flowdata.forEach(function (nde) {
-            if (lbl) return;
+            if (lbl) return
 
-            if (nde.type == "link in" && nde.name.startsWith("[blog] ") && (nde.wires[0] || []).indexOf(obj.id) > -1) {
+            if (nde.type === 'link in' && nde.name.startsWith('[blog] ') && (nde.wires[0] || []).indexOf(obj.id) > -1) {
                 lbl = nde.name.substring(7)
             }
-        });
+        })
 
-        return lbl || obj.type;
-    };
+        return lbl || obj.type
+    }
 
-    var labelByFunct = {
-        "base64": undefined,
-        "batch": undefined,
-        "catch": catchLabelFunct,
-        "change": changeLabelFunc,
-        "comment": undefined,
-        "csv": undefined,
-        "debug": undefined,
-        "exec": undefined,
-        "file": undefined,
-        "file in": undefined,
-        "function": undefined,
-        "html": undefined,
-        "http response": (obj, subflowObj, flowdata) => { return (obj.name || ("http" + (obj.statusCode ? " (" + obj.statusCode + ")" : ""))) },
-        "http in": (obj, subflowObj, flowdata) => { return (obj.name || ("[" + obj.method + "] " + obj.url)) },
-        "http request": undefined,
-        "inject": injectLabelFunc,
-        "join": undefined,
-        "json": undefined,
-        "junction": undefined,
-        "link in": undefined,
-        "link out": undefined,
-        "link call": linkCallLabelFunct,
-        "markdown": undefined,
-        "postgresql": undefined,
-        "range": undefined,
-        "sort": undefined,
-        "split": undefined,
-        "switch": undefined,
-        "yaml": undefined,
-        "xml": undefined,
+    const labelByFunct = {
+        base64: undefined,
+        batch: undefined,
+        catch: catchLabelFunct,
+        change: changeLabelFunc,
+        comment: undefined,
+        csv: undefined,
+        debug: undefined,
+        exec: undefined,
+        file: undefined,
+        'file in': undefined,
+        function: undefined,
+        html: undefined,
+        'http response': (obj, subflowObj, flowdata) => { return (obj.name || ('http' + (obj.statusCode ? ' (' + obj.statusCode + ')' : ''))) },
+        'http in': (obj, subflowObj, flowdata) => { return (obj.name || ('[' + obj.method + '] ' + obj.url)) },
+        'http request': undefined,
+        inject: injectLabelFunc,
+        join: undefined,
+        json: undefined,
+        junction: undefined,
+        'link in': undefined,
+        'link out': undefined,
+        'link call': linkCallLabelFunct,
+        markdown: undefined,
+        postgresql: undefined,
+        range: undefined,
+        sort: undefined,
+        split: undefined,
+        switch: undefined,
+        yaml: undefined,
+        xml: undefined,
 
         /* private nodes for this instane */
-        'BlogPages': undefined,
-        'BlogDetails': undefined,
-        'BlogPageInfo': blogPageInfoLabel,
-        'PubMedium': undefined,
+        BlogPages: undefined,
+        BlogDetails: undefined,
+        BlogPageInfo: blogPageInfoLabel,
+        PubMedium: undefined,
 
-        "Topic": mindMapNodeLabelFunct,
-        "Observation": mindMapNodeLabelFunct,
-        "Question": mindMapNodeLabelFunct,
-        "Thought": mindMapNodeLabelFunct,
-        "Idea": mindMapNodeLabelFunct,
-        "Analogy": mindMapNodeLabelFunct,
-        "Aphorism": mindMapNodeLabelFunct,
-        "Poesie": mindMapNodeLabelFunct,
-        "Humour": mindMapNodeLabelFunct,
-        "Treasure": mindMapNodeLabelFunct,
-        "Consequence": mindMapNodeLabelFunct,
-        "Advantage": mindMapNodeLabelFunct,
-        "Disadvantage": mindMapNodeLabelFunct,
-        "Text": mindMapNodeLabelFunct,
-        "Blog-Post": mindMapNodeLabelFunct,
-        "Comment": mindMapNodeLabelFunct,
-        "Codebase": mindMapNodeLabelFunct,
-        "Sketch": mindMapNodeLabelFunct,
-        "Inspiration": mindMapNodeLabelFunct,
-        "Quote": mindMapNodeLabelFunct,
-        "Definition": mindMapNodeLabelFunct,
-        "Book": mindMapNodeLabelFunct,
-        "Author": mindMapNodeLabelFunct,
+        Topic: mindMapNodeLabelFunct,
+        Observation: mindMapNodeLabelFunct,
+        Question: mindMapNodeLabelFunct,
+        Thought: mindMapNodeLabelFunct,
+        Idea: mindMapNodeLabelFunct,
+        Analogy: mindMapNodeLabelFunct,
+        Aphorism: mindMapNodeLabelFunct,
+        Poesie: mindMapNodeLabelFunct,
+        Humour: mindMapNodeLabelFunct,
+        Treasure: mindMapNodeLabelFunct,
+        Consequence: mindMapNodeLabelFunct,
+        Advantage: mindMapNodeLabelFunct,
+        Disadvantage: mindMapNodeLabelFunct,
+        Text: mindMapNodeLabelFunct,
+        'Blog-Post': mindMapNodeLabelFunct,
+        Comment: mindMapNodeLabelFunct,
+        Codebase: mindMapNodeLabelFunct,
+        Sketch: mindMapNodeLabelFunct,
+        Inspiration: mindMapNodeLabelFunct,
+        Quote: mindMapNodeLabelFunct,
+        Definition: mindMapNodeLabelFunct,
+        Book: mindMapNodeLabelFunct,
+        Author: mindMapNodeLabelFunct,
 
         'nnb-input-node': undefined,
-        'nnb-layer-node': (obj, _sub, _flow) => { return (obj.name || (obj.actfunct + ": " + obj.bias + ", " + obj.threshold)) },
+        'nnb-layer-node': (obj, _sub, _flow) => { return (obj.name || (obj.actfunct + ': ' + obj.bias + ', ' + obj.threshold)) },
         'nnb-output-node': undefined,
         'nnb-backprop': undefined,
         'nnb-trainer': undefined,
 
-        'Seeker': undefined,
-        'Sink': undefined,
-        'Screenshot': undefined,
-        'Orphans': undefined,
-        'IsMobile': undefined,
-        'Navigator': undefined,
-        'DrawSVG': undefined,
-        'GetFlows': undefined,
+        Seeker: undefined,
+        Sink: undefined,
+        Screenshot: undefined,
+        Orphans: undefined,
+        IsMobile: undefined,
+        Navigator: undefined,
+        DrawSVG: undefined,
+        GetFlows: undefined,
 
-        "_default": defaultLabelFunct,
-    };
+        _default: defaultLabelFunct
+    }
 
-    function getNodeLabel(node, subflows, flowdata) {
-        const lblFunct = (labelByFunct[node.type] || labelByFunct["_default"])
+    function getNodeLabel (node, subflows, flowdata) {
+        const lblFunct = (labelByFunct[node.type] || labelByFunct._default)
         const subflowObj = (subflows && subflows[node.type]) || {}
         return lblFunct(node, subflowObj, flowdata)
     }
@@ -2568,11 +2573,11 @@ const FlowRenderer = (function () {
      * @param {Array<Object>} flow - Node-RED flow array
      * @returns  {Array<{id: string, label: string, type: string, disabled: Boolean}>} - Array of tabs
      */
-    function getFlowTabs(flow) {
+    function getFlowTabs (flow) {
         const tabs = {}
         let sfIndex = 10000
         let fIndex = 0
-        for (let node of flow) {
+        for (const node of flow) {
             if (node.type === 'subflow') {
                 tabs[node.id] = {
                     id: node.id,
@@ -2581,7 +2586,7 @@ const FlowRenderer = (function () {
                     disabled: node.disabled,
                     order: sfIndex++
                 }
-            } else if (node.type !== "tab" && node.z) {
+            } else if (node.type !== 'tab' && node.z) {
                 if (!tabs[node.z]) {
                     tabs[node.z] = {
                         id: node.z,
@@ -2597,7 +2602,7 @@ const FlowRenderer = (function () {
         // if the flow contains real tabs, then update the tabs objects
         const flowTabs = flow.filter((d) => d.type === 'tab')
         let index = 0
-        for (let flowTab of flowTabs) {
+        for (const flowTab of flowTabs) {
             // Only update if tabs[d.id] exists (i.e. there are nodes to show)
             if (tabs[flowTab.id]) {
                 tabs[flowTab.id].label = flowTab.label || tabs[flowTab.id].label
@@ -2609,7 +2614,7 @@ const FlowRenderer = (function () {
         // convert tabs to an array and sort by order ascending
         const tabsArray = Object.keys(tabs).map((key) => tabs[key])
         tabsArray.sort((a, b) => a.order - b.order)
-        
+
         return tabsArray
     }
 
@@ -2655,7 +2660,7 @@ const FlowRenderer = (function () {
      * @param {Flows} flow - The flows to normalise
      * @returns {Flows}
      */
-    function normaliseFlow(flow) {
+    function normaliseFlow (flow) {
         if (!Array.isArray(flow)) {
             flow = []
         }
@@ -2672,11 +2677,11 @@ const FlowRenderer = (function () {
 
     /**
      * Normalise the options for rendering the flows
-     * NOTE: This function will also merge defaults and any data-options from the container 
+     * NOTE: This function will also merge defaults and any data-options from the container
      * NOTE: Merge occurs in this order: defaults, container data-options, provided options
      * @param {FlowRendererOptions} [options] - The options for rendering the flows.
      */
-    function normaliseOptions(options) {
+    function normaliseOptions (options) {
         const mergeItems = [defaults]
         // see if the container has and data-options and merge those
         // data-xxx will enable the option
@@ -2691,8 +2696,8 @@ const FlowRenderer = (function () {
                 const dataOptions = ['scope', 'gridLines', 'arrows', 'zoom', 'images', 'linkLines', 'labels', 'autoZoom', 'autoScroll', 'flowId']
                 dataOptions.forEach(function (opt) {
                     if (typeof options.container.dataset[opt] === 'string') {
-                        const optionValue = options.container.dataset[opt] || "true"
-                        containerOptions[opt.replace(/-/g, '')] = optionValue === "true"
+                        const optionValue = options.container.dataset[opt] || 'true'
+                        containerOptions[opt.replace(/-/g, '')] = optionValue === 'true'
                     }
                 })
                 mergeItems.push(containerOptions)
@@ -2711,11 +2716,10 @@ const FlowRenderer = (function () {
      * @returns {{}} Comparison object containing the changes and the tabMap
      */
     function compare (flows, renderOpts) {
-
         if (!flows || flows.length < 2) {
             return renderFlows(flows, renderOpts)
         } if (flows.length > 2) {
-            // for now, we only support comparing 2 
+            // for now, we only support comparing 2
             // the SVG and labels part of this is already capable of handling  more than 2 layers however
             // the slider needs work or some kind of selector buttons need adding to correctly transision between flows
             // Also the table comparison is only written for 2 flows
@@ -2737,7 +2741,7 @@ const FlowRenderer = (function () {
 
         // then via a slider, we can compare the flows by affecting the opacity of the layers
         // There may be more than 2 flows so the slider should be able to handle multiple layers (TODO)
-        
+
         // To achieve this, the SVG will contain multiple g elements, each representing a layer
         // each layer is one version of the flow, the slider will adjust the opacity of each layer
         // Additionally, since the tabs themselves may be different, we need to create also render
@@ -2775,7 +2779,7 @@ const FlowRenderer = (function () {
         slider.min = 0
         slider.max = 100
         slider.value = 0
-        slider.step= 5
+        slider.step = 5
         slider.style.width = '100%'
         slider.classList.add('flow-compare-slider')
 
@@ -2786,19 +2790,19 @@ const FlowRenderer = (function () {
 
         // scan the array flows, generate a distinct set of tabs
         const flowRenderer = container// layers[i] //.querySelector('.red-ui-workspace-chart')
-        const workspace = workspaceContainer//flowRenderer.querySelector('.red-ui-workspace-chart')
+        const workspace = workspaceContainer// flowRenderer.querySelector('.red-ui-workspace-chart')
         clearSavedLayout(svg)
         for (let i = 0; i < flows.length; i++) {
             // generate the SVG group layers for each flow
             const layer = i
             const svgLayer = createSVGLayer(svg, { layer, opacity: i === 0 ? 1 : 0 })
             const flowTabs = [...(getFlowTabs(flows[i]) || [])]
-            for (let tab of flowTabs) {
+            for (const tab of flowTabs) {
                 const order = tab.order
                 const flowId = tab.id
                 /** @type {FlowRendererOptions} */
                 const innerOptions = {
-                    ... renderOpts,
+                    ...renderOpts,
                     index: i,
                     layer,
                     svgLayer,
@@ -2815,7 +2819,7 @@ const FlowRenderer = (function () {
                     svgLayer,
                     flowRenderer,
                     workspace,
-                    tab: tab
+                    tab
                 }
                 if (!tabMap.has(flowId)) {
                     tabMap.set(flowId, {})
@@ -2827,13 +2831,13 @@ const FlowRenderer = (function () {
         // add tabs to the tabs container
         // destructuring for browser compatibility
         [...tabMap.entries()].forEach((el) => {
-            const flowId = el[0];
-            const layers = el[1];
+            const flowId = el[0]
+            const layers = el[1]
             const tabOptions = {
                 ...renderOpts,
-                flowId: flowId,
+                flowId,
                 container: null,
-                layers,
+                layers
             }
             addTab(tabsContainer, tabOptions, function (tabOptions) {
                 const tabs = tabsContainer.querySelectorAll('.red-ui-tab')
@@ -2841,7 +2845,7 @@ const FlowRenderer = (function () {
                 // get the tab element with the data-flow-id attribute equal to the id
                 const selectedTab = tabsContainer.querySelector(`[data-flow-id="${tabOptions.flowId}"]`)
                 selectedTab.classList.add('active')
-    
+
                 // update the SVG to the rendered SVG stored in the renderings object
                 const layers = Object.values(tabOptions.layers)
                 const layersNotUpdated = { 0: true, 1: true }
@@ -2858,7 +2862,7 @@ const FlowRenderer = (function () {
                 const emptyOpts = {
                     ...renderOpts,
                     flowId: tabOptions.flowId,
-                    container: anyLayerOpts?.container || anyLayerOpts?.flowRenderer || container,
+                    container: anyLayerOpts?.container || anyLayerOpts?.flowRenderer || container
                 }
                 if (layersNotUpdated[0]) {
                     emptyOpts.layer = 0
@@ -2895,11 +2899,11 @@ const FlowRenderer = (function () {
             updateOpacities()
         })
 
-        //# region "Local Helper functions"
+        // # region "Local Helper functions"
         function addTab (tabContainer, tabOptions, onClick) {
             const doc = getDocument(tabOptions.document, _this.document, container, this)
             const layers = tabOptions.layers
-            for (let layer of Object.values(layers)) {  
+            for (const layer of Object.values(layers)) {
                 // const container = renderOpts.compareData.map(d => d.flowContainer)
                 const tab = layer.tab
                 const name = tab.label
@@ -2907,7 +2911,6 @@ const FlowRenderer = (function () {
                 const thisId = `red-ui-tab-${tab.id}`
                 // const svg = flowTab.flowRenderer.querySelector('svg')
                 let tabEl = tabContainer.querySelector(`.${thisId}`)
-                
 
                 if (!tabEl) {
                     tabEl = doc.createElement('div')
@@ -2966,9 +2969,9 @@ const FlowRenderer = (function () {
             glowingTabs.forEach(tab => tab.classList.remove('tab-glow'))
             // set style.filter of any nodes in the SVG to ''
             const glowingNodes = svg.querySelectorAll('g[data-node-id]')
-            glowingNodes.forEach(node => node.style.filter = '')
+            glowingNodes.forEach(node => { node.style.filter = '' })
 
-            const currentTabEl = tabsContainer.querySelector(`.red-ui-tab.active`)
+            const currentTabEl = tabsContainer.querySelector('.red-ui-tab.active')
             const currentTabId = currentTabEl.getAttribute('data-flow-id')
             let selectedTabId = changeItem.tab
             if (changeItem.diffType === 'moved') {
@@ -3005,13 +3008,13 @@ const FlowRenderer = (function () {
                 // calculate ideal slider value for the layerNo (to make it more visible (75%))
                 const sliderValue = layerNo === 0 ? 10 : 90;
                 // change the slider value gradually
-                (async function(){
+                (async function () {
                     let currentValue = parseInt(slider.value)
                     const increment = sliderValue > currentValue ? 1 : -1
                     while (currentValue !== sliderValue) {
                         currentValue += increment
                         slider.value = currentValue
-                        //trigger the input event
+                        // trigger the input event
                         const event = new Event('input', { bubbles: true })
                         slider.dispatchEvent(event)
                         await new Promise(resolve => setTimeout(resolve, 10))
@@ -3019,15 +3022,15 @@ const FlowRenderer = (function () {
                 })()
             }
 
-            const node = { 
-                id: changeItem.item, 
+            const node = {
+                id: changeItem.item,
                 z: changeItem.tab
             }
-            let nodeId = node.id
+            const nodeId = node.id
             // select node by g.flow-layer-0 > g.flow_nodes > data-node-id="8abe21f57db87496"
             const layer1Node = svg.querySelector(`g.flow-layer-${0} g[data-node-id="${nodeId}"]`)
             const layer2Node = svg.querySelector(`g.flow-layer-${1} g[data-node-id="${nodeId}"]`)
-            
+
             if (!layer1Node && !layer2Node) {
                 return
             }
@@ -3041,7 +3044,7 @@ const FlowRenderer = (function () {
                 layer2Node.style.filter = 'url(#node-glow)'
             }
             nodeBlinkTimer = setTimeout(() => {
-                try { 
+                try {
                     if (layer1Node) { layer1Node.style.filter = '' }
                     if (layer2Node) { layer2Node.style.filter = '' }
                 } catch (e) { }
@@ -3067,7 +3070,7 @@ const FlowRenderer = (function () {
                 label.style.opacity = opacities[idx] || 0
             })
         }
-        //# endregion
+        // # endregion
 
         // simulate first tab click
         const firstTab = tabsContainer.querySelector('.red-ui-tab')
@@ -3094,10 +3097,10 @@ const FlowRenderer = (function () {
      * @param {Flows} flows - The flows to render
      * @param {FlowRendererOptions} renderOpts - The options for rendering the flows
     */
-    function renderFlows(flows, renderOpts) {
+    function renderFlows (flows, renderOpts) {
         flows = normaliseFlow(flows)
         renderOpts = normaliseOptions(renderOpts)
-        
+
         // SETUP
         /** @type {Document} */
         const doc = getDocument(renderOpts.document, _this.document, renderOpts.container, this)
@@ -3108,7 +3111,7 @@ const FlowRenderer = (function () {
         while (container.firstChild) {
             container.removeChild(container.firstChild)
         }
-        
+
         // setup the tabs container
         const tabContainer = doc.createElement('div')
         tabContainer.classList.add('red-ui-tabs')
@@ -3119,12 +3122,11 @@ const FlowRenderer = (function () {
 
         const copyControls = createCopyControls(container)
         copyControls.copy.onclick = function (e) {
-            copyToClipboard(e, flows) 
+            copyToClipboard(e, flows)
         }
         copyControls.download.onclick = function (e) {
             download(e, flows, 'application/json', 'flows.json')
         }
-        
 
         // generate the SVG element
         const svg = createDefaultSVG(workspaceContainer)
@@ -3148,7 +3150,7 @@ const FlowRenderer = (function () {
         addStyle(doc, renderOpts.scope)
 
         // delete any existing tabs
-        let tabEls = container.querySelectorAll('.red-ui-tab')
+        const tabEls = container.querySelectorAll('.red-ui-tab')
         if (tabEls) {
             tabEls.forEach(tab => tab.remove())
         }
@@ -3187,7 +3189,7 @@ const FlowRenderer = (function () {
         renderResult.tabs = tabs
         renderResult.flowId = renderOpts.flowId
         renderResult.css = renderResult.css || getCSS(renderOpts.scope)
-        
+
         return renderResult
     }
 
@@ -3196,12 +3198,10 @@ const FlowRenderer = (function () {
      * @param {Flows} flow - The flow to render
      * @param {FlowRendererOptions} renderOpts - The options for rendering the flows
     */
-    function renderFlow(flow, renderOpts) {
+    function renderFlow (flow, renderOpts) {
         flow = normaliseFlow(flow)
         renderOpts = normaliseOptions(renderOpts)
 
-        /** @type {Document} */
-        const doc = getDocument(renderOpts.document, _this.document, renderOpts.container, this)
         const container = renderOpts.container
         renderOpts = renderOpts || {}
         const nodes = {}
@@ -3225,20 +3225,20 @@ const FlowRenderer = (function () {
         resetSVG(svg, renderOpts.layer)
 
         /** @type {SVGGElement} */
-        const flow_gridEl = (renderOpts.svgLayer || svg).querySelector('.flow_grid');
+        const flow_gridEl = (renderOpts.svgLayer || svg).querySelector('.flow_grid')
         if (renderOpts.gridLines && flow_gridEl) {
             drawSVGGrid(flow_gridEl)
         }
 
         /*  this is used to define which nodes get input decoration, this is not clear from the json data so
-         *  we make a guessimate which nodes have inputs by the wiring within the flow 
+         *  we make a guessimate which nodes have inputs by the wiring within the flow
         */
         flow.forEach(function (obj) {
-            if (obj.type == "subflow") {
+            if (obj.type === 'subflow') {
                 /* prefix subflow since this is the type of the node that uses this subflow - makes lookup simpler */
-                subflows["subflow:" + obj.id] = obj;
-                for (var idx = 0; idx < obj.in.length; idx++) {
-                    for (var wdx = 0; wdx < obj.in[idx].wires.length; wdx++) {
+                subflows['subflow:' + obj.id] = obj
+                for (let idx = 0; idx < obj.in.length; idx++) {
+                    for (let wdx = 0; wdx < obj.in[idx].wires.length; wdx++) {
                         nodeIdsThatReceiveInput[obj.in[idx].wires[wdx].id] = true
                     }
                 }
@@ -3263,403 +3263,402 @@ const FlowRenderer = (function () {
         * For the sack of sanity, compute the top-left corner (x,y) and add it to the node. We also add the bounding-box so we have the width.
         */
         flow.forEach(function (obj) {
-            if (obj.z == flowId || obj.id == flowId /* this is a subflow or tab */) {
+            if (obj.z === flowId || obj.id === flowId /* this is a subflow or tab */) {
                 // get node dimensions
-                var dimensions = getNodeDimensions(obj)
+                const dimensions = getNodeDimensions(obj)
                 /** flag to indicate node should be full size or collapsed */
                 const showLabel = showsLabel(obj)
                 /** flag to indicate node labels should be hidden (but node size rendered as it would be with a label */
                 const hideLabels = !renderOpts.labels
 
                 // get node color
-                var clr = getNodeColor(obj.type);
+                const clr = getNodeColor(obj.type)
 
                 switch (obj.type) {
+                case 'tab':
+                case 'ui_spacer':
+                case 'ui-spacer':
+                    // ignore tabs and spacers
+                    break
+                case 'group':
+                    /* groups are handled later since we need all bounding boxes for all nodes contained in a group */
+                    flow_group_select[obj.id] = obj
+                    break
 
-                    case "tab":
-                    case "ui_spacer":
-                    case "ui-spacer":
-                        // ignore tabs and spacers
-                        break;
-                    case "group":
-                        /* groups are handled later since we need all bounding boxes for all nodes contained in a group */
-                        flow_group_select[obj.id] = obj;
-                        break;
-
-                    case "subflow": {
-                        /* the type of the node that represents a subflow is subflow:XXXX while the subflow has type 'subflow'. So this occurs if
-                            the flowId is that of a subflow. The obj.id == flowId and its type is 'subflow' and here we are.  
+                case 'subflow': {
+                    /* the type of the node that represents a subflow is subflow:XXXX while the subflow has type 'subflow'. So this occurs if
+                            the flowId is that of a subflow. The obj.id == flowId and its type is 'subflow' and here we are.
                           */
-                        subFlowInsOutsStatusNodes[obj.id] = { ...obj };
+                    subFlowInsOutsStatusNodes[obj.id] = { ...obj }
 
-                        /* input connectors */
-                        for (var idx = 0; idx < subFlowInsOutsStatusNodes[obj.id].in.length; idx++) {
-                            var inObj = subFlowInsOutsStatusNodes[obj.id].in[idx];
-                            // var grpId = "grp" + Math.random().toString().substring(2);
-                            // const grpObj = createSvgElement('g', { id: grpId });
-                            const grpObj = createSvgElement('g', { class: 'in-connector' });
+                    /* input connectors */
+                    for (let idx = 0; idx < subFlowInsOutsStatusNodes[obj.id].in.length; idx++) {
+                        const inObj = subFlowInsOutsStatusNodes[obj.id].in[idx]
+                        // var grpId = "grp" + Math.random().toString().substring(2);
+                        // const grpObj = createSvgElement('g', { id: grpId });
+                        const grpObj = createSvgElement('g', { class: 'in-connector' })
 
-                            flow_nodesEl.appendChild(grpObj);
-
-                            grpObj.appendChild(createSvgElement('rect', {
-                                ...clr,
-                                ...dimensions,
-                                rx: 8,
-                                ry: 8,
-                                x: -dimensions.width / 2,
-                                y: -dimensions.height / 2,
-                                "stroke-width": 1,
-                            }))
-
-                            grpObj.setAttribute("transform", `translate(${inObj.x}, ${inObj.y})`)
-                            inObj.bbox = grpObj.getBBox();
-                            inObj.bbox.x = inObj.x - dimensions.width / 2
-                            inObj.bbox.y = inObj.y - dimensions.height / 2
-
-                            /* add output decoration after computing the bounding box - the decoration extends the bounding box */
-                            grpObj.appendChild(createSvgElement('rect', {
-                                ...clr,
-                                ...portDimensions,
-                                ...portRadius,
-                                class: "red-ui-flow-port",
-                                transform: "translate(15, -5)"
-                            }))
-
-                            const textElem = createSvgElement('text', {
-                                y: 0,
-                                x: -2,
-                                class: 'subflow-node-text-label'
-                            });
-                            textElem.textContent = "input";
-                            grpObj.appendChild(textElem);
-                        }
-
-                        /* output connectors */
-                        for (var idx = 0; idx < subFlowInsOutsStatusNodes[obj.id].out.length; idx++) {
-                            const outObj = subFlowInsOutsStatusNodes[obj.id].out[idx];
-                            const grpObj = createSvgElement('g', { class: 'out-connector' })
-                            flow_nodesEl.appendChild(grpObj);
-
-                            grpObj.appendChild(createSvgElement('rect', {
-                                ...clr,
-                                ...dimensions,
-                                rx: 8,
-                                ry: 8,
-                                x: -dimensions.width / 2,
-                                y: -dimensions.height / 2,
-                                "stroke-width": 1,
-                            }))
-
-                            grpObj.setAttribute("transform", `translate(${outObj.x}, ${outObj.y})`)
-                            outObj.bbox = grpObj.getBBox()
-                            outObj.bbox.x = outObj.x - dimensions.width / 2
-                            outObj.bbox.y = outObj.y - dimensions.height / 2
-
-                            /* add output decoration after computing the bounding box - the decoration extends the bounding box */
-                            grpObj.appendChild(createSvgElement('rect', {
-                                ...clr,
-                                ...portDimensions,
-                                ...portRadius,
-                                class: "red-ui-flow-port-input",
-                                transform: "translate(-25, -5)",
-                            }))
-
-                            /* text that goes "output\n(idx+1)\n" i.e. two lines */
-                            const textElem1 = createSvgElement('text', {
-                                y: -10,
-                                x: 0,
-                                class: 'subflow-node-text-label'
-                            })
-                            textElem1.textContent = "output"
-                            grpObj.appendChild(textElem1)
-
-                            const textElem2 = createSvgElement('text', {
-                                y: 8,
-                                x: 0,
-                                class: 'subflow-node-text-label-number'
-                            })
-                            textElem2.textContent = "" + (idx + 1)
-                            grpObj.appendChild(textElem2)
-                        }
-
-                        /* status connectors */
-                        if (subFlowInsOutsStatusNodes[obj.id].status) {
-                            const outObj = subFlowInsOutsStatusNodes[obj.id].status;
-                            const grpObj = createSvgElement('g', { class: 'status-connector' })
-                            flow_nodesEl.appendChild(grpObj);
-
-                            grpObj.appendChild(createSvgElement('rect', {
-                                ...clr,
-                                ...dimensions,
-                                rx: 8,
-                                ry: 8,
-                                x: -dimensions.width / 2,
-                                y: -dimensions.height / 2,
-                                "stroke-width": 1,
-                            }))
-
-                            grpObj.setAttribute("transform", `translate(${outObj.x}, ${outObj.y})`)
-                            outObj.bbox = grpObj.getBBox()
-                            outObj.bbox.x = outObj.x - dimensions.width / 2
-                            outObj.bbox.y = outObj.y - dimensions.height / 2
-
-                            /* add output decoration after computing the bounding box - the decoration extends the bounding box */
-                            grpObj.appendChild(createSvgElement('path', {
-                                ...clr,
-                                ...portDimensions,
-                                ...portRadius,
-                                class: "red-ui-flow-port-input",
-                                transform: "translate(-25, -5)"
-                            }))
-
-                            const textElem = createSvgElement('text', {
-                                y: 0,
-                                x: 2,
-                                class: 'subflow-node-text-label'
-                            });
-                            textElem.textContent = "status";
-                            grpObj.appendChild(textElem)
-                        }
-
-                        break;
-                    }
-                    case "junction": {
-                        const grpObj = createSvgElement('g', { "data-node-id": obj.id, class: 'junction' })
                         flow_nodesEl.appendChild(grpObj)
 
                         grpObj.appendChild(createSvgElement('rect', {
                             ...clr,
                             ...dimensions,
-                            rx: 3,
-                            ry: 3,
-                            x: -5,
-                            y: -5,
-                            "stroke-width": 1,
+                            rx: 8,
+                            ry: 8,
+                            x: -dimensions.width / 2,
+                            y: -dimensions.height / 2,
+                            'stroke-width': 1
                         }))
 
-                        grpObj.setAttribute("transform", `translate(${obj.x}, ${obj.y})`)
+                        grpObj.setAttribute('transform', `translate(${inObj.x}, ${inObj.y})`)
+                        inObj.bbox = grpObj.getBBox()
+                        inObj.bbox.x = inObj.x - dimensions.width / 2
+                        inObj.bbox.y = inObj.y - dimensions.height / 2
 
-                        obj.bbox = grpObj.getBBox()
-                        obj.bbox.x = obj.x
-                        obj.bbox.y = obj.y
-                        obj.bbox.width = 0
-                        obj.bbox.height = 0
-                        break
-                    }
-                    default: {
-                        /* the type of the node that represents a subflow is subflow:XXXX while the subflow has type 'subflow' */
-                        const lblFunct = (labelByFunct[obj.type] || labelByFunct["_default"])
-                        const subflowObj = subflows[obj.type] || {}
-                        const textLabels = getLabelParts(lblFunct(obj, subflowObj, flow), "node-text-label")
-
-                        // add text group
-                        let grpText
-                        
-                        if (showLabel) {
-                            grpText = createSvgElement('g', { "transform": "translate(38," + (textLabels.lines.length > 1 ? 18 : 16) + ")" })
-                            var ypos = 0
-
-                            textLabels.lines.forEach(function (lne) {
-                                var textElem = createSvgElement('text', {
-                                    y: ypos,
-                                    class: 'node-text-label'
-                                })
-                                textElem.textContent = lne
-                                grpText.appendChild(textElem)
-                                ypos += 20
-                            })
-                        }
-
-                        // construct main outer group of the node
-                        const grpObj = createSvgElement('g', { "data-node-id": obj.id, class: 'node' })
-                        flow_nodesEl.appendChild(grpObj)
-
-                        if (showLabel && grpText) {
-                            grpObj.appendChild(grpText)
-                        }
-
-                        const txtBBox = showLabel ? grpText?.getBBox() : { width: 0, height: 0 }
-                        const txtWidth = txtBBox.width
-                        const txtHeight = txtBBox.height + 13.5
-                        let _rectWidth = showLabel ? (dimensions.width > txtWidth ? dimensions.width : txtWidth) : dimensions.width
-                        let _rectHeight = showLabel ? (dimensions.height > txtHeight ? dimensions.height : txtHeight) : dimensions.height
-
-                        // width logic from Node-RED
-                        const nn = { x: obj.x, y: obj.y, w: _rectWidth, h: _rectHeight, outputs: (obj.wires || []).length }
-                        const hasInput = !!nodeIdsThatReceiveInput[obj.id] 
-                        try {
-                            if (!showLabel) {
-                                nn.w = node_height;
-                                nn.h = Math.max(node_height,(nn.outputs || 0) * 15);
-                            } else {
-                                nn.w = Math.max(node_width,20*(Math.ceil((textLabels.width+48+(hasInput?7:0))/20)) );
-                                nn.h = Math.max(6+24*textLabels.lines.length,(nn.outputs || 0) * 15, 30);
-                            }
-                        } catch(err) {
-                        }
-
-                        if (nn.outputs > 2) {
-                            /* move the text block into the middle */
-                            if (showLabel && grpText) {
-                                if (nn.h > txtHeight) {
-                                    const offsetHeight = (nn.h - txtHeight) / 2
-                                    grpText.setAttributeNS(null, "transform", "translate(38," + ((textLabels.lines.length > 1 ? 16 : 14) + offsetHeight) + ")")
-                                }
-                            }
-                        }
-                        if (hideLabels && grpText) {
-                            grpText.style.display = "none"
-                        }
-                        // main rect of node
-                        grpObj.prepend(createSvgElement('rect', {
+                        /* add output decoration after computing the bounding box - the decoration extends the bounding box */
+                        grpObj.appendChild(createSvgElement('rect', {
                             ...clr,
-                            rx: 5,
-                            ry: 5,
-                            fill: subflowObj.color || clr.fill,
-                            width: nn.w,
-                            height: nn.h,
-                            class: "node " + (" node-" + obj.id)
-                        }))
-
-                        // image overlay rect
-                        grpObj.appendChild(createSvgElement('path', {
-                            d: "M5 0 h25 v" + nn.h + " h-25 a 5 5 0 0 1 -5 -5  v-" + (nn.h - 10) + " a 5 5 0 0 1 5 -5",
-                            fill: "rgb(0,0,0)",
-                            "fill-opacity": 0.1,
-                            "stroke": "none"
-                        }))
-                        // border line separating image and text
-                        if (showLabel) {
-                            grpObj.appendChild(createSvgElement('path', {
-                                d: "M 29.5 0.5 l 0 " + (nn.h - 1),
-                                fill: "none",
-                                stroke: "rgb(0,0,0)",
-                                "stroke-opacity": 0.1,
-                                "stroke-width": "1px"
-                            }))
-                        }
-
-                        const offsets = RED.view.tools.calculateGridSnapOffsets(nn)
-                        const positionX = obj.x - (nn.w / 2) - offsets.x
-                        const positionY = obj.y - (nn.h / 2) - offsets.y
-                        grpObj.setAttribute("transform", `translate(${positionX}, ${positionY})`)
-                        obj.bbox = grpObj.getBBox()
-                        obj.bbox.x = positionX
-                        obj.bbox.y = positionY
-
-                        /* Add image - if requested - by type - some types have no image */
-                        if (renderOpts.images) {
-                            const imgBaseOpts = {
-                                x: 0,
-                                y: Math.max(nn.h / 2 - 15, 0),
-                                width: 30,
-                                height: 30
-                            }
-                            const img = getNodeImage(obj.type)
-                            if (img) {
-                                grpObj.appendChild(createSvgElement('image', {
-                                    "href": img,
-                                    ...imgBaseOpts
-                                }))
-                            } else {
-                                if (obj.type.startsWith("subflow:")) {
-                                    const hrefContent = (subflowObj.icon &&
-                                        imageNameToContent[subflowObj.icon]) || imageNameToContent["subflow.svg"]
-
-                                    grpObj.appendChild(createSvgElement('image', { "href": hrefContent, ...imgBaseOpts }))
-                                }
-                            }
-                        }
-
-                        /* add output decoration after computing the bounding box - the decoration extends the bounding box otherwise */
-                        if ((subflowObj.in && subflowObj.in.length > 0) || nodeIdsThatReceiveInput[obj.id]) {
-                            if (renderOpts.arrows) {
-                                grpObj.appendChild(createSvgElement('path', {
-                                    ...junctionColor,
-                                    transform: "translate(-3," + ((obj.bbox.height / 2) - 5) + ")",
-                                    d: (renderOpts.arrows ? "M 0,10 9,5 0,0 Z" : "M -1,9.5 8,9.5 8,0.5 -1,0.5 Z"),
-                                    class: "red-ui-flow-port-input input-arrows",
-                                    "stroke-linecap": "round",
-                                    "stroke-linejoin": "round",
-                                }))
-                            } else {
-                                grpObj.appendChild(createSvgElement('rect', {
-                                    ...junctionColor,
-                                    transform: "translate(-5," + ((obj.bbox.height / 2) - 5) + ")",
-                                    ...portDimensions,
-                                    ...portRadius,
-                                    class: "red-ui-flow-port-input"
-                                }))
-                            }
-                        }
-
-                        const outDecoBaseAttrs = {
-                            ...junctionColor,
                             ...portDimensions,
                             ...portRadius,
-                            class: "red-ui-flow-port"
+                            class: 'red-ui-flow-port',
+                            transform: 'translate(15, -5)'
+                        }))
+
+                        const textElem = createSvgElement('text', {
+                            y: 0,
+                            x: -2,
+                            class: 'subflow-node-text-label'
+                        })
+                        textElem.textContent = 'input'
+                        grpObj.appendChild(textElem)
+                    }
+
+                    /* output connectors */
+                    for (let idx = 0; idx < subFlowInsOutsStatusNodes[obj.id].out.length; idx++) {
+                        const outObj = subFlowInsOutsStatusNodes[obj.id].out[idx]
+                        const grpObj = createSvgElement('g', { class: 'out-connector' })
+                        flow_nodesEl.appendChild(grpObj)
+
+                        grpObj.appendChild(createSvgElement('rect', {
+                            ...clr,
+                            ...dimensions,
+                            rx: 8,
+                            ry: 8,
+                            x: -dimensions.width / 2,
+                            y: -dimensions.height / 2,
+                            'stroke-width': 1
+                        }))
+
+                        grpObj.setAttribute('transform', `translate(${outObj.x}, ${outObj.y})`)
+                        outObj.bbox = grpObj.getBBox()
+                        outObj.bbox.x = outObj.x - dimensions.width / 2
+                        outObj.bbox.y = outObj.y - dimensions.height / 2
+
+                        /* add output decoration after computing the bounding box - the decoration extends the bounding box */
+                        grpObj.appendChild(createSvgElement('rect', {
+                            ...clr,
+                            ...portDimensions,
+                            ...portRadius,
+                            class: 'red-ui-flow-port-input',
+                            transform: 'translate(-25, -5)'
+                        }))
+
+                        /* text that goes "output\n(idx+1)\n" i.e. two lines */
+                        const textElem1 = createSvgElement('text', {
+                            y: -10,
+                            x: 0,
+                            class: 'subflow-node-text-label'
+                        })
+                        textElem1.textContent = 'output'
+                        grpObj.appendChild(textElem1)
+
+                        const textElem2 = createSvgElement('text', {
+                            y: 8,
+                            x: 0,
+                            class: 'subflow-node-text-label-number'
+                        })
+                        textElem2.textContent = '' + (idx + 1)
+                        grpObj.appendChild(textElem2)
+                    }
+
+                    /* status connectors */
+                    if (subFlowInsOutsStatusNodes[obj.id].status) {
+                        const outObj = subFlowInsOutsStatusNodes[obj.id].status
+                        const grpObj = createSvgElement('g', { class: 'status-connector' })
+                        flow_nodesEl.appendChild(grpObj)
+
+                        grpObj.appendChild(createSvgElement('rect', {
+                            ...clr,
+                            ...dimensions,
+                            rx: 8,
+                            ry: 8,
+                            x: -dimensions.width / 2,
+                            y: -dimensions.height / 2,
+                            'stroke-width': 1
+                        }))
+
+                        grpObj.setAttribute('transform', `translate(${outObj.x}, ${outObj.y})`)
+                        outObj.bbox = grpObj.getBBox()
+                        outObj.bbox.x = outObj.x - dimensions.width / 2
+                        outObj.bbox.y = outObj.y - dimensions.height / 2
+
+                        /* add output decoration after computing the bounding box - the decoration extends the bounding box */
+                        grpObj.appendChild(createSvgElement('path', {
+                            ...clr,
+                            ...portDimensions,
+                            ...portRadius,
+                            class: 'red-ui-flow-port-input',
+                            transform: 'translate(-25, -5)'
+                        }))
+
+                        const textElem = createSvgElement('text', {
+                            y: 0,
+                            x: 2,
+                            class: 'subflow-node-text-label'
+                        })
+                        textElem.textContent = 'status'
+                        grpObj.appendChild(textElem)
+                    }
+
+                    break
+                }
+                case 'junction': {
+                    const grpObj = createSvgElement('g', { 'data-node-id': obj.id, class: 'junction' })
+                    flow_nodesEl.appendChild(grpObj)
+
+                    grpObj.appendChild(createSvgElement('rect', {
+                        ...clr,
+                        ...dimensions,
+                        rx: 3,
+                        ry: 3,
+                        x: -5,
+                        y: -5,
+                        'stroke-width': 1
+                    }))
+
+                    grpObj.setAttribute('transform', `translate(${obj.x}, ${obj.y})`)
+
+                    obj.bbox = grpObj.getBBox()
+                    obj.bbox.x = obj.x
+                    obj.bbox.y = obj.y
+                    obj.bbox.width = 0
+                    obj.bbox.height = 0
+                    break
+                }
+                default: {
+                    /* the type of the node that represents a subflow is subflow:XXXX while the subflow has type 'subflow' */
+                    const lblFunct = (labelByFunct[obj.type] || labelByFunct._default)
+                    const subflowObj = subflows[obj.type] || {}
+                    const textLabels = getLabelParts(lblFunct(obj, subflowObj, flow), 'node-text-label')
+
+                    // add text group
+                    let grpText
+
+                    if (showLabel) {
+                        grpText = createSvgElement('g', { transform: 'translate(38,' + (textLabels.lines.length > 1 ? 18 : 16) + ')' })
+                        let ypos = 0
+
+                        textLabels.lines.forEach(function (lne) {
+                            const textElem = createSvgElement('text', {
+                                y: ypos,
+                                class: 'node-text-label'
+                            })
+                            textElem.textContent = lne
+                            grpText.appendChild(textElem)
+                            ypos += 20
+                        })
+                    }
+
+                    // construct main outer group of the node
+                    const grpObj = createSvgElement('g', { 'data-node-id': obj.id, class: 'node' })
+                    flow_nodesEl.appendChild(grpObj)
+
+                    if (showLabel && grpText) {
+                        grpObj.appendChild(grpText)
+                    }
+
+                    const txtBBox = showLabel ? grpText?.getBBox() : { width: 0, height: 0 }
+                    const txtWidth = txtBBox.width
+                    const txtHeight = txtBBox.height + 13.5
+                    const _rectWidth = showLabel ? (dimensions.width > txtWidth ? dimensions.width : txtWidth) : dimensions.width
+                    const _rectHeight = showLabel ? (dimensions.height > txtHeight ? dimensions.height : txtHeight) : dimensions.height
+
+                    // width logic from Node-RED
+                    const nn = { x: obj.x, y: obj.y, w: _rectWidth, h: _rectHeight, outputs: (obj.wires || []).length }
+                    const hasInput = !!nodeIdsThatReceiveInput[obj.id]
+                    try {
+                        if (!showLabel) {
+                            nn.w = node_height
+                            nn.h = Math.max(node_height, (nn.outputs || 0) * 15)
+                        } else {
+                            nn.w = Math.max(node_width, 20 * (Math.ceil((textLabels.width + 48 + (hasInput ? 7 : 0)) / 20)))
+                            nn.h = Math.max(6 + 24 * textLabels.lines.length, (nn.outputs || 0) * 15, 30)
                         }
-                        if (obj.wires && Array.isArray(obj.wires)) {
-                            const initFactor = (obj.wires.length == 1 ? ((obj.bbox.height / 2) - 5) : ((obj.wires.length % 2 == 0) ? 3.5 : 4.5))
-                            for (let idx = 0; idx < obj.wires.length; idx++) {
-                                grpObj.appendChild(createSvgElement('rect', {
-                                    transform: "translate(" + (obj.bbox.width - 4) + "," + (initFactor + (portSpacing * idx)) + ")",
-                                    ...outDecoBaseAttrs
-                                }))
+                    } catch (err) {
+                    }
+
+                    if (nn.outputs > 2) {
+                        /* move the text block into the middle */
+                        if (showLabel && grpText) {
+                            if (nn.h > txtHeight) {
+                                const offsetHeight = (nn.h - txtHeight) / 2
+                                grpText.setAttributeNS(null, 'transform', 'translate(38,' + ((textLabels.lines.length > 1 ? 16 : 14) + offsetHeight) + ')')
                             }
                         }
-                        if (obj.d || tabDisabled) {
-                            grpObj.setAttribute('class', 'node-disabled')
-                        }
-
-                        break
                     }
-                };
+                    if (hideLabels && grpText) {
+                        grpText.style.display = 'none'
+                    }
+                    // main rect of node
+                    grpObj.prepend(createSvgElement('rect', {
+                        ...clr,
+                        rx: 5,
+                        ry: 5,
+                        fill: subflowObj.color || clr.fill,
+                        width: nn.w,
+                        height: nn.h,
+                        class: 'node ' + (' node-' + obj.id)
+                    }))
+
+                    // image overlay rect
+                    grpObj.appendChild(createSvgElement('path', {
+                        d: 'M5 0 h25 v' + nn.h + ' h-25 a 5 5 0 0 1 -5 -5  v-' + (nn.h - 10) + ' a 5 5 0 0 1 5 -5',
+                        fill: 'rgb(0,0,0)',
+                        'fill-opacity': 0.1,
+                        stroke: 'none'
+                    }))
+                    // border line separating image and text
+                    if (showLabel) {
+                        grpObj.appendChild(createSvgElement('path', {
+                            d: 'M 29.5 0.5 l 0 ' + (nn.h - 1),
+                            fill: 'none',
+                            stroke: 'rgb(0,0,0)',
+                            'stroke-opacity': 0.1,
+                            'stroke-width': '1px'
+                        }))
+                    }
+
+                    const offsets = RED.view.tools.calculateGridSnapOffsets(nn)
+                    const positionX = obj.x - (nn.w / 2) - offsets.x
+                    const positionY = obj.y - (nn.h / 2) - offsets.y
+                    grpObj.setAttribute('transform', `translate(${positionX}, ${positionY})`)
+                    obj.bbox = grpObj.getBBox()
+                    obj.bbox.x = positionX
+                    obj.bbox.y = positionY
+
+                    /* Add image - if requested - by type - some types have no image */
+                    if (renderOpts.images) {
+                        const imgBaseOpts = {
+                            x: 0,
+                            y: Math.max(nn.h / 2 - 15, 0),
+                            width: 30,
+                            height: 30
+                        }
+                        const img = getNodeImage(obj.type)
+                        if (img) {
+                            grpObj.appendChild(createSvgElement('image', {
+                                href: img,
+                                ...imgBaseOpts
+                            }))
+                        } else {
+                            if (obj.type.startsWith('subflow:')) {
+                                const hrefContent = (subflowObj.icon &&
+                                        imageNameToContent[subflowObj.icon]) || imageNameToContent['subflow.svg']
+
+                                grpObj.appendChild(createSvgElement('image', { href: hrefContent, ...imgBaseOpts }))
+                            }
+                        }
+                    }
+
+                    /* add output decoration after computing the bounding box - the decoration extends the bounding box otherwise */
+                    if ((subflowObj.in && subflowObj.in.length > 0) || nodeIdsThatReceiveInput[obj.id]) {
+                        if (renderOpts.arrows) {
+                            grpObj.appendChild(createSvgElement('path', {
+                                ...junctionColor,
+                                transform: 'translate(-3,' + ((obj.bbox.height / 2) - 5) + ')',
+                                d: (renderOpts.arrows ? 'M 0,10 9,5 0,0 Z' : 'M -1,9.5 8,9.5 8,0.5 -1,0.5 Z'),
+                                class: 'red-ui-flow-port-input input-arrows',
+                                'stroke-linecap': 'round',
+                                'stroke-linejoin': 'round'
+                            }))
+                        } else {
+                            grpObj.appendChild(createSvgElement('rect', {
+                                ...junctionColor,
+                                transform: 'translate(-5,' + ((obj.bbox.height / 2) - 5) + ')',
+                                ...portDimensions,
+                                ...portRadius,
+                                class: 'red-ui-flow-port-input'
+                            }))
+                        }
+                    }
+
+                    const outDecoBaseAttrs = {
+                        ...junctionColor,
+                        ...portDimensions,
+                        ...portRadius,
+                        class: 'red-ui-flow-port'
+                    }
+                    if (obj.wires && Array.isArray(obj.wires)) {
+                        const initFactor = (obj.wires.length === 1 ? ((obj.bbox.height / 2) - 5) : ((obj.wires.length % 2 === 0) ? 3.5 : 4.5))
+                        for (let idx = 0; idx < obj.wires.length; idx++) {
+                            grpObj.appendChild(createSvgElement('rect', {
+                                transform: 'translate(' + (obj.bbox.width - 4) + ',' + (initFactor + (portSpacing * idx)) + ')',
+                                ...outDecoBaseAttrs
+                            }))
+                        }
+                    }
+                    if (obj.d || tabDisabled) {
+                        grpObj.setAttribute('class', 'node-disabled')
+                    }
+
+                    break
+                }
+                }
                 /* since the obj is altered, from here on end, we will be using the altered version of the node */
                 nodes[obj.id] = obj
             }
-        });
+        })
 
-        /* 
+        /*
         * Rendering groups.
-        * 
+        *
         * since groups can contain other groups, we have to loop through this until all groups have
         * been placed
         */
 
         const flow_group_selectEl = (renderOpts.svgLayer || svg).querySelector('.flow_group_select')
 
-        var doneGroups = []
-        var todoGroups = []
-        var biscuitBreaker = 50 /* absolute maximum number of enclosure levels */
+        const doneGroups = []
+        const todoGroups = []
+        let biscuitBreaker = 50 /* absolute maximum number of enclosure levels */
 
-        for (var grpId in flow_group_select) {
+        for (const grpId in flow_group_select) {
             todoGroups.push(grpId)
         }
 
         // There is also another way of doing this and that is to check for the 'g' attribute on a group
         // object. The 'g' attribute is set if the group is contained within another group and the 'g' is the
-        // id of the other group - but moving up this chain, one gets to the very top group and knows which 
+        // id of the other group - but moving up this chain, one gets to the very top group and knows which
         // groups need to be drawn to have the size of the top level group. But that is the same as this
         // except all groups are drawn, i.e., if there are two groups within one group, going from the first
         // group up the tree won't give us the second group contained within the enclosing group.
-        while (doneGroups.length != todoGroups.length && biscuitBreaker > 0) {
+        while (doneGroups.length !== todoGroups.length && biscuitBreaker > 0) {
             biscuitBreaker -= 1
 
-            for (var grpId in flow_group_select) {
+            for (const grpId in flow_group_select) {
                 if (doneGroups.indexOf(grpId) > -1) { continue }
 
-                var grpObj = flow_group_select[grpId]
+                const grpObj = flow_group_select[grpId]
 
-                /* create a very back-of-a-paper-napkin estimate of the height and width (laziness) 
+                /* create a very back-of-a-paper-napkin estimate of the height and width (laziness)
                   * Could use something like d3.js for doing this automagically, but limit the number
                   * of dependencies for this code - ideally no jQuery either.
                 ***/
 
-                var width = 0, height = 0, oneWasMissing = false
+                let width = 0; let height = 0; let oneWasMissing = false
 
                 grpObj.nodes.forEach(function (ndeId) {
-                    var bbox = (nodes[ndeId] || {}).bbox
+                    const bbox = (nodes[ndeId] || {}).bbox
                     if (bbox) {
                         width = Math.max(width, (bbox.x - grpObj.x) + bbox.width)
                         height = Math.max(height, (bbox.y - grpObj.y) + bbox.height)
@@ -3673,43 +3672,43 @@ const FlowRenderer = (function () {
                 // nodes that it contains have been defined.
                 if (oneWasMissing) { continue }
 
-                var grpSvgObj = createSvgElement('g', { "data-node-id": grpId })
+                const grpSvgObj = createSvgElement('g', { 'data-node-id': grpId })
 
-                grpSvgObj.setAttribute("transform", `translate(${grpObj.x}, ${grpObj.y})`)
+                grpSvgObj.setAttribute('transform', `translate(${grpObj.x}, ${grpObj.y})`)
 
                 grpSvgObj.appendChild(createSvgElement('rect', {
                     rx: 5,
                     ry: 5,
                     width: grpObj.w,
                     height: grpObj.h,
-                    fill: "none",
-                    "fill-opacity": 0,
-                    "stroke-width": 2,
-                    stroke: "grey",
-                    class: "group-" + grpObj.id,
-                    ...grpObj.style,
+                    fill: 'none',
+                    'fill-opacity': 0,
+                    'stroke-width': 2,
+                    stroke: 'grey',
+                    class: 'group-' + grpObj.id,
+                    ...grpObj.style
                 }))
 
                 flow_group_selectEl.prepend(grpSvgObj)
 
-                var obj = nodes[grpId]
+                const obj = nodes[grpId]
                 obj.bbox = grpSvgObj.getBBox()
                 obj.bbox.x = grpObj.x
                 obj.bbox.y = grpObj.y
 
-                var labelGrp = createSvgElement('g', {})
+                const labelGrp = createSvgElement('g', {})
                 grpSvgObj.appendChild(labelGrp)
 
-                /* this is taken from 
-                  * https://github.com/node-red/node-red/blob/7e9042e9f713eec981adeb8ff6af226a40efb5af/packages/node_modules/%40node-red/editor-client/src/js/ui/view.js#L5555 
+                /* this is taken from
+                  * https://github.com/node-red/node-red/blob/7e9042e9f713eec981adeb8ff6af226a40efb5af/packages/node_modules/%40node-red/editor-client/src/js/ui/view.js#L5555
                 */
                 if (grpObj.style.label && grpObj.name) {
-                    var labelPos = grpObj.style["label-position"] || "nw"
-                    var labels = getLabelParts(grpObj.name, "group-text-label")
+                    const labelPos = grpObj.style['label-position'] || 'nw'
+                    const labels = getLabelParts(grpObj.name, 'group-text-label')
 
-                    var labelX = 0
-                    var labelY = 0
-                    var labelAnchor = "start"
+                    let labelX = 0
+                    let labelY = 0
+                    let labelAnchor = 'start'
 
                     if (labelPos[0] === 'n') {
                         labelY = 0 + 15 // Allow for font-height
@@ -3718,25 +3717,25 @@ const FlowRenderer = (function () {
                     }
                     if (labelPos[1] === 'w') {
                         labelX = 5
-                        labelAnchor = "start"
+                        labelAnchor = 'start'
                     } else if (labelPos[1] === 'e') {
                         labelX = obj.bbox.width - 5
-                        labelAnchor = "end"
+                        labelAnchor = 'end'
                     } else {
                         labelX = obj.bbox.width / 2
-                        labelAnchor = "middle"
+                        labelAnchor = 'middle'
                     }
 
-                    labelGrp.setAttribute("transform", `translate(${labelX}, ${labelY})`)
-                    labelGrp.setAttribute("text-anchor", labelAnchor)
+                    labelGrp.setAttribute('transform', `translate(${labelX}, ${labelY})`)
+                    labelGrp.setAttribute('text-anchor', labelAnchor)
                     if (labels) {
                         let ypos = 0
                         labels.lines.forEach(function (name) {
-                            const tspan = createSvgElement("text", {
-                                class: "group-text-label",
+                            const tspan = createSvgElement('text', {
+                                class: 'group-text-label',
                                 x: 0,
                                 y: ypos,
-                                fill: grpObj.style.color || 'grey',
+                                fill: grpObj.style.color || 'grey'
                             })
                             tspan.textContent = name
                             labelGrp.appendChild(tspan)
@@ -3754,127 +3753,124 @@ const FlowRenderer = (function () {
           */
         const flow_wiresEl = (renderOpts.svgLayer || svg).querySelector('.flow_wires')
 
-        var linkOutNodes = []
+        const linkOutNodes = []
 
         /* rendering subflow? then the subflow hash will be filled */
-        var subFlowIds = Object.keys(subFlowInsOutsStatusNodes);
-        for (var idx = 0; idx < subFlowIds.length; idx++) {
-            var sfObj = subFlowInsOutsStatusNodes[subFlowIds[idx]];
+        const subFlowIds = Object.keys(subFlowInsOutsStatusNodes)
+        for (let idx = 0; idx < subFlowIds.length; idx++) {
+            const sfObj = subFlowInsOutsStatusNodes[subFlowIds[idx]]
 
-            for (var jdx = 0; jdx < sfObj.in.length; jdx++) {
-                var inObj = sfObj.in[jdx];
+            for (let jdx = 0; jdx < sfObj.in.length; jdx++) {
+                const inObj = sfObj.in[jdx]
 
-                for (var wdx = 0; wdx < inObj.wires.length; wdx++) {
-                    var otherNode = nodes[inObj.wires[wdx].id];
+                for (let wdx = 0; wdx < inObj.wires.length; wdx++) {
+                    const otherNode = nodes[inObj.wires[wdx].id]
                     if (!otherNode) { continue }
-                    var startX = inObj.bbox.x + inObj.bbox.width;
-                    var startY = inObj.bbox.y + inObj.bbox.height / 2;
-                    var endX = otherNode.bbox.x;
-                    var endY = otherNode.bbox.y + otherNode.bbox.height / 2;
+                    const startX = inObj.bbox.x + inObj.bbox.width
+                    const startY = inObj.bbox.y + inObj.bbox.height / 2
+                    const endX = otherNode.bbox.x
+                    const endY = otherNode.bbox.y + otherNode.bbox.height / 2
 
                     flow_wiresEl.appendChild(createSvgElement('path', {
                         d: generateLinkPath(startX, startY, endX, endY, 1),
-                        class: "link " + (otherNode.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + sfObj.id + "-to-" + otherNode.id)
-                    }));
+                        class: 'link ' + (otherNode.d || tabDisabled ? 'link-disabled' : '') + (' link-from-' + sfObj.id + '-to-' + otherNode.id)
+                    }))
                 }
             }
 
             if (sfObj.status) { sfObj.out.push(sfObj.status) }
-            for (var jdx = 0; jdx < sfObj.out.length; jdx++) {
-                var outObj = sfObj.out[jdx]
+            for (let jdx = 0; jdx < sfObj.out.length; jdx++) {
+                const outObj = sfObj.out[jdx]
 
-                for (var wdx = 0; wdx < outObj.wires.length; wdx++) {
-                    var otherNode = nodes[outObj.wires[wdx].id];
+                for (let wdx = 0; wdx < outObj.wires.length; wdx++) {
+                    const otherNode = nodes[outObj.wires[wdx].id]
                     if (!otherNode) { continue }
-                    const initFactor = (otherNode.wires.length == 1 ? ((otherNode.bbox.height / 2) ) : ((otherNode.wires.length % 2 == 0) ? 3.5 : 4.5) + 5)
+                    const initFactor = (otherNode.wires.length === 1 ? ((otherNode.bbox.height / 2)) : ((otherNode.wires.length % 2 === 0) ? 3.5 : 4.5) + 5)
 
-                    var startX = otherNode.bbox.x + otherNode.bbox.width;
-                    var startY = otherNode.bbox.y + (initFactor + (portSpacing * outObj.wires[wdx].port));
-                    var endX = outObj.bbox.x;
-                    var endY = outObj.bbox.y + outObj.bbox.height / 2;
+                    const startX = otherNode.bbox.x + otherNode.bbox.width
+                    const startY = otherNode.bbox.y + (initFactor + (portSpacing * outObj.wires[wdx].port))
+                    const endX = outObj.bbox.x
+                    const endY = outObj.bbox.y + outObj.bbox.height / 2
 
                     flow_wiresEl.appendChild(createSvgElement('path', {
                         d: generateLinkPath(startX, startY, endX, endY, 1),
-                        class: "link " + (otherNode.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + sfObj.id + "-to-" + otherNode.id)
-                    }));
+                        class: 'link ' + (otherNode.d || tabDisabled ? 'link-disabled' : '') + (' link-from-' + sfObj.id + '-to-' + otherNode.id)
+                    }))
                 }
             }
-
         }
 
-        for (var ndeId in nodes) {
-            var nde = nodes[ndeId];
-            if (nde.type == "link out") { linkOutNodes.push(nde) }
-            if ((nde.wires || []).length == 0) { continue }
+        for (const ndeId in nodes) {
+            const nde = nodes[ndeId]
+            if (nde.type === 'link out') { linkOutNodes.push(nde) }
+            if ((nde.wires || []).length === 0) { continue }
 
-            const initFactor = (nde.wires.length == 1 ? ((nde.bbox.height / 2) ) : ((nde.wires.length % 2 == 0) ? 3.5 : 4.5) + 5)
-            var wireCnt = 0;
+            const initFactor = (nde.wires.length === 1 ? ((nde.bbox.height / 2)) : ((nde.wires.length % 2 === 0) ? 3.5 : 4.5) + 5)
+            let wireCnt = 0
             nde.wires.forEach(function (wires) {
                 wires.forEach(function (otherNodeId) {
-                    var otherNode = nodes[otherNodeId];
+                    const otherNode = nodes[otherNodeId]
 
                     if (otherNode) {
-                        var startX = nde.bbox.x + nde.bbox.width;
-                        var startY = nde.bbox.y + (initFactor + (portSpacing * wireCnt));
-                        var endX = otherNode.bbox.x;
-                        var endY = otherNode.bbox.y + otherNode.bbox.height / 2;
+                        const startX = nde.bbox.x + nde.bbox.width
+                        const startY = nde.bbox.y + (initFactor + (portSpacing * wireCnt))
+                        const endX = otherNode.bbox.x
+                        const endY = otherNode.bbox.y + otherNode.bbox.height / 2
 
                         flow_wiresEl.appendChild(createSvgElement('path', {
                             d: generateLinkPath(startX, startY, endX, endY, 1),
-                            class: "link " + (otherNode.d || nde.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
-                        }));
+                            class: 'link ' + (otherNode.d || nde.d || tabDisabled ? 'link-disabled' : '') + (' link-from-' + nde.id + '-to-' + otherNode.id)
+                        }))
                     }
-                });
-                wireCnt++;
-            });
+                })
+                wireCnt++
+            })
         }
 
         /* draw the links between link nodes, i.e. link-in and link-out nodes */
         if (renderOpts.linkLines) {
             linkOutNodes.forEach(function (nde) {
                 nde.links.forEach(function (ndeId) {
-                    var otherNode = nodes[ndeId];
+                    const otherNode = nodes[ndeId]
 
                     if (otherNode) {
-                        var startX = nde.bbox.x + nde.bbox.width;
-                        var startY = nde.bbox.y + nde.bbox.height / 2;
-                        var endX = otherNode.bbox.x;
-                        var endY = otherNode.bbox.y + otherNode.bbox.height / 2;
+                        const startX = nde.bbox.x + nde.bbox.width
+                        const startY = nde.bbox.y + nde.bbox.height / 2
+                        const endX = otherNode.bbox.x
+                        const endY = otherNode.bbox.y + otherNode.bbox.height / 2
 
                         flow_wiresEl.appendChild(createSvgElement('path', {
                             d: generateLinkPath(startX, startY, endX, endY, 1),
-                            "stroke-dasharray": "25,4",
-                            class: "link " + (otherNode.d || nde.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
-                        }));
+                            'stroke-dasharray': '25,4',
+                            class: 'link ' + (otherNode.d || nde.d || tabDisabled ? 'link-disabled' : '') + (' link-from-' + nde.id + '-to-' + otherNode.id)
+                        }))
 
                         flow_wiresEl.appendChild(createSvgElement('circle', {
                             cy: startY,
                             cx: startX + 6.5,
                             r: 5,
                             stroke: 'rgb(170, 170, 170)',
-                            "stroke-width": 1,
-                            stroke: 'rgb(170, 170, 170)',
-                            "fill": 'rgb(238, 238, 238)',
-                            class: (otherNode.d || nde.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
-                        }));
+                            'stroke-width': 1,
+                            fill: 'rgb(238, 238, 238)',
+                            class: (otherNode.d || nde.d || tabDisabled ? 'link-disabled' : '') + (' link-from-' + nde.id + '-to-' + otherNode.id)
+                        }))
 
                         flow_wiresEl.appendChild(createSvgElement('circle', {
                             cy: endY,
                             cx: endX - 6.5,
                             r: 5,
                             stroke: 'rgb(170, 170, 170)',
-                            "stroke-width": 1,
-                            stroke: 'rgb(170, 170, 170)',
-                            "fill": 'rgb(238, 238, 238)',
-                            class: (otherNode.d || nde.d || tabDisabled ? "link-disabled" : "") + (" link-from-" + nde.id + "-to-" + otherNode.id)
-                        }));
+                            'stroke-width': 1,
+                            fill: 'rgb(238, 238, 238)',
+                            class: (otherNode.d || nde.d || tabDisabled ? 'link-disabled' : '') + (' link-from-' + nde.id + '-to-' + otherNode.id)
+                        }))
                     }
-                });
-            });
+                })
+            })
         }
 
         /* finally remove our changes to the objects in the flowData array */
-        flow.forEach(function (obj) { delete obj.bbox; });
+        flow.forEach(function (obj) { delete obj.bbox })
 
         const hasScrollBars = hasScrollbars(svg.parentElement)
         if (hasScrollBars.hasHorizontalScrollbar || hasScrollBars.hasVerticalScrollbar) {
@@ -3883,13 +3879,11 @@ const FlowRenderer = (function () {
             container.classList.remove('has-scrollbars')
         }
 
-        
-
         if (renderOpts.zoom) {
             setupZoom(svg, renderOpts.container)
         }
 
-        const computedAutoScaleAndScroll = autoLayout(svg, flow, renderOpts);
+        const computedAutoScaleAndScroll = autoLayout(svg, flow, renderOpts)
 
         const result = {
             svg: svg.innerHTML,
@@ -3898,7 +3892,6 @@ const FlowRenderer = (function () {
             autoScaleAndScroll: computedAutoScaleAndScroll
         }
 
-
         return result
     }
 
@@ -3906,12 +3899,12 @@ const FlowRenderer = (function () {
 
     return {
         compare,
-        renderFlows: renderFlows,
-        renderFlow: renderFlow,
-        normaliseOptions: normaliseOptions,
-        getStyles: getCSS,
+        renderFlows,
+        renderFlow,
+        normaliseOptions,
+        getStyles: getCSS
     }
-})
+}
 
 if (typeof module === 'object' && module.exports) {
     module.exports = FlowRenderer
