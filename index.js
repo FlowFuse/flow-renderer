@@ -1994,9 +1994,17 @@ const FlowRenderer = function () {
 
         /* copy controls */
         ${scope} .copy-controls.button-group {
-            margin-right: 24px;
+            margin-right: 8px;
         }
         ${scope} .copy-controls.button-group button {
+            padding: 0px 4px;
+        }
+
+        /* source controls */
+        ${scope} .source-controls.button-group {
+            margin-right: 8px;
+        }
+        ${scope} .source-controls.button-group button {
             padding: 0px 4px;
         }
 
