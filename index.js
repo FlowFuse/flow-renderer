@@ -247,7 +247,14 @@ const FlowRenderer = function () {
         'ui_toast.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADeSURBVEiJ7ZKxCQJBFERnRQ5BUCzAxEB7sAB7EGzB6EJzE0OLsAGbMDW0AROTM9E70GcyyiknihiI3MDn/52dP8vuX6lEiT9EkCQg+4pZCFHFdfoFv1SSroYdSRNJW69PbxicnXeSZpK6tx0gBlpABAyBFZABB+d8XLmVtZF747xhBiTAHOiZ6wMLG6SOg7m+NT33JHdzyJ1+dOMSGAABaANTR9vcwJrUPdkzw8drbYAxUAdqwAhYP3sO6fW3wZq966aHUSkShxCi6otJBudGjis0e2vzE/y+YYkSf4kLDcYTu4mDJeQAAAAASUVORK5CYII=',
         'ff-logo.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+PHNjcmlwdCB4bWxucz0iIi8+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNmZmYiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+'
     }
-
+    const toolbarImages = {
+        zoomReset: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBQRC4gTWFkZSBieSBtb25vLWNvbXBhbnk6IGh0dHBzOi8vZ2l0aHViLmNvbS9tb25vLWNvbXBhbnkvbW9uby1pY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgNGE2IDYgMCAxIDAgMCAxMiA2IDYgMCAwIDAgMC0xMnptLTggNmE4IDggMCAxIDEgMTQuMzIgNC45MDZsNS4zODcgNS4zODdhMSAxIDAgMCAxLTEuNDE0IDEuNDE0bC01LjM4Ny01LjM4N0E4IDggMCAwIDEgMiAxMHoiIGZpbGw9IiMwRDBEMEQiLz48L3N2Zz4=',
+        zoomIn: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBQRC4gTWFkZSBieSBtb25vLWNvbXBhbnk6IGh0dHBzOi8vZ2l0aHViLmNvbS9tb25vLWNvbXBhbnkvbW9uby1pY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgNGE2IDYgMCAxIDAgMCAxMiA2IDYgMCAwIDAgMC0xMnptLTggNmE4IDggMCAxIDEgMTQuMzIgNC45MDZsNS4zODcgNS4zODdhMSAxIDAgMCAxLTEuNDE0IDEuNDE0bC01LjM4Ny01LjM4N0E4IDggMCAwIDEgMiAxMHptOC0zYTEgMSAwIDAgMSAxIDF2MWgxYTEgMSAwIDEgMSAwIDJoLTF2MWExIDEgMCAxIDEtMiAwdi0xSDhhMSAxIDAgMSAxIDAtMmgxVjhhMSAxIDAgMCAxIDEtMXoiIGZpbGw9IiMwRDBEMEQiLz48L3N2Zz4=',
+        zoomOut: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBQRC4gTWFkZSBieSBtb25vLWNvbXBhbnk6IGh0dHBzOi8vZ2l0aHViLmNvbS9tb25vLWNvbXBhbnkvbW9uby1pY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgNGE2IDYgMCAxIDAgMCAxMiA2IDYgMCAwIDAgMC0xMnptLTggNmE4IDggMCAxIDEgMTQuMzIgNC45MDZsNS4zODcgNS4zODdhMSAxIDAgMCAxLTEuNDE0IDEuNDE0bC01LjM4Ny01LjM4N0E4IDggMCAwIDEgMiAxMHptNSAwYTEgMSAwIDAgMSAxLTFoNGExIDEgMCAxIDEgMCAySDhhMSAxIDAgMCAxLTEtMXoiIGZpbGw9IiMwRDBEMEQiLz48L3N2Zz4=',
+        copyFlow: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBQRC4gTWFkZSBieSBtb25vLWNvbXBhbnk6IGh0dHBzOi8vZ2l0aHViLmNvbS9tb25vLWNvbXBhbnkvbW9uby1pY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzYTEgMSAwIDAgMSAxLTFoNmExIDEgMCAwIDEgMSAxaDJhMiAyIDAgMCAxIDIgMnYxNWEyIDIgMCAwIDEtMiAySDZhMiAyIDAgMCAxLTItMlY1YTIgMiAwIDAgMSAyLTJoMnptMCAySDZ2MTVoMTJWNWgtMnYxYTEgMSAwIDAgMS0xIDFIOWExIDEgMCAwIDEtMS0xVjV6bTYtMWgtNHYxaDRWNHoiIGZpbGw9IiMwRDBEMEQiLz48L3N2Zz4=',
+        downloadFlow: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBQRC4gTWFkZSBieSBtb25vLWNvbXBhbnk6IGh0dHBzOi8vZ2l0aHViLmNvbS9tb25vLWNvbXBhbnkvbW9uby1pY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgMmExIDEgMCAwIDEgMSAxdjEwLjU4NmwyLjI5My0yLjI5M2ExIDEgMCAwIDEgMS40MTQgMS40MTRsLTQgNGExIDEgMCAwIDEtMS40MTQgMGwtNC00YTEgMSAwIDEgMSAxLjQxNC0xLjQxNEwxMSAxMy41ODZWM2ExIDEgMCAwIDEgMS0xek01IDE3YTEgMSAwIDAgMSAxIDF2MmgxMnYtMmExIDEgMCAxIDEgMiAwdjJhMiAyIDAgMCAxLTIgMkg2YTIgMiAwIDAgMS0yLTJ2LTJhMSAxIDAgMCAxIDEtMXoiIGZpbGw9IiMwRDBEMEQiLz48L3N2Zz4=',
+        viewSource: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBNSVQuIE1hZGUgYnkgaGFsZm1hZ2U6IGh0dHBzOi8vZ2l0aHViLmNvbS9oYWxmbWFnZS9tYWplc3RpY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSJub25lIj48cGF0aCBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIiBkPSJNOS41IDVIOWEyIDIgMCAwIDAtMiAydjJjMCAxLS42IDMtMyAzIDEgMCAzIC42IDMgM3YyYTIgMiAwIDAgMCAyIDJoLjVtNS0xNGguNWEyIDIgMCAwIDEgMiAydjJjMCAxIC42IDMgMyAzLTEgMC0zIC42LTMgM3YyYTIgMiAwIDAgMS0yIDJoLS41Ii8+PC9zdmc+'
+    }
     const colorByType = {
         base64: _hshClr('#DEBD5C'),
         batch: _hshClr('#E2D96E'),
@@ -784,6 +791,41 @@ const FlowRenderer = function () {
         return div
     }
 
+    /**
+     * Creates a container for displaying the source code of the flow
+     * * The container is a <pre> element with a <code> child element.
+     * * The <code> element has the class "lang-json hljs language-json"
+     * * The content of the <code> element is the JSON stringified version of the content parameter.
+     * @param {HTMLElement} container - the container to append the source container to
+     * If no container is provided, a new <pre> element will be created and returned
+     * @param {String|Array<FlowNode>} content - the content to display in the source container
+     * @param {Boolean} [hidden=true] - if true, the source container will be hidden by default
+     * @returns {HTMLPreElement}
+     */
+    function createSourceContainer (container, content, hidden = true) {
+        const doc = getDocument(container, this)
+        const pre = doc.createElement('pre')
+        pre.classList.add('red-ui-workspace-source')
+        if (hidden) {
+            pre.classList.add('hidden')
+        }
+        pre.setAttribute('data-code-wrap', 'json')
+        const code = doc.createElement('code')
+        code.classList.add('lang-json', 'hljs', 'language-json')
+        if (typeof content === 'object') {
+            code.textContent = JSON.stringify(content, null, 2)
+        } else if (typeof content === 'string') {
+            code.textContent = content
+        } else {
+            code.textContent = '// No content available'
+        }
+        pre.appendChild(code)
+        if (container) {
+            container.appendChild(pre)
+        }
+        return pre
+    }
+
     function createToolbar (container) {
         const doc = getDocument(container, this)
         if (!doc) {
@@ -839,14 +881,16 @@ const FlowRenderer = function () {
         zoomControls.classList.add('zoom-controls')
         zoomControls.classList.add('button-group')
         const zoomIn = doc.createElement('button')
-        zoomIn.classList.add('red-ui-footer-button', 'zoom-in')
+        zoomIn.classList.add('red-ui-footer-button', 'icon-button-bg', 'zoom-in')
         zoomIn.innerHTML = '+'
+        zoomIn.title = 'Zoom In (Ctrl + Mouse Wheel Up)'
         const zoomReset = doc.createElement('button')
-        zoomReset.classList.add('red-ui-footer-button', 'zoom-reset')
-        zoomReset.innerHTML = '○'
+        zoomReset.classList.add('red-ui-footer-button', 'icon-button-bg', 'zoom-reset')
+        zoomReset.title = 'Zoom & Scroll Reset'
         const zoomOut = doc.createElement('button')
-        zoomOut.classList.add('red-ui-footer-button', 'zoom-out')
+        zoomOut.classList.add('red-ui-footer-button', 'icon-button-bg', 'zoom-out')
         zoomOut.innerHTML = '-'
+        zoomOut.title = 'Zoom Out (Ctrl + Mouse Wheel Down)'
 
         zoomControls.appendChild(zoomOut)
         zoomControls.appendChild(zoomReset)
@@ -859,6 +903,34 @@ const FlowRenderer = function () {
             zoomIn,
             zoomOut,
             zoomReset
+        }
+    }
+
+    function createSourceControls (container) {
+        const doc = getDocument(container, this)
+        if (!doc) { return null }
+        let toolbar = container.querySelector('.toolbar')
+        if (!toolbar) {
+            toolbar = createToolbar(container)
+        }
+        let sourceControls = toolbar.querySelector('.source-controls')
+        if (sourceControls) {
+            return {
+                viewSource: toolbar.querySelector('.view-source')
+            }
+        }
+        sourceControls = doc.createElement('div')
+        sourceControls.classList.add('source-controls')
+        sourceControls.classList.add('button-group')
+        const viewSourceBtn = doc.createElement('button')
+        viewSourceBtn.classList.add('red-ui-footer-button', 'icon-button-bg', 'view-source')
+        viewSourceBtn.title = 'Toggle Flows / Source'
+        sourceControls.appendChild(viewSourceBtn)
+
+        toolbar.appendChild(sourceControls)
+
+        return {
+            viewSource: viewSourceBtn
         }
     }
 
@@ -880,11 +952,12 @@ const FlowRenderer = function () {
         copyControls.classList.add('copy-controls')
         copyControls.classList.add('button-group')
         const copyBtn = doc.createElement('button')
-        copyBtn.classList.add('red-ui-footer-button', 'copy-flow')
-        copyBtn.innerHTML = 'Copy'
+        copyBtn.classList.add('red-ui-footer-button', 'icon-button-bg', 'copy-flow')
+        copyBtn.title = 'Copy Flow to Clipboard'
+
         const downloadBtn = doc.createElement('button')
-        downloadBtn.classList.add('red-ui-footer-button', 'download-flow')
-        downloadBtn.innerHTML = 'Download'
+        downloadBtn.classList.add('red-ui-footer-button', 'icon-button-bg', 'download-flow')
+        downloadBtn.title = 'Download Flows'
 
         copyControls.appendChild(copyBtn)
         copyControls.appendChild(downloadBtn)
@@ -895,6 +968,38 @@ const FlowRenderer = function () {
         return {
             copy: copyBtn,
             download: downloadBtn
+        }
+    }
+
+    /**
+     * Toggles between the source view and the flow view.
+     * @param {Event} evt - the event that triggered the toggle
+     */
+    function toggleSourceView (evt) {
+        // toggle the source view of the flows
+        evt.preventDefault()
+        evt.stopPropagation()
+        const workspace = evt.target.parentElement.parentElement.parentElement.querySelector('.red-ui-workspace-chart')
+        if (!workspace) {
+            console.warn('No container found for source view toggle')
+            return
+        }
+        const container = workspace.parentElement
+        const tabs = container.querySelector('.red-ui-tabs')
+        const sourceView = container.querySelector('.red-ui-workspace-source')
+        const zoomControls = container.querySelector('.zoom-controls')
+        if (sourceView && sourceView.classList.contains('hidden')) {
+            // source view is hidden, show it
+            sourceView.classList.remove('hidden')
+            workspace.classList.add('hidden')
+            tabs.classList.add('hidden')
+            zoomControls?.classList.add('hidden')
+        } else {
+            // source view is visible, hide it
+            sourceView.classList.add('hidden')
+            workspace.classList.remove('hidden')
+            tabs.classList.remove('hidden')
+            zoomControls?.classList.remove('hidden')
         }
     }
 
@@ -1579,6 +1684,15 @@ const FlowRenderer = function () {
         ${scope} {
             position: relative;
         }
+        /* Source view */
+        ${scope} pre.red-ui-workspace-source {
+            height: 100%;
+            overflow: auto;
+            width: 100%;
+            font-family: var(--red-ui-monospace-font);
+            background-color: #f7f7f7;
+        }
+        /* Chart view */
         ${scope} .red-ui-workspace-chart {
             box-sizing: border-box;
             border: var(--red-ui-view-border);
@@ -1797,7 +1911,7 @@ const FlowRenderer = function () {
             position: absolute;
             bottom: 5px;
             right: 5px;
-            opacity: 0.7;
+            opacity: 0.6;
         }
         ${scope} .toolbar:hover {
             opacity: 1;
@@ -1806,6 +1920,42 @@ const FlowRenderer = function () {
             bottom: 24px;
             right: 24px;
         }
+
+        ${scope} .hidden {
+            display: none !important;
+        }
+        ${scope} .toolbar .button-group.hidden {
+            display: none !important;
+        }
+        ${scope} .toolbar .icon-button-bg.view-source {
+            background-image: url("${toolbarImages.viewSource}");
+        }
+        ${scope} .toolbar .icon-button-bg.download-flow {
+            background-image: url("${toolbarImages.downloadFlow}");
+        }
+        ${scope} .toolbar .icon-button-bg.copy-flow {
+            background-image: url("${toolbarImages.copyFlow}");
+        }
+        ${scope} .toolbar .icon-button-bg.zoom-reset {
+            background-image: url("${toolbarImages.zoomReset}");
+        }
+        ${scope} .toolbar .icon-button-bg {
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 16px 16px; /* Size of the background SVG */
+            background-color: transparent;
+            padding: 4px;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            font-size: 0; /* Hide any default button text if present */
+            line-height: 0; /* Hide any default button text if present */
+        }
+
+        ${scope} .toolbar .icon-button-bg:hover {
+            background-color: #f0f0f0;
+        }
+
         /* styles for button groups and buttons */
         ${scope} .button-group {
             display: flex;
@@ -1840,9 +1990,17 @@ const FlowRenderer = function () {
 
         /* copy controls */
         ${scope} .copy-controls.button-group {
-            margin-right: 24px;
+            margin-right: 8px;
         }
         ${scope} .copy-controls.button-group button {
+            padding: 0px 4px;
+        }
+
+        /* source controls */
+        ${scope} .source-controls.button-group {
+            margin-right: 8px;
+        }
+        ${scope} .source-controls.button-group button {
             padding: 0px 4px;
         }
 
@@ -3119,6 +3277,12 @@ const FlowRenderer = function () {
 
         // setup the scrollable div container for the svg element
         const workspaceContainer = createWorkspaceContainer(container)
+        createSourceContainer(container, flows)
+
+        const viewSourceControls = createSourceControls(container)
+        viewSourceControls.viewSource.onclick = function (e) {
+            toggleSourceView(e, flows)
+        }
 
         const copyControls = createCopyControls(container)
         copyControls.copy.onclick = function (e) {
