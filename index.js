@@ -1951,7 +1951,6 @@ const FlowRenderer = function () {
             cursor: pointer;
             width: 24px;
             height: 24px;
-            border-radius: 4px;
             font-size: 0; /* Hide any default button text if present */
             line-height: 0; /* Hide any default button text if present */
         }
