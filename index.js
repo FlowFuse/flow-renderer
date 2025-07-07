@@ -1908,7 +1908,7 @@ const FlowRenderer = function () {
             position: absolute;
             bottom: 5px;
             right: 5px;
-            opacity: 0.7;
+            opacity: 0.6;
         }
         ${scope} .toolbar:hover {
             opacity: 1;
