@@ -3869,6 +3869,21 @@ const FlowRenderer = function () {
             })
         }
 
+        // add a tooltip of the node type to each node
+        // This is useful for identifying unknown node types that currently appear as white nodes
+        flow_nodesEl.querySelectorAll('.node').forEach(function (node) {
+            const nodeId = node.getAttribute('data-node-id')
+            const nde = nodes[nodeId]
+            if (nde) {
+                const type = nde.type
+                const subflowObj = subflows[type] || {}
+                const tooltip = subflowObj.label || type
+                const titleEl = createSvgElement('title')
+                titleEl.textContent = tooltip
+                node.appendChild(titleEl)
+            }
+        })
+
         /* finally remove our changes to the objects in the flowData array */
         flow.forEach(function (obj) { delete obj.bbox })
 
