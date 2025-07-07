@@ -882,12 +882,14 @@ const FlowRenderer = function () {
         zoomControls.classList.add('button-group')
         const zoomIn = doc.createElement('button')
         zoomIn.classList.add('red-ui-footer-button', 'icon-button-bg', 'zoom-in')
+        zoomIn.innerHTML = '+'
         zoomIn.title = 'Zoom In (Ctrl + Mouse Wheel Up)'
         const zoomReset = doc.createElement('button')
         zoomReset.classList.add('red-ui-footer-button', 'icon-button-bg', 'zoom-reset')
         zoomReset.title = 'Zoom & Scroll Reset'
         const zoomOut = doc.createElement('button')
         zoomOut.classList.add('red-ui-footer-button', 'icon-button-bg', 'zoom-out')
+        zoomOut.innerHTML = '-'
         zoomOut.title = 'Zoom Out (Ctrl + Mouse Wheel Down)'
 
         zoomControls.appendChild(zoomOut)
@@ -1688,6 +1690,7 @@ const FlowRenderer = function () {
             overflow: auto;
             width: 100%;
             font-family: var(--red-ui-monospace-font);
+            background-color: #f7f7f7;
         }
         /* Chart view */
         ${scope} .red-ui-workspace-chart {
@@ -1933,21 +1936,15 @@ const FlowRenderer = function () {
         ${scope} .toolbar .icon-button-bg.copy-flow {
             background-image: url("${toolbarImages.copyFlow}");
         }
-        ${scope} .toolbar .icon-button-bg.zoom-in {
-            background-image: url("${toolbarImages.zoomIn}");
-        }
-        ${scope} .toolbar .icon-button-bg.zoom-out {
-            background-image: url("${toolbarImages.zoomOut}");
-        }
         ${scope} .toolbar .icon-button-bg.zoom-reset {
             background-image: url("${toolbarImages.zoomReset}");
         }
         ${scope} .toolbar .icon-button-bg {
             background-repeat: no-repeat;
             background-position: center;
-            background-size: 22px 22px; /* Size of the background SVG */
+            background-size: 16px 16px; /* Size of the background SVG */
             background-color: transparent;
-            padding: 2px;
+            padding: 4px;
             cursor: pointer;
             width: 24px;
             height: 24px;
