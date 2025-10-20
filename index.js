@@ -93,7 +93,7 @@ const FlowRenderer = function () {
         delay: 'timer.svg',
         exec: 'cog.svg',
         feedparse: 'parser-xml.svg',
-        file: 'file.svg',
+        file: 'file-out.svg',
         'file in': 'file-in.svg',
         function: 'function.svg',
         'http response': 'white-globe.svg',
@@ -167,20 +167,46 @@ const FlowRenderer = function () {
         'websocket in': 'white-globe.svg',
         'websocket out': 'white-globe.svg',
 
+        /* common contrib nodes */
+        Thought: 'alert.svg',
+        Idea: 'light.svg',
+        cronplus: 'timer.svg',
         'i2c scan': 'serial.svg',
         'i2c in': 'serial.svg',
         'i2c out': 'serial.svg',
 
-        cronplus: 'timer.svg',
+        'jimp-image': 'image.png',
+        'image viewer': 'watch.svg',
+        'annotate-image': 'image.png',
 
-        /* custom, my own private collection */
-        Thought: 'alert.svg',
-        Idea: 'light.svg',
+        'MC Read': 'plc-read.png',
+        'MC Write': 'plc-write.png',
+        'FINS Read': 'plc-read.png',
+        'FINS Write': 'plc-write.png',
+        'FINS Read Multiple': 'plc-read.png',
+        'FINS Fill': 'plc-write.png',
+        'FINS Transfer': 'plc-write.png',
+        'FINS Control': 'plc-read.png',
+
+        's7comm read': 'arrow-in.svg',
+        's7comm write': 'arrow-in.svg',
 
         // FlowFuse specific
         'project link out': 'ff-logo.svg',
         'project link in': 'ff-logo.svg',
-        'project link call': 'ff-logo.svg'
+        'project link call': 'ff-logo.svg',
+        'ff-mqtt-in': 'ff-logo.svg',
+        'ff-mqtt-out': 'ff-logo.svg',
+        'tables-query': 'ff-logo-red.svg',
+
+        'mcp-tool': 'function.svg',
+        'mcp-resource': 'file.svg',
+        'mcp-prompt': 'template.svg',
+        'mcp-response': 'arrow-in.svg',
+        'advanced-ai': 'advanced-ai-node.svg',
+        'image-classification': 'classification-node.svg',
+        'image-depth': 'depth-estimation-node.svg',
+        'object-detection': 'object-detection-node.svg'
     }
 
     const imageNameToContent = {
@@ -198,9 +224,11 @@ const FlowRenderer = function () {
         'envelope.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNMjAgMzIuOTZsLTE4LTE4aDM2eiIvPjxwYXRoIGQ9Ik0yIDIwLjM2bDE4IDE4IDE4LTE4djI2LjFIMnoiLz48L2c+PC9zdmc+Cg==',
         'feed.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjYjg1YzVjIiBzdHJva2U9IiMwMDAiPjxwYXRoIGNvbG9yPSIjMDAwIiBkPSJNLS4wMS0uMDA0aDM5Ljk5OHY2MEgtLjAxeiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQ1MC4yNjYgLTU4NS4zNykiPjxyZWN0IHg9IjQ2NC4yNyIgeT0iNjI1LjM3IiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ5PSIyLjQiIGNvbG9yPSIjMDAwIiBmaWxsPSIjZmZmIiBzdHJva2U9Im5vbmUiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNCI+PHBhdGggZD0iTTQ2MS4yNyA2MTguODdsNS41LTIuNWg3bDUuNSAyLjVNNDU5LjI3IDYwOC44N2w1LjUtMi41aDExbDUuNSAyLjVNNDU3LjI3IDU5OC44N2w1LjUtMi41aDE1bDUuNSAyLjUiLz48L2c+PC9nPjwvZz48L3N2Zz4=',
         'file-in.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmg5djdIMTh2MTBoMTB2N0g1eiIvPjxwYXRoIGQ9Ik0yMiA5Ljk2bDEzIDEzSDIyeiIvPjxwYXRoIGQ9Ik0yOCAyNS45Nmg3djZsNSA2LTQuOTg3IDYtLjAxMyA2aC03bDEwLTEyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9nPjwvc3ZnPg==',
-        'file.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmgxNnYyNEg1di03aDV2N2wxMC0xMi0xMC0xMnY3SDV6Ii8+PHBhdGggZD0iTTIyIDkuOTZsMTMgMTNIMjJ6Ii8+PC9nPjxwYXRoIGQ9Ik01IDMwLjk2SDB2MTRoNXYtMkgydi0xMGgzeiIgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+',
+        'file-out.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCwgMCwgNDAsIDYwIj48cGF0aCBjb2xvcj0iIzAwMCIgZmlsbD0ibm9uZSIgZD0iTTAtLjA0aDQwdjYwSDB6Ii8+PGcgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTUgOS45NmgxNHYxNmgxNnYyNEg1di03aDV2N2wxMC0xMi0xMC0xMnY3SDV6Ii8+PHBhdGggZD0iTTIyIDkuOTZsMTMgMTNIMjJ6Ii8+PC9nPjxwYXRoIGQ9Ik01IDMwLjk2SDB2MTRoNXYtMkgydi0xMGgzeiIgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+',
+        'file.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCwgMCwgNDAsIDYwIj48ZyBmaWxsPSIjZmZmIj48cGF0aCBkPSJNNSAxMGgxNHYxNmgxNnYyNEg1eiIvPjxwYXRoIGQ9Ik0yMiAxMGwxMyAxM0gyMnoiLz48L2c+PHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+',
         'function.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAuOTk5IDMxLjAwNXYtM2gtNi43NjJzLjgxMi0xMi4zOTcgMS4xNjItMTQgLjU5Ny0zLjM1IDIuNjI4LTMuMTAzIDEuOTcxIDMuMTAzIDEuOTcxIDMuMTAzbDQuODYyLS4wMTZzLS43ODMtMy45ODQtMi43ODMtNS45ODQtNy45NDYtMS43LTkuNjMzLjAzYy0xLjY4NyAxLjczLTIuMzAyIDUuMDY1LTIuNTk3IDYuNDIyLS41ODggNC41LS44NTQgOS4wMjctMS4yNDggMTMuNTQ3aC04LjZ2M0gxOC4xcy0uODEyIDEyLjM5OC0xLjE2MiAxNC0uNTk3IDMuMzUtMi42MjggMy4xMDMtMS45NzItMy4xMDItMS45NzItMy4xMDJsLTQuODYyLjAxNXMuNzgzIDMuOTg1IDIuNzgzIDUuOTg1YzIgMiA3Ljk0NiAxLjY5OSA5LjYzNC0uMDMxIDEuNjg3LTEuNzMgMi4zMDItNS4wNjUgMi41OTctNi40MjIuNTg3LTQuNS44NTQtOS4wMjcgMS4yNDgtMTMuNTQ3eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo=',
         'hash.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii44NTciPjxwYXRoIGQ9Ik0xNy45OTcgOC45OThsLTUuOTcyLjA3Mi00LjAyOCA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik02IDE2Ljk5OWwtMSA2IDMxIDEgMS02eiIvPjxwYXRoIGQ9Ik0zMS45OTYgOC45OThsLTUuOTcxLjA3Mi00LjAyOSA0My45MjggNS45MTQuMDcyeiIvPjxwYXRoIGQ9Ik0zLjk5OCAzNy4wMDRsLTEgNiAzMSAxIDEtNnoiLz48L2c+PC9zdmc+Cg==',
+        'image.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAACQ0lEQVR4AeyWyys9YRjHz5zfxSXksrKR3JYkKZGF2ChKysIfIEsLLFwWNqws7FiwoZTCRlZSyjVlZ0GKlGxdshKOz8OcSe953zNzZGbOgr4f7zzPe3m+533nzJxoJI3+0s9MLBZbg7A1EsXBH06qG0Qt/AuaeO1xOSYLAx+yLGsnaCi8AaJsMSMXvsHO50MJ/HUr4qsZDExj4A6u4YG4ltYo38xQuJOqgxBXNhfH5LNotfLNDNX6QZUcVbWajMd+mrmNF1HaRyV2wpTNsM2TIJ/QWcRwMaHJn5A7A61SMoOJSlYZhUVIKh4RsjNlDNqDJ5CbuZF8jGutPJvBiMUKqyDqJdbdE9LnQOEraIZcGIZnp1Nz4dkMc9vh6803h6Eacj8mT2Yo+o+KK6DqgL48NekWM8eCUnWcJzNMGoIcUCXPjl0Wlveb2qeN7bHywdrUAa5mmFzIpCkwSY5u1tT5Nc9amcSH0AMJcjXDjAVwUx+FepMNor+I/kuoB62SmmEB+dRd2pmJyWXGy1c/oYd8FckbKAajjGZYQL7K68aZ+g5598h95PSyjtwb5yTkiGjMMpphipxrOW0qymfwNgYqbAaIt8CTtGZYKIPZS/AdNTDpwmaG1rO0Zpg9Bv8hUJnMtAbqwi5mMmN3B9v8mjHtt3ZneNU3gd+aV01pzaiDgorFzGsk8lmO58t+0FD5CEQXUc5CfgZ2SASNIVBHzTfolp2JYGiTQJ66BbRhkIGH0w8zGBBDzyTuQ+JFPDhmJAibtDLzDgAA///iRoiIAAAABklEQVQDAPQ90lai088BAAAAAElFTkSuQmCC',
         'inject.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTggNXYxMkg3djloMTV2LTdsNiAxMS02IDEydi04SDd2OWgxMXYxMmwxNC0yNXoiIGZpbGw9IiNmZmYiLz48L3N2Zz4K',
         'join.svg': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAsIDAsIDQwLCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNDAuMDAxIDM5Ljk5bC0uMDMyLTE5Ljk1NS0xMS45NjcuMDE3djE5Ljk4M2wxMi0uMDQ2TTguMDAxIDI4LjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxTTE0LjAwMSAyOC4wMjdsLTQgLjAwNHYzLjk5N2w0LS4wMU0yNS4wMDEgMzAuMDI3bC03LTcuOTg2djE1Ljk4Nk04LjAwMSAyMC4wMjdsLTQgLjAwNHYzLjk5Nmw0LS4wMU0xNC4wMDEgMjAuMDI3bC00IC4wMDR2My45OTZsNC0uMDFNOC4wMDEgMzYuMDI3bC00IC4wMDR2My45OTdsNC0uMDFNMTQuMDAxIDM2LjAyN2wtNCAuMDA0djMuOTk3bDQtLjAxIiBmaWxsPSIjZmZmIiBzdHJva2Utd2lkdGg9Ii42MTIiLz48L3N2Zz4K',
         'leveldb.png': 'data:image/png;base64,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',
@@ -245,7 +273,17 @@ const FlowRenderer = function () {
         'ui_template.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEaSURBVEiJ7dE/L4NRGAXw90W6EKMahEGMoh2wqUVC7d3EZjdZjGb1GXwIk6WpiVHMJEQwNUHjT+JncCXN9bZCGomkZ7r3nPOce3OeJOmhh38I7GC4W2GDeMLkb4b7MrgV3CBt5/lCBONEkiQnKEfSUpIkh2maCtoxxr/7WQl3eMRMpJ1iPZwLaAbvQruwDbzgErORNoo3jLVwBZzjFVtxWNUHahjJeGwNZxl8HvUwW20VGrhvt0HsY6+NNoUHNFrJSujkFqVoIMU1VjPCFkOPTVRisYCLuBNM4xlDkf+z8yvMZf0+7mQ5cJuoRb5y8NSRzwxrMefCkorhfoDtyFPELnIdwzLC+8Ky5n802CFwAEfo70pgDz38Ad4Br8tc7FtGcAwAAAAASUVORK5CYII=',
         'ui_text.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEWSURBVEiJ7ZMhS0RBFEbPyDMYhGXB5poFm2GNJpHFplXQ32AVYYO4xSIGQTAqGhQ0mGwmDQYRZJPYXGQRMYnwjsFZGQyy4YUN75SB716Gc+8wUFJSUgBqU/3qt3+oaIHfC9W62vaHN3UlbVTX1Xv1SB2L2ZR6oT6qp2otNVwGOsAi0Aa2kloG1IAW0AB21BHgEqgAm8A0sJ8aDKtz6rb6pOZqiDvM4wWoB+qLOhOnacS8qmap4TGwBzwD1wAhBJN6iGfvgbI/eQUYTw3f1TN1Ur1V85g3o8muOq921BN1VH1Vr9SFuMeb1HADmAXOgTsgqBNJ/RM4BB6AtRDCB7AEVON0XWCVgae3UFT/a+yXwn9KSckg8A2LRsxzeZWjFAAAAABJRU5ErkJggg==',
         'ui_toast.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADeSURBVEiJ7ZKxCQJBFERnRQ5BUCzAxEB7sAB7EGzB6EJzE0OLsAGbMDW0AROTM9E70GcyyiknihiI3MDn/52dP8vuX6lEiT9EkCQg+4pZCFHFdfoFv1SSroYdSRNJW69PbxicnXeSZpK6tx0gBlpABAyBFZABB+d8XLmVtZF747xhBiTAHOiZ6wMLG6SOg7m+NT33JHdzyJ1+dOMSGAABaANTR9vcwJrUPdkzw8drbYAxUAdqwAhYP3sO6fW3wZq966aHUSkShxCi6otJBudGjis0e2vzE/y+YYkSf4kLDcYTu4mDJeQAAAAASUVORK5CYII=',
-        'ff-logo.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+PHNjcmlwdCB4bWxucz0iIi8+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNmZmYiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+'
+
+        'plc-read.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAABXUlEQVR4AeyUTa7CMAyEX3kCASs4A2vufxDWnAGxAQSCMiPhKolqNy6hAqlVRnEcO/7q/kz+vugaYbSHMXZm7IzWAc3vfmfquq60w971RzAo1DlQ8NEVhJheI4LpdULBpN+AqZQLjVi1bcFvDj5aMwCb7s4A5Ii8XqMLyA3TiyIzKQuGd0TJmbQpWXtmKy8LxlMsjGVhUeoP12KrMHIIZwmGHf3wsG6GxOTOTExjVZg0kGu8vDXnUkqBVBgUboZWvAmAocVYfqRFnVZhrENy91hMlObQn/qyYJhISTJtStbeWcvNgvEWs+I1EOYMCmOBmDB80z3iYZa6QJg7aGdY0NJXw0zYzndl3b21F3UGEEX/sFbhtr0Ipi1gSN8LplxJfIEVNIWW0ByiTf3DXkBraANtoVlYuTgMHzV0g07QBaJN3WGfoQO0h3bQ9aMw4eFeu3hnvABh/AgTdiO0nwAAAP//+PePKAAAAAZJREFUAwCtHPpHGrQtpgAAAABJRU5ErkJggg==',
+        'plc-write.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAABY0lEQVR4AeyU3U7DMAyF2yEQcAXPwDXv/yBc8wyIG0BMW3eONHdOZadx20zb1CpHcRzH/ur+bJoLulYY72GsnVk743XA81d9Z7qua73Cln8yDAqNDhTcjwUhph+TYfoMCxrXAcP2lt5061w4/2JtwW+ObGciQFZ2gHxbfs+XhfEO1fKPwkS7w3hKgGlTss7NCQwPifQh+vS6lp3A5IrkgLgnkhxYJz88rPshMcO5GIYHmY1zifDydiVxOiYEgwLJ3Uoi+kXiG86yz3m4J+sEhoEiCZCZfrFrzQmMVyQCwlhKctGmZJ2bR2FKE+WKlO5lYc4JQmAXJgLCrywiFrbkwljBtX03A7Pho5wr3e3JnQFE+A+rC1v2ZBgr2VzfEWZumtN5fFUtdA89Q48QbeoO9hP0Cr1B79DD6WTTLA7DxwdtoR/oD6JN7WD/Ql/QJ/QB/VeF0cmj9uKdiQLo+BVGd0PbBwAAAP//lELFSQAAAAZJREFUAwBkHfpHEDPmHQAAAABJRU5ErkJggg==',
+
+        'ff-logo.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+PHNjcmlwdCB4bWxucz0iIi8+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNmZmYiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+',
+        'ff-logo-red.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNEQTNEMEIiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+',
+
+        'advanced-ai-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Im0xNzYtMTIwLTU2LTU2IDMwMS0zMDItMTgxLTQ1IDE5OC0xMjMtMTctMjM0IDE3OSAxNTEgMjE2LTg4LTg3IDIxNyAxNTEgMTc4LTIzNC0xNi0xMjQgMTk4LTQ1LTE4MS0zMDEgMzAxWm0yNC01MjAtODAtODAgODAtODAgODAgODAtODAgODBabTM1NSAxOTcgNDgtNzkgOTMgNy02MC03MSAzNS04Ni04NiAzNS03MS01OSA3IDkyLTc5IDQ5IDkwIDIyIDIzIDkwWm0xNjUgMzIzLTgwLTgwIDgwLTgwIDgwIDgwLTgwIDgwWk01NjktNTcwWiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
+        'classification-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yMTYtNzkydjYyNC02MjQgMTY4LTE2OFptMCA2OTZxLTI5LjcgMC01MC44NS0yMS4xNVExNDQtMTM4LjMgMTQ0LTE2OHYtNjI0cTAtMjkuNyAyMS4xNS01MC44NVExODYuMy04NjQgMjE2LTg2NGgzMTJsMTkyIDE5MnYxNDlxLTE4LTQtMzYtNXQtMzYgMXYtOTdINDgwdi0xNjhIMjE2djYyNGgyNDhxMTIgMjEgMjggMzkuNVQ1MjgtOTZIMjE2Wm00NTUuNzctOTZRNzEyLTE5MiA3NDAtMjE5Ljc3cTI4LTI3Ljc4IDI4LTY4UTc2OC0zMjggNzQwLjE2LTM1NnEtMjcuODQtMjgtNjguMTYtMjgtMzIgMC02NCAyNHQtMzIgNzJxMCA0MC4zMiAyNy43NyA2OC4xNiAyNy43OCAyNy44NCA2OCAyNy44NFpNODYxLTQ4bC05OC05OXEtMjAgMTMtNDMuMDMgMjB0LTQ3LjQ3IDdRNjAyLTEyMCA1NTMtMTY5dC00OS0xMTlxMC03MCA0OS0xMTl0MTE5LTQ5cTcwIDAgMTE5IDQ5dDQ5IDExOXEwIDI0LjYxLTcgNDcuODFRODI2LTIxNyA4MTMtMTk3bDk5IDk4LTUxIDUxWiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
+        'depth-estimation-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik00ODAtMTE4IDEyMC0zOThsNjYtNTAgMjk0IDIyOCAyOTQtMjI4IDY2IDUwLTM2MCAyODBabTAtMjAyTDEyMC02MDBsMzYwLTI4MCAzNjAgMjgwLTM2MCAyODBabTAtMjgwWm0wIDE3OCAyMzAtMTc4LTIzMC0xNzgtMjMwIDE3OCAyMzAgMTc4WiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
+        'object-detection-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4Ij4KICAgIDxwYXRoIGZpbGw9IndoaXRlIiBkPSJtMjYwLTUyMCAyMjAtMzYwIDIyMCAzNjBIMjYwWk03MDAtODBxLTc1IDAtMTI3LjUtNTIuNVQ1MjAtMjYwcTAtNzUgNTIuNS0xMjcuNVQ3MDAtNDQwcTc1IDAgMTI3LjUgNTIuNVQ4ODAtMjYwcTAgNzUtNTIuNSAxMjcuNVQ3MDAtODBabS01ODAtMjB2LTMyMGgzMjB2MzIwSDEyMFptNTgwLTYwcTQyIDAgNzEtMjl0MjktNzFxMC00Mi0yOS03MXQtNzEtMjlxLTQyIDAtNzEgMjl0LTI5IDcxcTAgNDIgMjkgNzF0NzEgMjlabS01MDAtMjBoMTYwdi0xNjBIMjAwdjE2MFptMjAyLTQyMGgxNTZsLTc4LTEyNi03OCAxMjZabTc4IDBaTTM2MC0zNDBabTM0MCA4MFoiLz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+'
     }
     const toolbarImages = {
         zoomReset: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBQRC4gTWFkZSBieSBtb25vLWNvbXBhbnk6IGh0dHBzOi8vZ2l0aHViLmNvbS9tb25vLWNvbXBhbnkvbW9uby1pY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgNGE2IDYgMCAxIDAgMCAxMiA2IDYgMCAwIDAgMC0xMnptLTggNmE4IDggMCAxIDEgMTQuMzIgNC45MDZsNS4zODcgNS4zODdhMSAxIDAgMCAxLTEuNDE0IDEuNDE0bC01LjM4Ny01LjM4N0E4IDggMCAwIDEgMiAxMHoiIGZpbGw9IiMwRDBEMEQiLz48L3N2Zz4=',
@@ -391,11 +429,15 @@ const FlowRenderer = function () {
         SendFlow: _hshClr('#e5e4ef'),
         TriggerImport: _hshClr('#e5e4ef'),
 
+        // common contrib nodes
+        cronplus: _hshClr('#a6bbcf'),
         'i2c scan': _hshClr('rgb(227, 82, 83)'),
         'i2c in': _hshClr('rgb(227, 82, 83)'),
         'i2c out': _hshClr('rgb(227, 82, 83)'),
 
-        cronplus: _hshClr('#a6bbcf'),
+        'jimp-image': _hshClr('#ffaaaa'),
+        'image viewer': _hshClr('#ffaaaa'),
+        'annotate-image': _hshClr('#f1c2f0'),
 
         'buffer-maker': _hshClr('#0090d4'),
         'buffer-parser': _hshClr('#0090d4'),
@@ -406,6 +448,9 @@ const FlowRenderer = function () {
         'FINS Transfer': _hshClr('#0090d4'),
         'FINS Fill': _hshClr('#0090d4'),
         'FINS Control': _hshClr('#0090d4'),
+
+        's7comm read': _hshClr('#009999'),
+        's7comm write': _hshClr('#009999'),
 
         'MC Read': _hshClr('#0090d4'),
         'MC Write': _hshClr('#0090d4'),
@@ -439,6 +484,25 @@ const FlowRenderer = function () {
         'project link out': _hshClr('#87D8CF'),
         'project link in': _hshClr('#87D8CF'),
         'project link call': _hshClr('#87D8CF'),
+
+        // ff mqtt nodes
+        'ff-mqtt-in': _hshClr('#d8bfd8'),
+        'ff-mqtt-out': _hshClr('#d8bfd8'),
+
+        // ff tables
+        'tables-query': _hshClr('#ffffff'),
+
+        // mcp nodes
+        'mcp-tool': _hshClr('#87ceeb'),
+        'mcp-resource': _hshClr('#98fb98'),
+        'mcp-prompt': _hshClr('#ffd700'),
+        'mcp-response': _hshClr('#ffa500'),
+
+        // onnx nodes
+        'advanced-ai': _hshClr('#f69e00'),
+        'image-classification': _hshClr('#f69e00'),
+        'image-depth': _hshClr('#f69e00'),
+        'object-detection': _hshClr('#f69e00'),
 
         _default: _hshClr()
     }
@@ -2417,8 +2481,12 @@ const FlowRenderer = function () {
     const CORE_NODES = ['inject', 'change', 'switch', 'function', 'template', 'delay', 'trigger', 'link in', 'link out', 'link call', 'watch', 'complete', 'catch', 'status', 'comment', 'debug', 'subflow', 'range', 'filter', 'rbe', 'mqtt in', 'mqtt out', 'http in', 'http response', 'http request', 'websocket in', 'websocket out', 'tcp in', 'tcp out', 'udp in', 'udp out', 'tcp request', 'split', 'join', 'sort', 'batch', 'csv', 'json', 'xml', 'yaml', 'html', 'file in', 'file', 'exec']
 
     const defaultLabelFunct = (node, subflowObj, flowdata) => {
-        const label = (node.name || node.label || node.info || node.text || subflowObj.name) || ''
+        const fixedName = (node.name || subflowObj.name)
+        if (fixedName) {
+            return fixedName
+        }
 
+        const label = (node.label || node.info || node.text) || ''
         let betterCandidate = ''
         let temp = ''
         let name = ''
@@ -3688,7 +3756,7 @@ const FlowRenderer = function () {
                     grpObj.appendChild(createSvgElement('path', {
                         d: 'M5 0 h25 v' + nn.h + ' h-25 a 5 5 0 0 1 -5 -5  v-' + (nn.h - 10) + ' a 5 5 0 0 1 5 -5',
                         fill: 'rgb(0,0,0)',
-                        'fill-opacity': 0.1,
+                        'fill-opacity': 0.05,
                         stroke: 'none'
                     }))
                     // border line separating image and text
