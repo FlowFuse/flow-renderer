@@ -1760,6 +1760,7 @@ const FlowRenderer = function () {
         ${scope} .red-ui-workspace-chart {
             box-sizing: border-box;
             border: var(--red-ui-view-border);
+            border-radius: 0 4px 4px 4px;
             overflow: scroll;
             height: 100%;
             width: 100%;
@@ -1958,8 +1959,15 @@ const FlowRenderer = function () {
             border-left-style: dashed;
             font-style: italic;
         }
+        ${scope} .red-ui-tab:first-child {
+            border-radius: 4px 0 0 0;
+        }
         ${scope} .red-ui-tab:last-child {
             border-right: 1px solid #bbbbbb;
+            border-radius: 0 4px 0 0;
+        }
+        ${scope} .red-ui-tab:first-child:last-child {
+            border-radius: 4px 4px 0 0;
         }
         ${scope} .red-ui-tab:last-child.disabled {
             border-right-style: dashed;
