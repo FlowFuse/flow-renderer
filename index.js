@@ -654,7 +654,7 @@ const FlowRenderer = function () {
                 // zoom in/out
                 e.preventDefault()
                 let scale = getScale(mainSvgGroup)
-                scale = scale - (Math.sign(e.deltaY) * 0.04)
+scale = scale - (Math.sign(e.deltaY) * 0.05)
                 scale = clamp(scale, 0.20, 3, 1)
                 updateScale(mainSvgGroup, scale)
             }
