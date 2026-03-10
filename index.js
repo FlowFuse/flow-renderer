@@ -206,7 +206,68 @@ const FlowRenderer = function () {
         'advanced-ai': 'advanced-ai-node.svg',
         'image-classification': 'classification-node.svg',
         'image-depth': 'depth-estimation-node.svg',
-        'object-detection': 'object-detection-node.svg'
+        'object-detection': 'object-detection-node.svg',
+
+        // Victronenergy specific
+        'victron-virtual-switch': 'victronenergy.svg',
+        'victron-virtual': 'victronenergy.svg',
+        'victron-inject': 'victronenergy.svg',
+        'vrm-api': 'victronenergy.svg',
+
+        'victron-input-accharger': 'victronenergy.svg',
+        'victron-input-acload': 'victronenergy.svg',
+        'victron-input-acsystem': 'victronenergy.svg',
+        'victron-input-alternator': 'victronenergy.svg',
+        'victron-input-battery': 'victronenergy.svg',
+        'victron-input-dcdc': 'victronenergy.svg',
+        'victron-input-dcload': 'victronenergy.svg',
+        'victron-input-dcsource': 'victronenergy.svg',
+        'victron-input-dcsystem': 'victronenergy.svg',
+        'victron-input-dess': 'victronenergy.svg',
+        'victron-input-digitalinput': 'victronenergy.svg',
+        'victron-input-ess': 'victronenergy.svg',
+        'victron-input-evcharger': 'victronenergy.svg',
+        'victron-input-fuelcell': 'victronenergy.svg',
+        'victron-input-generator': 'victronenergy.svg',
+        'victron-input-gps': 'victronenergy.svg',
+        'victron-input-gridmeter': 'victronenergy.svg',
+        'victron-input-inverter': 'victronenergy.svg',
+        'victron-input-meteo': 'victronenergy.svg',
+        'victron-input-motordrive': 'victronenergy.svg',
+        'victron-input-multi': 'victronenergy.svg',
+        'victron-input-pulsemeter': 'victronenergy.svg',
+        'victron-input-pump': 'victronenergy.svg',
+        'victron-input-pvinverter': 'victronenergy.svg',
+        'victron-input-relay': 'victronenergy.svg',
+        'victron-input-settings': 'victronenergy.svg',
+        'victron-input-solarcharger': 'victronenergy.svg',
+        'victron-input-switch': 'victronenergy.svg',
+        'victron-input-system': 'victronenergy.svg',
+        'victron-input-tank': 'victronenergy.svg',
+        'victron-input-temperature': 'victronenergy.svg',
+        'victron-input-vebus': 'victronenergy.svg',
+
+        'victron-output-accharger': 'victronenergy.svg',
+        'victron-output-acsystem': 'victronenergy.svg',
+        'victron-output-battery': 'victronenergy.svg',
+        'victron-output-charger': 'victronenergy.svg',
+        'victron-output-dcdc': 'victronenergy.svg',
+        'victron-output-dess': 'victronenergy.svg',
+        'victron-output-ess': 'victronenergy.svg',
+        'victron-output-evcharger': 'victronenergy.svg',
+        'victron-output-generator': 'victronenergy.svg',
+        'victron-output-inverter': 'victronenergy.svg',
+        'victron-output-multi': 'victronenergy.svg',
+        'victron-output-pump': 'victronenergy.svg',
+        'victron-output-pvinverter': 'victronenergy.svg',
+        'victron-output-relay': 'victronenergy.svg',
+        'victron-output-settings': 'victronenergy.svg',
+        'victron-output-solarcharger': 'victronenergy.svg',
+        'victron-output-switch': 'victronenergy.svg',
+        'victron-output-vebus': 'victronenergy.svg',
+
+        'victron-input-custom': 'victronenergy.svg',
+        'victron-output-custom': 'victronenergy.svg'
     }
 
     const imageNameToContent = {
@@ -283,7 +344,9 @@ const FlowRenderer = function () {
         'advanced-ai-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Im0xNzYtMTIwLTU2LTU2IDMwMS0zMDItMTgxLTQ1IDE5OC0xMjMtMTctMjM0IDE3OSAxNTEgMjE2LTg4LTg3IDIxNyAxNTEgMTc4LTIzNC0xNi0xMjQgMTk4LTQ1LTE4MS0zMDEgMzAxWm0yNC01MjAtODAtODAgODAtODAgODAgODAtODAgODBabTM1NSAxOTcgNDgtNzkgOTMgNy02MC03MSAzNS04Ni04NiAzNS03MS01OSA3IDkyLTc5IDQ5IDkwIDIyIDIzIDkwWm0xNjUgMzIzLTgwLTgwIDgwLTgwIDgwIDgwLTgwIDgwWk01NjktNTcwWiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
         'classification-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yMTYtNzkydjYyNC02MjQgMTY4LTE2OFptMCA2OTZxLTI5LjcgMC01MC44NS0yMS4xNVExNDQtMTM4LjMgMTQ0LTE2OHYtNjI0cTAtMjkuNyAyMS4xNS01MC44NVExODYuMy04NjQgMjE2LTg2NGgzMTJsMTkyIDE5MnYxNDlxLTE4LTQtMzYtNXQtMzYgMXYtOTdINDgwdi0xNjhIMjE2djYyNGgyNDhxMTIgMjEgMjggMzkuNVQ1MjgtOTZIMjE2Wm00NTUuNzctOTZRNzEyLTE5MiA3NDAtMjE5Ljc3cTI4LTI3Ljc4IDI4LTY4UTc2OC0zMjggNzQwLjE2LTM1NnEtMjcuODQtMjgtNjguMTYtMjgtMzIgMC02NCAyNHQtMzIgNzJxMCA0MC4zMiAyNy43NyA2OC4xNiAyNy43OCAyNy44NCA2OCAyNy44NFpNODYxLTQ4bC05OC05OXEtMjAgMTMtNDMuMDMgMjB0LTQ3LjQ3IDdRNjAyLTEyMCA1NTMtMTY5dC00OS0xMTlxMC03MCA0OS0xMTl0MTE5LTQ5cTcwIDAgMTE5IDQ5dDQ5IDExOXEwIDI0LjYxLTcgNDcuODFRODI2LTIxNyA4MTMtMTk3bDk5IDk4LTUxIDUxWiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
         'depth-estimation-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik00ODAtMTE4IDEyMC0zOThsNjYtNTAgMjk0IDIyOCAyOTQtMjI4IDY2IDUwLTM2MCAyODBabTAtMjAyTDEyMC02MDBsMzYwLTI4MCAzNjAgMjgwLTM2MCAyODBabTAtMjgwWm0wIDE3OCAyMzAtMTc4LTIzMC0xNzgtMjMwIDE3OCAyMzAgMTc4WiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
-        'object-detection-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4Ij4KICAgIDxwYXRoIGZpbGw9IndoaXRlIiBkPSJtMjYwLTUyMCAyMjAtMzYwIDIyMCAzNjBIMjYwWk03MDAtODBxLTc1IDAtMTI3LjUtNTIuNVQ1MjAtMjYwcTAtNzUgNTIuNS0xMjcuNVQ3MDAtNDQwcTc1IDAgMTI3LjUgNTIuNVQ4ODAtMjYwcTAgNzUtNTIuNSAxMjcuNVQ3MDAtODBabS01ODAtMjB2LTMyMGgzMjB2MzIwSDEyMFptNTgwLTYwcTQyIDAgNzEtMjl0MjktNzFxMC00Mi0yOS03MXQtNzEtMjlxLTQyIDAtNzEgMjl0LTI5IDcxcTAgNDIgMjkgNzF0NzEgMjlabS01MDAtMjBoMTYwdi0xNjBIMjAwdjE2MFptMjAyLTQyMGgxNTZsLTc4LTEyNi03OCAxMjZabTc4IDBaTTM2MC0zNDBabTM0MCA4MFoiLz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+'
+        'object-detection-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4Ij4KICAgIDxwYXRoIGZpbGw9IndoaXRlIiBkPSJtMjYwLTUyMCAyMjAtMzYwIDIyMCAzNjBIMjYwWk03MDAtODBxLTc1IDAtMTI3LjUtNTIuNVQ1MjAtMjYwcTAtNzUgNTIuNS0xMjcuNVQ3MDAtNDQwcTc1IDAgMTI3LjUgNTIuNVQ4ODAtMjYwcTAgNzUtNTIuNSAxMjcuNVQ3MDAtODBabS01ODAtMjB2LTMyMGgzMjB2MzIwSDEyMFptNTgwLTYwcTQyIDAgNzEtMjl0MjktNzFxMC00Mi0yOS03MXQtNzEtMjlxLTQyIDAtNzEgMjl0LTI5IDcxcTAgNDIgMjkgNzF0NzEgMjlabS01MDAtMjBoMTYwdi0xNjBIMjAwdjE2MFptMjAyLTQyMGgxNTZsLTc4LTEyNi03OCAxMjZabTc4IDBaTTM2MC0zNDBabTM0MCA4MFoiLz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+',
+
+        'victronenergy.svg': 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDIzLjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA5Mi43IDYyLjIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDkyLjcgNjIuMjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0MHtmaWxsOiNGRkZGRkY7fQo8L3N0eWxlPgo8dGl0bGU+di1zeW1ib2w8L3RpdGxlPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMjMuOSw3LjdjLTMuNC0xLjEtNy4xLTAuMy05LjgsMi4xYzAsMC01LjksNC03LDIwLjZjMCwwLTAuMywyLjgsMi4xLDMuMmMwLDAsMi41LDAuNSwyLjgtMS42czAuMy0xMi42LDQuOS0xOAoJYzAuNC0wLjUsMS0xLDEuNy0xLjJjMS0wLjcsMS44LTEuNywyLjUtMi43QzIxLjgsOSwyMi44LDguMiwyMy45LDcuNyIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzIuNyw3LjNjMCwwLTQuNC0xLjQtOSwyLjJjMCwwLTUuNSwzLjQtNi45LDE2LjljLTAuMiwxLjctMC4zLDMuMy0wLjIsNWMwLjEsMS4yLDEuMSwyLDIuMiwyLjEKCWMwLDAsMi41LDAuMiwyLjYtMi4xbDAuMi0zLjJjMCwwLDAuNC05LDQtMTMuNWwwLjksMC43QzI3LjcsMTIsMjkuOSw5LjIsMzIuNyw3LjNMMzIuNyw3LjN6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik00MS42LDcuM2MtMy43LTAuNy03LjQsMC41LTEwLDMuMmMwLDAtNC4yLDMuNy01LjQsMTNjMCwwLTAuNSw1LTAuNiw3LjRjMCwxLjMsMC45LDIuNCwyLjIsMi42CgljMS4zLDAuMSwyLjQtMC45LDIuNS0yLjJjMC0wLjEsMC0wLjEsMC0wLjJjMCwwLDAuMi0xMS4zLDQuNC0xNi41bDEsMC42QzM1LjYsMTUuMywzNy40LDEwLjEsNDEuNiw3LjNMNDEuNiw3LjN6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik00OC4yLDcuMWMtMy45LDAuMS03LjQsMi4zLTkuMyw1LjdjMCwwLTQsNS44LTQsMTcuNmMwLDAtMC4yLDIuOCwyLDMuMWMxLjQsMC4xLDIuNi0xLDIuNi0yLjQKCWMwLTAuMSwwLTAuMywwLTAuNGMwLDAsMC4xLTExLjcsNC42LTE2LjRjMCwwLDQsNC43LDQuMywxNS45YzAsMCwwLjEsNy43LDEuNiwxMS45YzAuOS0zLjcsMS40LTcuNSwxLjUtMTEuM2MwLTAuOCwwLjMtMS41LDAuOS0yCgljMCwwLDAuNy0wLjMsMC41LTEuNWMwLDAtMS05LjctNC4yLTE1LjNjMCwwLDYuOS0wLjUsOC4yLDEzLjNjMCwxLjIsMC40LDIuMywxLjEsMy4zYzAuNiwwLjUsMC45LDEuMiwwLjksMmMwLjEsMi44LDAsNS41LTAuNCw4LjIKCWMtMC4xLDEuMSwwLjEsMi4zLDAuNSwzLjNjMS0zLDEuNC02LjIsMS4zLTkuM2MwLDAtMC4yLTMuNywxLjYtNWMwLDAtMC4xLTEwLjUtNC4zLTE2LjJDNTUuNCw4LjcsNTEuOSw3LjEsNDguMiw3LjFMNDguMiw3LjF6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik02OC44LDU0LjRjMy40LDEuMSw3LjEsMC4zLDkuOC0yLjFjMCwwLDUuOS00LDctMjAuNmMwLDAsMC4zLTIuOC0yLjEtMy4yYzAsMC0yLjUtMC41LTIuOCwxLjYKCXMtMC4zLDEyLjYtNC45LDE4Yy0wLjQsMC41LTEsMS0xLjcsMS4yYy0xLDAuNy0xLjgsMS43LTIuNSwyLjdDNzAuOCw1My4xLDY5LjksNTMuOCw2OC44LDU0LjQiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTU5LjksNTQuOGMwLDAsNC40LDEuNCw5LTIuMmMwLDAsNS41LTMuNCw2LjktMTYuOWMwLjItMS43LDAuMy0zLjMsMC4yLTVjLTAuMS0xLjItMS4xLTIuMS0yLjItMi4xCgljMCwwLTIuNS0wLjItMi42LDIuMWwtMC4yLDMuMmMwLDAtMC40LDktNCwxMy41TDY2LDQ2LjhDNjQuOSw1MCw2Mi44LDUyLjksNTkuOSw1NC44TDU5LjksNTQuOHoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTUxLjEsNTQuOGMzLjcsMC43LDcuNC0wLjUsMTAtMy4yYzAsMCw0LjItMy43LDUuNC0xM2MwLDAsMC41LTUsMC42LTcuNGMwLTEuMy0wLjktMi40LTIuMi0yLjYKCWMtMS4zLTAuMS0yLjQsMC45LTIuNSwyLjJjMCwwLjEsMCwwLjEsMCwwLjJjMCwwLTAuMSwxMS4zLTQuNCwxNi41bC0xLTAuNkM1Ny4xLDQ2LjcsNTUuMyw1Miw1MS4xLDU0LjhMNTEuMSw1NC44eiIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNDQuNCw1NWMzLjktMC4xLDcuNC0yLjMsOS4zLTUuN2MwLDAsNC01LjgsNC0xNy42YzAsMCwwLjItMi44LTItMy4xYy0xLjQtMC4xLTIuNiwxLTIuNiwyLjQKCWMwLDAuMSwwLDAuMywwLDAuNGMwLDAtMC4xLDExLjctNC42LDE2LjRjMCwwLTQtNC43LTQuMy0xNS45YzAsMC0wLjEtNy43LTEuNi0xMS45Yy0wLjksMy43LTEuNCw3LjUtMS41LDExLjNjMCwwLjgtMC4zLDEuNS0wLjksMgoJYzAsMC0wLjcsMC4zLTAuNSwxLjVjMCwwLDEsOS43LDQuMiwxNS4zYzAsMC02LjksMC41LTguMi0xMy4zYzAtMS4yLTAuNC0yLjMtMS4xLTMuM2MtMC42LTAuNS0wLjktMS4yLTAuOS0yCgljLTAuMS0yLjgsMC01LjUsMC40LTguMmMwLTEuMS0wLjEtMi4zLTAuNS0zLjNjLTEsMy0xLjQsNi4yLTEuMiw5LjNjMCwwLDAuMiwzLjctMS42LDVjMCwwLDAuMiwxMC41LDQuMywxNi4yCglDMzcuMiw1My40LDQwLjcsNTUsNDQuNCw1NUw0NC40LDU1eiIvPgo8L3N2Zz4K'
     }
     const toolbarImages = {
         zoomReset: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBQRC4gTWFkZSBieSBtb25vLWNvbXBhbnk6IGh0dHBzOi8vZ2l0aHViLmNvbS9tb25vLWNvbXBhbnkvbW9uby1pY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgNGE2IDYgMCAxIDAgMCAxMiA2IDYgMCAwIDAgMC0xMnptLTggNmE4IDggMCAxIDEgMTQuMzIgNC45MDZsNS4zODcgNS4zODdhMSAxIDAgMCAxLTEuNDE0IDEuNDE0bC01LjM4Ny01LjM4N0E4IDggMCAwIDEgMiAxMHoiIGZpbGw9IiMwRDBEMEQiLz48L3N2Zz4=',
@@ -504,6 +567,67 @@ const FlowRenderer = function () {
         'image-depth': _hshClr('#f69e00'),
         'object-detection': _hshClr('#f69e00'),
 
+        // victron nodes
+        'victron-virtual-switch': _hshClr('#f7ab3e'),
+        'victron-virtual': _hshClr('#f7ab3e'),
+        'victron-inject': _hshClr('#f7ab3e'),
+        'vrm-api': _hshClr('#f7ab3e'),
+
+        'victron-input-accharger': _hshClr('#4790d0'),
+        'victron-input-acload': _hshClr('#4790d0'),
+        'victron-input-acsystem': _hshClr('#4790d0'),
+        'victron-input-alternator': _hshClr('#4790d0'),
+        'victron-input-battery': _hshClr('#4790d0'),
+        'victron-input-dcdc': _hshClr('#4790d0'),
+        'victron-input-dcload': _hshClr('#4790d0'),
+        'victron-input-dcsource': _hshClr('#4790d0'),
+        'victron-input-dcsystem': _hshClr('#4790d0'),
+        'victron-input-dess': _hshClr('#4790d0'),
+        'victron-input-digitalinput': _hshClr('#4790d0'),
+        'victron-input-ess': _hshClr('#4790d0'),
+        'victron-input-evcharger': _hshClr('#4790d0'),
+        'victron-input-fuelcell': _hshClr('#4790d0'),
+        'victron-input-generator': _hshClr('#4790d0'),
+        'victron-input-gps': _hshClr('#4790d0'),
+        'victron-input-gridmeter': _hshClr('#4790d0'),
+        'victron-input-inverter': _hshClr('#4790d0'),
+        'victron-input-meteo': _hshClr('#4790d0'),
+        'victron-input-motordrive': _hshClr('#4790d0'),
+        'victron-input-multi': _hshClr('#4790d0'),
+        'victron-input-pulsemeter': _hshClr('#4790d0'),
+        'victron-input-pump': _hshClr('#4790d0'),
+        'victron-input-pvinverter': _hshClr('#4790d0'),
+        'victron-input-relay': _hshClr('#4790d0'),
+        'victron-input-settings': _hshClr('#4790d0'),
+        'victron-input-solarcharger': _hshClr('#4790d0'),
+        'victron-input-switch': _hshClr('#4790d0'),
+        'victron-input-system': _hshClr('#4790d0'),
+        'victron-input-tank': _hshClr('#4790d0'),
+        'victron-input-temperature': _hshClr('#4790d0'),
+        'victron-input-vebus': _hshClr('#4790d0'),
+
+        'victron-output-accharger': _hshClr('#4790d0'),
+        'victron-output-acsystem': _hshClr('#4790d0'),
+        'victron-output-battery': _hshClr('#4790d0'),
+        'victron-output-charger': _hshClr('#4790d0'),
+        'victron-output-dcdc': _hshClr('#4790d0'),
+        'victron-output-dess': _hshClr('#4790d0'),
+        'victron-output-ess': _hshClr('#4790d0'),
+        'victron-output-evcharger': _hshClr('#4790d0'),
+        'victron-output-generator': _hshClr('#4790d0'),
+        'victron-output-inverter': _hshClr('#4790d0'),
+        'victron-output-multi': _hshClr('#4790d0'),
+        'victron-output-pump': _hshClr('#4790d0'),
+        'victron-output-pvinverter': _hshClr('#4790d0'),
+        'victron-output-relay': _hshClr('#4790d0'),
+        'victron-output-settings': _hshClr('#4790d0'),
+        'victron-output-solarcharger': _hshClr('#4790d0'),
+        'victron-output-switch': _hshClr('#4790d0'),
+        'victron-output-vebus': _hshClr('#4790d0'),
+
+        'victron-input-custom': _hshClr('#f7ab3e'),
+        'victron-output-custom': _hshClr('#f7ab3e'),
+        
         _default: _hshClr()
     }
 
@@ -2712,6 +2836,105 @@ const FlowRenderer = function () {
         return lbl || obj.type
     }
 
+    const victronPaletteLabelByType = {
+        'victron-virtual-switch': 'Virtual Switch',
+        'victron-virtual': 'Virtual Device',
+        'victron-inject': 'Inject Notification',
+        'vrm-api': 'VRM API',
+
+        'victron-input-accharger': 'AC Charger',
+        'victron-input-acload': 'AC Load',
+        'victron-input-acsystem': 'AC System',
+        'victron-input-alternator': 'Alternator',
+        'victron-input-battery': 'Battery Monitor',
+        'victron-input-dcdc': 'DC-DC',
+        'victron-input-dcload': 'DC Load',
+        'victron-input-dcsource': 'DC Source',
+        'victron-input-dcsystem': 'DC System',
+        'victron-input-dess': 'Dynamic ESS',
+        'victron-input-digitalinput': 'Digital Input',
+        'victron-input-ess': 'ESS',
+        'victron-input-evcharger': 'EV Charger',
+        'victron-input-fuelcell': 'Fuel cell',
+        'victron-input-generator': 'Generator',
+        'victron-input-gps': 'GPS',
+        'victron-input-gridmeter': 'Grid Meter',
+        'victron-input-inverter': 'Inverter',
+        'victron-input-meteo': 'Meteo',
+        'victron-input-motordrive': 'E-drive',
+        'victron-input-multi': 'Multi RS',
+        'victron-input-pulsemeter': 'Pulsemeter',
+        'victron-input-pump': 'Pump',
+        'victron-input-pvinverter': 'PV Inverter',
+        'victron-input-relay': 'Relay',
+        'victron-input-settings': 'Settings',
+        'victron-input-solarcharger': 'Solar Charger',
+        'victron-input-switch': 'Switch',
+        'victron-input-system': 'System',
+        'victron-input-tank': 'Tank Sensor',
+        'victron-input-temperature': 'Temperature Sensor',
+        'victron-input-vebus': 'VE.Bus System',
+
+        'victron-output-accharger': 'AC Charger Control',
+        'victron-output-acsystem': 'AC System Control',
+        'victron-output-battery': 'Battery Monitor Control',
+        'victron-output-charger': 'Charger Control',
+        'victron-output-dcdc': 'DC-DC Control',
+        'victron-output-dess': 'Dynamic ESS Control',
+        'victron-output-ess': 'ESS Control',
+        'victron-output-evcharger': 'EV Charger Control',
+        'victron-output-generator': 'GX Generator Control',
+        'victron-output-inverter': 'Inverter Control',
+        'victron-output-multi': 'Multi RS Control',
+        'victron-output-pump': 'Pump Control',
+        'victron-output-pvinverter': 'PV Inverter Control',
+        'victron-output-relay': 'Relay Control',
+        'victron-output-settings': 'Settings Control',
+        'victron-output-solarcharger': 'Solar Charger Control',
+        'victron-output-switch': 'Switch Control',
+        'victron-output-vebus': 'VE.Bus System Control',
+
+        'victron-input-custom': 'Custom Input',
+        'victron-output-custom': 'Custom Control'
+
+    }
+
+    const victronLabelFunct = (node, subflowObj, flowdata) => {
+
+        let altName=''
+        if (node.serviceObj && node.path) {
+            var svc = node.serviceObj.name;
+            var path = node.pathObj.name;
+            altName = "".concat(svc, " | ").concat(path);
+        }
+        if (node.device) {
+            altName = "Virtual " + node.device;
+        }
+
+        if (node.type == 'vrm-api') {
+            altName =  node.api_type
+            switch (node.api_type) {
+                case 'users': {
+                    altName += ' - ' + (node.usersQuery || 'me')
+                }
+                    break;
+                case 'installations': {
+                    if ( node.installations === 'stats' ) {
+                        altName += ' - Stats: ' + node.attribute
+                    } else {
+                        altName += ' - ' + node.installations
+                    }
+                }
+                    break;
+                case 'widgets': {
+                    altName += ' - ' + node.widgets
+                }
+            }
+        }
+
+        return node.name || altName || victronPaletteLabelByType[node.type] || node.type
+    }
+
     const labelByFunct = {
         base64: undefined,
         batch: undefined,
@@ -2788,6 +3011,66 @@ const FlowRenderer = function () {
         Navigator: undefined,
         DrawSVG: undefined,
         GetFlows: undefined,
+
+        'victron-virtual-switch': victronLabelFunct,
+        'victron-virtual': victronLabelFunct,
+        'victron-inject': victronLabelFunct,
+        'vrm-api': victronLabelFunct,
+
+        'victron-input-accharger': victronLabelFunct,
+        'victron-input-acload': victronLabelFunct,
+        'victron-input-acsystem': victronLabelFunct,
+        'victron-input-alternator': victronLabelFunct,
+        'victron-input-battery': victronLabelFunct,
+        'victron-input-dcdc': victronLabelFunct,
+        'victron-input-dcload': victronLabelFunct,
+        'victron-input-dcsource': victronLabelFunct,
+        'victron-input-dcsystem': victronLabelFunct,
+        'victron-input-dess': victronLabelFunct,
+        'victron-input-digitalinput': victronLabelFunct,
+        'victron-input-ess': victronLabelFunct,
+        'victron-input-evcharger': victronLabelFunct,
+        'victron-input-fuelcell': victronLabelFunct,
+        'victron-input-generator': victronLabelFunct,
+        'victron-input-gps': victronLabelFunct,
+        'victron-input-gridmeter': victronLabelFunct,
+        'victron-input-inverter': victronLabelFunct,
+        'victron-input-meteo': victronLabelFunct,
+        'victron-input-motordrive': victronLabelFunct,
+        'victron-input-multi': victronLabelFunct,
+        'victron-input-pulsemeter': victronLabelFunct,
+        'victron-input-pump': victronLabelFunct,
+        'victron-input-pvinverter': victronLabelFunct,
+        'victron-input-relay': victronLabelFunct,
+        'victron-input-settings': victronLabelFunct,
+        'victron-input-solarcharger': victronLabelFunct,
+        'victron-input-switch': victronLabelFunct,
+        'victron-input-system': victronLabelFunct,
+        'victron-input-tank': victronLabelFunct,
+        'victron-input-temperature': victronLabelFunct,
+        'victron-input-vebus': victronLabelFunct,
+
+        'victron-output-accharger': victronLabelFunct,
+        'victron-output-acsystem': victronLabelFunct,
+        'victron-output-battery': victronLabelFunct,
+        'victron-output-charger': victronLabelFunct,
+        'victron-output-dcdc': victronLabelFunct,
+        'victron-output-dess': victronLabelFunct,
+        'victron-output-ess': victronLabelFunct,
+        'victron-output-evcharger': victronLabelFunct,
+        'victron-output-generator': victronLabelFunct,
+        'victron-output-inverter': victronLabelFunct,
+        'victron-output-multi': victronLabelFunct,
+        'victron-output-pump': victronLabelFunct,
+        'victron-output-pvinverter': victronLabelFunct,
+        'victron-output-relay': victronLabelFunct,
+        'victron-output-settings': victronLabelFunct,
+        'victron-output-solarcharger': victronLabelFunct,
+        'victron-output-switch': victronLabelFunct,
+        'victron-output-vebus': victronLabelFunct,
+
+        'victron-input-custom': victronLabelFunct,
+        'victron-output-custom': victronLabelFunct,
 
         _default: defaultLabelFunct
     }
