@@ -206,7 +206,68 @@ const FlowRenderer = function () {
         'advanced-ai': 'advanced-ai-node.svg',
         'image-classification': 'classification-node.svg',
         'image-depth': 'depth-estimation-node.svg',
-        'object-detection': 'object-detection-node.svg'
+        'object-detection': 'object-detection-node.svg',
+
+        // Victronenergy specific
+        'victron-virtual-switch': 'victronenergy.svg',
+        'victron-virtual': 'victronenergy.svg',
+        'victron-inject': 'victronenergy.svg',
+        'vrm-api': 'victronenergy.svg',
+
+        'victron-input-accharger': 'victronenergy.svg',
+        'victron-input-acload': 'victronenergy.svg',
+        'victron-input-acsystem': 'victronenergy.svg',
+        'victron-input-alternator': 'victronenergy.svg',
+        'victron-input-battery': 'victronenergy.svg',
+        'victron-input-dcdc': 'victronenergy.svg',
+        'victron-input-dcload': 'victronenergy.svg',
+        'victron-input-dcsource': 'victronenergy.svg',
+        'victron-input-dcsystem': 'victronenergy.svg',
+        'victron-input-dess': 'victronenergy.svg',
+        'victron-input-digitalinput': 'victronenergy.svg',
+        'victron-input-ess': 'victronenergy.svg',
+        'victron-input-evcharger': 'victronenergy.svg',
+        'victron-input-fuelcell': 'victronenergy.svg',
+        'victron-input-generator': 'victronenergy.svg',
+        'victron-input-gps': 'victronenergy.svg',
+        'victron-input-gridmeter': 'victronenergy.svg',
+        'victron-input-inverter': 'victronenergy.svg',
+        'victron-input-meteo': 'victronenergy.svg',
+        'victron-input-motordrive': 'victronenergy.svg',
+        'victron-input-multi': 'victronenergy.svg',
+        'victron-input-pulsemeter': 'victronenergy.svg',
+        'victron-input-pump': 'victronenergy.svg',
+        'victron-input-pvinverter': 'victronenergy.svg',
+        'victron-input-relay': 'victronenergy.svg',
+        'victron-input-settings': 'victronenergy.svg',
+        'victron-input-solarcharger': 'victronenergy.svg',
+        'victron-input-switch': 'victronenergy.svg',
+        'victron-input-system': 'victronenergy.svg',
+        'victron-input-tank': 'victronenergy.svg',
+        'victron-input-temperature': 'victronenergy.svg',
+        'victron-input-vebus': 'victronenergy.svg',
+
+        'victron-output-accharger': 'victronenergy.svg',
+        'victron-output-acsystem': 'victronenergy.svg',
+        'victron-output-battery': 'victronenergy.svg',
+        'victron-output-charger': 'victronenergy.svg',
+        'victron-output-dcdc': 'victronenergy.svg',
+        'victron-output-dess': 'victronenergy.svg',
+        'victron-output-ess': 'victronenergy.svg',
+        'victron-output-evcharger': 'victronenergy.svg',
+        'victron-output-generator': 'victronenergy.svg',
+        'victron-output-inverter': 'victronenergy.svg',
+        'victron-output-multi': 'victronenergy.svg',
+        'victron-output-pump': 'victronenergy.svg',
+        'victron-output-pvinverter': 'victronenergy.svg',
+        'victron-output-relay': 'victronenergy.svg',
+        'victron-output-settings': 'victronenergy.svg',
+        'victron-output-solarcharger': 'victronenergy.svg',
+        'victron-output-switch': 'victronenergy.svg',
+        'victron-output-vebus': 'victronenergy.svg',
+
+        'victron-input-custom': 'victronenergy.svg',
+        'victron-output-custom': 'victronenergy.svg'
     }
 
     const imageNameToContent = {
@@ -283,7 +344,9 @@ const FlowRenderer = function () {
         'advanced-ai-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Im0xNzYtMTIwLTU2LTU2IDMwMS0zMDItMTgxLTQ1IDE5OC0xMjMtMTctMjM0IDE3OSAxNTEgMjE2LTg4LTg3IDIxNyAxNTEgMTc4LTIzNC0xNi0xMjQgMTk4LTQ1LTE4MS0zMDEgMzAxWm0yNC01MjAtODAtODAgODAtODAgODAgODAtODAgODBabTM1NSAxOTcgNDgtNzkgOTMgNy02MC03MSAzNS04Ni04NiAzNS03MS01OSA3IDkyLTc5IDQ5IDkwIDIyIDIzIDkwWm0xNjUgMzIzLTgwLTgwIDgwLTgwIDgwIDgwLTgwIDgwWk01NjktNTcwWiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
         'classification-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yMTYtNzkydjYyNC02MjQgMTY4LTE2OFptMCA2OTZxLTI5LjcgMC01MC44NS0yMS4xNVExNDQtMTM4LjMgMTQ0LTE2OHYtNjI0cTAtMjkuNyAyMS4xNS01MC44NVExODYuMy04NjQgMjE2LTg2NGgzMTJsMTkyIDE5MnYxNDlxLTE4LTQtMzYtNXQtMzYgMXYtOTdINDgwdi0xNjhIMjE2djYyNGgyNDhxMTIgMjEgMjggMzkuNVQ1MjgtOTZIMjE2Wm00NTUuNzctOTZRNzEyLTE5MiA3NDAtMjE5Ljc3cTI4LTI3Ljc4IDI4LTY4UTc2OC0zMjggNzQwLjE2LTM1NnEtMjcuODQtMjgtNjguMTYtMjgtMzIgMC02NCAyNHQtMzIgNzJxMCA0MC4zMiAyNy43NyA2OC4xNiAyNy43OCAyNy44NCA2OCAyNy44NFpNODYxLTQ4bC05OC05OXEtMjAgMTMtNDMuMDMgMjB0LTQ3LjQ3IDdRNjAyLTEyMCA1NTMtMTY5dC00OS0xMTlxMC03MCA0OS0xMTl0MTE5LTQ5cTcwIDAgMTE5IDQ5dDQ5IDExOXEwIDI0LjYxLTcgNDcuODFRODI2LTIxNyA4MTMtMTk3bDk5IDk4LTUxIDUxWiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
         'depth-estimation-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPgogICAgPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik00ODAtMTE4IDEyMC0zOThsNjYtNTAgMjk0IDIyOCAyOTQtMjI4IDY2IDUwLTM2MCAyODBabTAtMjAyTDEyMC02MDBsMzYwLTI4MCAzNjAgMjgwLTM2MCAyODBabTAtMjgwWm0wIDE3OCAyMzAtMTc4LTIzMC0xNzgtMjMwIDE3OCAyMzAgMTc4WiIvPgo8c2NyaXB0IHhtbG5zPSIiLz48L3N2Zz4=',
-        'object-detection-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4Ij4KICAgIDxwYXRoIGZpbGw9IndoaXRlIiBkPSJtMjYwLTUyMCAyMjAtMzYwIDIyMCAzNjBIMjYwWk03MDAtODBxLTc1IDAtMTI3LjUtNTIuNVQ1MjAtMjYwcTAtNzUgNTIuNS0xMjcuNVQ3MDAtNDQwcTc1IDAgMTI3LjUgNTIuNVQ4ODAtMjYwcTAgNzUtNTIuNSAxMjcuNVQ3MDAtODBabS01ODAtMjB2LTMyMGgzMjB2MzIwSDEyMFptNTgwLTYwcTQyIDAgNzEtMjl0MjktNzFxMC00Mi0yOS03MXQtNzEtMjlxLTQyIDAtNzEgMjl0LTI5IDcxcTAgNDIgMjkgNzF0NzEgMjlabS01MDAtMjBoMTYwdi0xNjBIMjAwdjE2MFptMjAyLTQyMGgxNTZsLTc4LTEyNi03OCAxMjZabTc4IDBaTTM2MC0zNDBabTM0MCA4MFoiLz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+'
+        'object-detection-node.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4Ij4KICAgIDxwYXRoIGZpbGw9IndoaXRlIiBkPSJtMjYwLTUyMCAyMjAtMzYwIDIyMCAzNjBIMjYwWk03MDAtODBxLTc1IDAtMTI3LjUtNTIuNVQ1MjAtMjYwcTAtNzUgNTIuNS0xMjcuNVQ3MDAtNDQwcTc1IDAgMTI3LjUgNTIuNVQ4ODAtMjYwcTAgNzUtNTIuNSAxMjcuNVQ3MDAtODBabS01ODAtMjB2LTMyMGgzMjB2MzIwSDEyMFptNTgwLTYwcTQyIDAgNzEtMjl0MjktNzFxMC00Mi0yOS03MXQtNzEtMjlxLTQyIDAtNzEgMjl0LTI5IDcxcTAgNDIgMjkgNzF0NzEgMjlabS01MDAtMjBoMTYwdi0xNjBIMjAwdjE2MFptMjAyLTQyMGgxNTZsLTc4LTEyNi03OCAxMjZabTc4IDBaTTM2MC0zNDBabTM0MCA4MFoiLz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+',
+
+        'victronenergy.svg': 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDIzLjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA5Mi43IDYyLjIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDkyLjcgNjIuMjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0MHtmaWxsOiNGRkZGRkY7fQo8L3N0eWxlPgo8dGl0bGU+di1zeW1ib2w8L3RpdGxlPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMjMuOSw3LjdjLTMuNC0xLjEtNy4xLTAuMy05LjgsMi4xYzAsMC01LjksNC03LDIwLjZjMCwwLTAuMywyLjgsMi4xLDMuMmMwLDAsMi41LDAuNSwyLjgtMS42czAuMy0xMi42LDQuOS0xOAoJYzAuNC0wLjUsMS0xLDEuNy0xLjJjMS0wLjcsMS44LTEuNywyLjUtMi43QzIxLjgsOSwyMi44LDguMiwyMy45LDcuNyIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzIuNyw3LjNjMCwwLTQuNC0xLjQtOSwyLjJjMCwwLTUuNSwzLjQtNi45LDE2LjljLTAuMiwxLjctMC4zLDMuMy0wLjIsNWMwLjEsMS4yLDEuMSwyLDIuMiwyLjEKCWMwLDAsMi41LDAuMiwyLjYtMi4xbDAuMi0zLjJjMCwwLDAuNC05LDQtMTMuNWwwLjksMC43QzI3LjcsMTIsMjkuOSw5LjIsMzIuNyw3LjNMMzIuNyw3LjN6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik00MS42LDcuM2MtMy43LTAuNy03LjQsMC41LTEwLDMuMmMwLDAtNC4yLDMuNy01LjQsMTNjMCwwLTAuNSw1LTAuNiw3LjRjMCwxLjMsMC45LDIuNCwyLjIsMi42CgljMS4zLDAuMSwyLjQtMC45LDIuNS0yLjJjMC0wLjEsMC0wLjEsMC0wLjJjMCwwLDAuMi0xMS4zLDQuNC0xNi41bDEsMC42QzM1LjYsMTUuMywzNy40LDEwLjEsNDEuNiw3LjNMNDEuNiw3LjN6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik00OC4yLDcuMWMtMy45LDAuMS03LjQsMi4zLTkuMyw1LjdjMCwwLTQsNS44LTQsMTcuNmMwLDAtMC4yLDIuOCwyLDMuMWMxLjQsMC4xLDIuNi0xLDIuNi0yLjQKCWMwLTAuMSwwLTAuMywwLTAuNGMwLDAsMC4xLTExLjcsNC42LTE2LjRjMCwwLDQsNC43LDQuMywxNS45YzAsMCwwLjEsNy43LDEuNiwxMS45YzAuOS0zLjcsMS40LTcuNSwxLjUtMTEuM2MwLTAuOCwwLjMtMS41LDAuOS0yCgljMCwwLDAuNy0wLjMsMC41LTEuNWMwLDAtMS05LjctNC4yLTE1LjNjMCwwLDYuOS0wLjUsOC4yLDEzLjNjMCwxLjIsMC40LDIuMywxLjEsMy4zYzAuNiwwLjUsMC45LDEuMiwwLjksMmMwLjEsMi44LDAsNS41LTAuNCw4LjIKCWMtMC4xLDEuMSwwLjEsMi4zLDAuNSwzLjNjMS0zLDEuNC02LjIsMS4zLTkuM2MwLDAtMC4yLTMuNywxLjYtNWMwLDAtMC4xLTEwLjUtNC4zLTE2LjJDNTUuNCw4LjcsNTEuOSw3LjEsNDguMiw3LjFMNDguMiw3LjF6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik02OC44LDU0LjRjMy40LDEuMSw3LjEsMC4zLDkuOC0yLjFjMCwwLDUuOS00LDctMjAuNmMwLDAsMC4zLTIuOC0yLjEtMy4yYzAsMC0yLjUtMC41LTIuOCwxLjYKCXMtMC4zLDEyLjYtNC45LDE4Yy0wLjQsMC41LTEsMS0xLjcsMS4yYy0xLDAuNy0xLjgsMS43LTIuNSwyLjdDNzAuOCw1My4xLDY5LjksNTMuOCw2OC44LDU0LjQiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTU5LjksNTQuOGMwLDAsNC40LDEuNCw5LTIuMmMwLDAsNS41LTMuNCw2LjktMTYuOWMwLjItMS43LDAuMy0zLjMsMC4yLTVjLTAuMS0xLjItMS4xLTIuMS0yLjItMi4xCgljMCwwLTIuNS0wLjItMi42LDIuMWwtMC4yLDMuMmMwLDAtMC40LDktNCwxMy41TDY2LDQ2LjhDNjQuOSw1MCw2Mi44LDUyLjksNTkuOSw1NC44TDU5LjksNTQuOHoiLz4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTUxLjEsNTQuOGMzLjcsMC43LDcuNC0wLjUsMTAtMy4yYzAsMCw0LjItMy43LDUuNC0xM2MwLDAsMC41LTUsMC42LTcuNGMwLTEuMy0wLjktMi40LTIuMi0yLjYKCWMtMS4zLTAuMS0yLjQsMC45LTIuNSwyLjJjMCwwLjEsMCwwLjEsMCwwLjJjMCwwLTAuMSwxMS4zLTQuNCwxNi41bC0xLTAuNkM1Ny4xLDQ2LjcsNTUuMyw1Miw1MS4xLDU0LjhMNTEuMSw1NC44eiIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNDQuNCw1NWMzLjktMC4xLDcuNC0yLjMsOS4zLTUuN2MwLDAsNC01LjgsNC0xNy42YzAsMCwwLjItMi44LTItMy4xYy0xLjQtMC4xLTIuNiwxLTIuNiwyLjQKCWMwLDAuMSwwLDAuMywwLDAuNGMwLDAtMC4xLDExLjctNC42LDE2LjRjMCwwLTQtNC43LTQuMy0xNS45YzAsMC0wLjEtNy43LTEuNi0xMS45Yy0wLjksMy43LTEuNCw3LjUtMS41LDExLjNjMCwwLjgtMC4zLDEuNS0wLjksMgoJYzAsMC0wLjcsMC4zLTAuNSwxLjVjMCwwLDEsOS43LDQuMiwxNS4zYzAsMC02LjksMC41LTguMi0xMy4zYzAtMS4yLTAuNC0yLjMtMS4xLTMuM2MtMC42LTAuNS0wLjktMS4yLTAuOS0yCgljLTAuMS0yLjgsMC01LjUsMC40LTguMmMwLTEuMS0wLjEtMi4zLTAuNS0zLjNjLTEsMy0xLjQsNi4yLTEuMiw5LjNjMCwwLDAuMiwzLjctMS42LDVjMCwwLDAuMiwxMC41LDQuMywxNi4yCglDMzcuMiw1My40LDQwLjcsNTUsNDQuNCw1NUw0NC40LDU1eiIvPgo8L3N2Zz4K'
     }
     const toolbarImages = {
         zoomReset: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBQRC4gTWFkZSBieSBtb25vLWNvbXBhbnk6IGh0dHBzOi8vZ2l0aHViLmNvbS9tb25vLWNvbXBhbnkvbW9uby1pY29ucyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgNGE2IDYgMCAxIDAgMCAxMiA2IDYgMCAwIDAgMC0xMnptLTggNmE4IDggMCAxIDEgMTQuMzIgNC45MDZsNS4zODcgNS4zODdhMSAxIDAgMCAxLTEuNDE0IDEuNDE0bC01LjM4Ny01LjM4N0E4IDggMCAwIDEgMiAxMHoiIGZpbGw9IiMwRDBEMEQiLz48L3N2Zz4=',
