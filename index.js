@@ -2836,6 +2836,105 @@ const FlowRenderer = function () {
         return lbl || obj.type
     }
 
+    const victronPaletteLabelByType = {
+        'victron-virtual-switch': 'Virtual Switch',
+        'victron-virtual': 'Virtual Device',
+        'victron-inject': 'Inject Notification',
+        'vrm-api': 'VRM API',
+
+        'victron-input-accharger': 'AC Charger',
+        'victron-input-acload': 'AC Load',
+        'victron-input-acsystem': 'AC System',
+        'victron-input-alternator': 'Alternator',
+        'victron-input-battery': 'Battery Monitor',
+        'victron-input-dcdc': 'DC-DC',
+        'victron-input-dcload': 'DC Load',
+        'victron-input-dcsource': 'DC Source',
+        'victron-input-dcsystem': 'DC System',
+        'victron-input-dess': 'Dynamic ESS',
+        'victron-input-digitalinput': 'Digital Input',
+        'victron-input-ess': 'ESS',
+        'victron-input-evcharger': 'EV Charger',
+        'victron-input-fuelcell': 'Fuel cell',
+        'victron-input-generator': 'Generator',
+        'victron-input-gps': 'GPS',
+        'victron-input-gridmeter': 'Grid Meter',
+        'victron-input-inverter': 'Inverter',
+        'victron-input-meteo': 'Meteo',
+        'victron-input-motordrive': 'E-drive',
+        'victron-input-multi': 'Multi RS',
+        'victron-input-pulsemeter': 'Pulsemeter',
+        'victron-input-pump': 'Pump',
+        'victron-input-pvinverter': 'PV Inverter',
+        'victron-input-relay': 'Relay',
+        'victron-input-settings': 'Settings',
+        'victron-input-solarcharger': 'Solar Charger',
+        'victron-input-switch': 'Switch',
+        'victron-input-system': 'System',
+        'victron-input-tank': 'Tank Sensor',
+        'victron-input-temperature': 'Temperature Sensor',
+        'victron-input-vebus': 'VE.Bus System',
+
+        'victron-output-accharger': 'AC Charger Control',
+        'victron-output-acsystem': 'AC System Control',
+        'victron-output-battery': 'Battery Monitor Control',
+        'victron-output-charger': 'Charger Control',
+        'victron-output-dcdc': 'DC-DC Control',
+        'victron-output-dess': 'Dynamic ESS Control',
+        'victron-output-ess': 'ESS Control',
+        'victron-output-evcharger': 'EV Charger Control',
+        'victron-output-generator': 'GX Generator Control',
+        'victron-output-inverter': 'Inverter Control',
+        'victron-output-multi': 'Multi RS Control',
+        'victron-output-pump': 'Pump Control',
+        'victron-output-pvinverter': 'PV Inverter Control',
+        'victron-output-relay': 'Relay Control',
+        'victron-output-settings': 'Settings Control',
+        'victron-output-solarcharger': 'Solar Charger Control',
+        'victron-output-switch': 'Switch Control',
+        'victron-output-vebus': 'VE.Bus System Control',
+
+        'victron-input-custom': 'Custom Input',
+        'victron-output-custom': 'Custom Control'
+
+    }
+
+    const victronLabelFunct = (node, subflowObj, flowdata) => {
+
+        let altName=''
+        if (node.serviceObj && node.path) {
+            var svc = node.serviceObj.name;
+            var path = node.pathObj.name;
+            altName = "".concat(svc, " | ").concat(path);
+        }
+        if (node.device) {
+            altName = "Virtual " + node.device;
+        }
+
+        if (node.type == 'vrm-api') {
+            altName =  node.api_type
+            switch (node.api_type) {
+                case 'users': {
+                    altName += ' - ' + (node.usersQuery || 'me')
+                }
+                    break;
+                case 'installations': {
+                    if ( node.installations === 'stats' ) {
+                        altName += ' - Stats: ' + node.attribute
+                    } else {
+                        altName += ' - ' + node.installations
+                    }
+                }
+                    break;
+                case 'widgets': {
+                    altName += ' - ' + node.widgets
+                }
+            }
+        }
+
+        return node.name || altName || victronPaletteLabelByType[node.type] || node.type
+    }
+
     const labelByFunct = {
         base64: undefined,
         batch: undefined,
@@ -2912,6 +3011,66 @@ const FlowRenderer = function () {
         Navigator: undefined,
         DrawSVG: undefined,
         GetFlows: undefined,
+
+        'victron-virtual-switch': victronLabelFunct,
+        'victron-virtual': victronLabelFunct,
+        'victron-inject': victronLabelFunct,
+        'vrm-api': victronLabelFunct,
+
+        'victron-input-accharger': victronLabelFunct,
+        'victron-input-acload': victronLabelFunct,
+        'victron-input-acsystem': victronLabelFunct,
+        'victron-input-alternator': victronLabelFunct,
+        'victron-input-battery': victronLabelFunct,
+        'victron-input-dcdc': victronLabelFunct,
+        'victron-input-dcload': victronLabelFunct,
+        'victron-input-dcsource': victronLabelFunct,
+        'victron-input-dcsystem': victronLabelFunct,
+        'victron-input-dess': victronLabelFunct,
+        'victron-input-digitalinput': victronLabelFunct,
+        'victron-input-ess': victronLabelFunct,
+        'victron-input-evcharger': victronLabelFunct,
+        'victron-input-fuelcell': victronLabelFunct,
+        'victron-input-generator': victronLabelFunct,
+        'victron-input-gps': victronLabelFunct,
+        'victron-input-gridmeter': victronLabelFunct,
+        'victron-input-inverter': victronLabelFunct,
+        'victron-input-meteo': victronLabelFunct,
+        'victron-input-motordrive': victronLabelFunct,
+        'victron-input-multi': victronLabelFunct,
+        'victron-input-pulsemeter': victronLabelFunct,
+        'victron-input-pump': victronLabelFunct,
+        'victron-input-pvinverter': victronLabelFunct,
+        'victron-input-relay': victronLabelFunct,
+        'victron-input-settings': victronLabelFunct,
+        'victron-input-solarcharger': victronLabelFunct,
+        'victron-input-switch': victronLabelFunct,
+        'victron-input-system': victronLabelFunct,
+        'victron-input-tank': victronLabelFunct,
+        'victron-input-temperature': victronLabelFunct,
+        'victron-input-vebus': victronLabelFunct,
+
+        'victron-output-accharger': victronLabelFunct,
+        'victron-output-acsystem': victronLabelFunct,
+        'victron-output-battery': victronLabelFunct,
+        'victron-output-charger': victronLabelFunct,
+        'victron-output-dcdc': victronLabelFunct,
+        'victron-output-dess': victronLabelFunct,
+        'victron-output-ess': victronLabelFunct,
+        'victron-output-evcharger': victronLabelFunct,
+        'victron-output-generator': victronLabelFunct,
+        'victron-output-inverter': victronLabelFunct,
+        'victron-output-multi': victronLabelFunct,
+        'victron-output-pump': victronLabelFunct,
+        'victron-output-pvinverter': victronLabelFunct,
+        'victron-output-relay': victronLabelFunct,
+        'victron-output-settings': victronLabelFunct,
+        'victron-output-solarcharger': victronLabelFunct,
+        'victron-output-switch': victronLabelFunct,
+        'victron-output-vebus': victronLabelFunct,
+
+        'victron-input-custom': victronLabelFunct,
+        'victron-output-custom': victronLabelFunct,
 
         _default: defaultLabelFunct
     }
