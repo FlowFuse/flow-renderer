@@ -1485,8 +1485,8 @@ const FlowRenderer = function () {
                     }
                     if (diff.positionChanged[changeId]) {
                         otherChanges = false // position changes indicate no other changes
-                        const v1Obj = { x: numberOrNull(v1node.x), y: numberOrNull(v1node.y) }
-                        const v2Obj = { x: numberOrNull(v2node.x), y: numberOrNull(v2node.y) }
+                        const v1Obj = { x: numberOrNull(v1node.x), y: numberOrNull(v1node.y), w: numberOrNull(v1node.w), h: numberOrNull(v1node.h) }
+                        const v2Obj = { x: numberOrNull(v2node.x), y: numberOrNull(v2node.y), w: numberOrNull(v2node.w), h: numberOrNull(v2node.h) }
                         const v1ObjStr = JSON.stringify(v1Obj)
                         const v2ObjStr = JSON.stringify(v2Obj)
                         changes.push(...getItemDifferences(tab.id, changeId, 'position', 'positionChanged', v1ObjStr, v2ObjStr))
