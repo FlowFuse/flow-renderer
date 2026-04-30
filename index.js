@@ -12,6 +12,8 @@
  * @property {Array<Object>} flowId - The specific flow(s) to render. If not provided, all flows will be rendered.
  * @property {HTMLElement} container - The container div where the SVG diagram and controls will be rendered.
  * @property {Document} document - The document object to use for creating SVG elements. Defaults to the global document object.
+ * @property {boolean} [persistentHighlight=false] - When true, highlighted nodes and tabs stay highlighted until the next highlight() or clearHighlight() call. When false (default), highlights auto-clear after 10 seconds.
+ * @property {boolean} [allChanges=false] - When true, compare() returns change entries for all differing properties including position-only nodes. When false (default), position-only changes skip the full property diff.
  */
 
 /**
@@ -1292,7 +1294,7 @@ const FlowRenderer = function () {
         return el
     }
 
-    function diffProcessor (diff) {
+    function diffProcessor (diff, opts) {
         const changeList = []
         const tabs = {}
         const keysChanged = new Set([...Object.keys(diff.changed), ...Object.keys(diff.added), ...Object.keys(diff.deleted), ...Object.keys(diff.moved), ...Object.keys(diff.positionChanged)])
@@ -1342,7 +1344,7 @@ const FlowRenderer = function () {
 
             // scan each tab and populate the change list
             for (const tabId of Object.keys(tabs)) {
-                changes.push(...getTabChanges(diff, tabs[tabId]))
+                changes.push(...getTabChanges(diff, tabs[tabId], opts?.allChanges))
             }
 
             // return unique entries
@@ -1429,7 +1431,7 @@ const FlowRenderer = function () {
          * @param {*} tab
          * @returns
          */
-        function getTabChanges (diff, tab) {
+        function getTabChanges (diff, tab, allChanges) {
             /** A key-value pair of node id to node object */
             const v1Nodes = diff.currentConfig.all
             /** A key-value pair of node id to node object */
@@ -1484,7 +1486,7 @@ const FlowRenderer = function () {
                         changes.push(...getItemDifferences(tab.id, changeId, '', 'moved', { z: v1node.z }, { z: v2node.z }))
                     }
                     if (diff.positionChanged[changeId]) {
-                        otherChanges = false // position changes indicate no other changes
+                        if (!allChanges) otherChanges = false // position changes indicate no other changes
                         const v1Obj = { x: numberOrNull(v1node.x), y: numberOrNull(v1node.y) }
                         const v2Obj = { x: numberOrNull(v2node.x), y: numberOrNull(v2node.y) }
                         const v1ObjStr = JSON.stringify(v1Obj)
@@ -1509,15 +1511,18 @@ const FlowRenderer = function () {
                 diffList.push(formatChange(tabId, itemId, changeType, prop, value1 ? 'added' : '', value2 ? 'added' : ''))
             } else if (typeof value1 !== typeof value2) {
                 diffList.push(formatChange(tabId, itemId, 'changed', prop, value1 || '', value2 || ''))
-            } else if (Array.isArray(value1)) {
-                for (let i = 0; i < value1.length; i++) {
+            } else if (Array.isArray(value1) || Array.isArray(value2)) {
+                const arr1 = Array.isArray(value1) ? value1 : []
+                const arr2 = Array.isArray(value2) ? value2 : []
+                const len = Math.max(arr1.length, arr2.length)
+                for (let i = 0; i < len; i++) {
                     const thisProp = prop ? `${prop}[${i}]` : `[${i}]`
-                    const v1val = value1[i]
-                    const v2val = value2[i]
+                    const v1val = arr1[i]
+                    const v2val = arr2[i]
                     diffList.push(...getItemDifferences(tabId, itemId, thisProp, changeType || 'changed', v1val, v2val))
                 }
             } else if (value1 && value2 && typeof value1 === 'object' && typeof value2 === 'object') {
-                const keys = Object.keys(value1)
+                const keys = [...new Set([...Object.keys(value1), ...Object.keys(value2)])]
                 for (const key of keys) {
                     const keyNeedsBrackets = /[^a-zA-Z0-9_$]/.test(key)
                     const thisProp = prop ? (keyNeedsBrackets ? `${prop}["${key}"]` : `${prop}.${key}`) : (keyNeedsBrackets ? `["${key}"]` : key)
@@ -2961,14 +2966,16 @@ const FlowRenderer = function () {
         }
         const tabMap = new Map()
         const diff = generateDiff(flows[0], flows[1])
-        const comparison = diffProcessor(diff)
+        renderOpts = normaliseOptions(renderOpts)
+        const comparison = diffProcessor(diff, { allChanges: !!renderOpts.allChanges })
 
         comparison.changes.forEach(change => {
             // attach the highlight function to each change in differ
             change.highlight = (layerNo) => highlightChangeItem(layerNo, change)
         })
+        comparison.clearHighlight = clearHighlight
         comparison.tabMap = tabMap
-        renderOpts = normaliseOptions(renderOpts)
+        let persistentHighlight = !!renderOpts.persistentHighlight
 
         // to compare flows visually, we need to scan the flows and collect
         // all TABs (flow tabs and subflow tabs) and associate the flows with the tabs
@@ -3194,16 +3201,22 @@ const FlowRenderer = function () {
         }
         let nodeBlinkTimer = null
         let tabBlinkTimer = null
-        function highlightChangeItem (layerNo = -1, changeItem) {
-            // console.log("highlightChangeItem", layerNo, changeItem)
+        function clearHighlight () {
             clearTimeout(nodeBlinkTimer)
             clearTimeout(tabBlinkTimer)
-            // remove class 'tab-glow' from all tabs
             const glowingTabs = tabsContainer.querySelectorAll('.red-ui-tab')
             glowingTabs.forEach(tab => tab.classList.remove('tab-glow'))
-            // set style.filter of any nodes in the SVG to ''
             const glowingNodes = svg.querySelectorAll('g[data-node-id]')
-            glowingNodes.forEach(node => { node.style.filter = '' })
+            glowingNodes.forEach(node => {
+                node.style.filter = ''
+                // Also clear glow from group rect children
+                const rect = node.querySelector('rect')
+                if (rect) rect.style.filter = ''
+            })
+        }
+        function highlightChangeItem (layerNo = -1, changeItem) {
+            // console.log("highlightChangeItem", layerNo, changeItem)
+            clearHighlight()
 
             const currentTabEl = tabsContainer.querySelector('.red-ui-tab.active')
             const currentTabId = currentTabEl.getAttribute('data-flow-id')
@@ -3232,9 +3245,11 @@ const FlowRenderer = function () {
                 if (selectedTabEl) {
                     selectedTabEl.click()
                     selectedTabEl.classList.add('tab-glow')
-                    tabBlinkTimer = setTimeout(() => {
-                        selectedTabEl.classList.remove('tab-glow')
-                    }, 10000)
+                    if (!persistentHighlight) {
+                        tabBlinkTimer = setTimeout(() => {
+                            selectedTabEl.classList.remove('tab-glow')
+                        }, 10000)
+                    }
                 }
             }
 
@@ -3271,18 +3286,30 @@ const FlowRenderer = function () {
 
             // scroll the svg element into view by adjusting the parent div scroll & highlight the node(s)
             (layer1Node || layer2Node).scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
-            if (layer1Node) {
-                layer1Node.style.filter = 'url(#node-glow)'
+            // For group nodes, apply the glow to the <rect> child only so the
+            // label text remains readable. Regular nodes get the filter on the
+            // whole <g> as before.
+            const glowTarget = (el) => {
+                if (!el) return null
+                if (el.closest('.flow_group_select')) return el.querySelector('rect') || el
+                return el
             }
-            if (layer2Node) {
-                layer2Node.style.filter = 'url(#node-glow)'
+            const glow1 = glowTarget(layer1Node)
+            const glow2 = glowTarget(layer2Node)
+            if (glow1) {
+                glow1.style.filter = 'url(#node-glow)'
             }
-            nodeBlinkTimer = setTimeout(() => {
-                try {
-                    if (layer1Node) { layer1Node.style.filter = '' }
-                    if (layer2Node) { layer2Node.style.filter = '' }
-                } catch (e) { }
-            }, 10000)
+            if (glow2) {
+                glow2.style.filter = 'url(#node-glow)'
+            }
+            if (!persistentHighlight) {
+                nodeBlinkTimer = setTimeout(() => {
+                    try {
+                        if (glow1) { glow1.style.filter = '' }
+                        if (glow2) { glow2.style.filter = '' }
+                    } catch (e) { }
+                }, 10000)
+            }
         }
 
         function updateOpacities () {
