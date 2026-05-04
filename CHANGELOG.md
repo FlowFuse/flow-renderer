@@ -1,0 +1,28 @@
+#### 0.5.1: Release
+
+ - chore: bump version to 0.5.1 (#99)
+ - Bump actions/setup-node from 6.3.0 to 6.4.0 (#95)
+ - Bump flowfuse/github-actions-workflows/.github/workflows/sast_scan.yaml (#96)
+ - Bump actions/setup-node from 6.2.0 to 6.3.0 (#82)
+ - Bump flowfuse/github-actions-workflows/.github/workflows/sast_scan.yaml (#80)
+ - Bump flowfuse/github-actions-workflows/.github/workflows/sast_scan.yaml (#78)
+ - Bump flowfuse/github-actions-workflows/.github/workflows/sast_scan.yaml (#77)
+ - Bump JS-DevTools/npm-publish from 4.1.4 to 4.1.5 (#76)
+ - Bump flowfuse/github-actions-workflows/.github/workflows/sast_scan.yaml (#75)
+ - Bump JS-DevTools/npm-publish from 4.1.3 to 4.1.4 (#72)
+ - Bump actions/setup-node from 6.1.0 to 6.2.0 (#73)
+ - Bump JS-DevTools/npm-publish from 4.1.1 to 4.1.3 (#70)
+ - Bump actions/checkout from 5.0.1 to 6.0.0 (#66)
+ - Bump actions/checkout from 5.0.0 to 5.0.1 (#63)
+ - ci: Use new project-automation workflow (#98) @ppawlowski
+ - Fix compare highlight and diff engine (#94) @andypalmi
+ - Bump flatted from 3.3.3 to 3.4.2 (#84) @app/dependabot
+ - Bump minimatch from 3.1.2 to 3.1.5 (#79) @app/dependabot
+ - ci: Use NodeJS v24 as a default GitHub Actions runtime (#85) @ppawlowski
+ - Bump actions/checkout from 6.0.1 to 6.0.2 (#74) @app/dependabot
+ - ci: Enable SAST (#71) @ppawlowski
+ - Bump actions/checkout from 6.0.0 to 6.0.1 (#67) @app/dependabot
+ - Bump actions/setup-node from 6.0.0 to 6.1.0 (#68) @app/dependabot
+ - feat: add contextual 4px rounded corners to tabs and workspace chart (#65) @dimitrieh
+ - Bump js-yaml from 4.1.0 to 4.1.1 (#62) @app/dependabot
+ - Bump actions/setup-node from 5.0.0 to 6.0.0 (#61) @app/dependabot
