@@ -193,6 +193,13 @@ const FlowRenderer = function () {
         's7comm read': 'arrow-in.svg',
         's7comm write': 'arrow-in.svg',
 
+        // S7 Suite: @flowfuse-certified-nodes/s7 and node-red-contrib-s7-suite
+        's7-read': 's7-suite.svg',
+        's7-write': 's7-suite.svg',
+        's7-trigger': 's7-suite.svg',
+        's7-browse': 's7-suite.svg',
+        's7-control': 's7-suite.svg',
+
         // FlowFuse specific
         'project link out': 'ff-logo.svg',
         'project link in': 'ff-logo.svg',
@@ -339,6 +346,7 @@ const FlowRenderer = function () {
 
         'plc-read.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAABXUlEQVR4AeyUTa7CMAyEX3kCASs4A2vufxDWnAGxAQSCMiPhKolqNy6hAqlVRnEcO/7q/kz+vugaYbSHMXZm7IzWAc3vfmfquq60w971RzAo1DlQ8NEVhJheI4LpdULBpN+AqZQLjVi1bcFvDj5aMwCb7s4A5Ii8XqMLyA3TiyIzKQuGd0TJmbQpWXtmKy8LxlMsjGVhUeoP12KrMHIIZwmGHf3wsG6GxOTOTExjVZg0kGu8vDXnUkqBVBgUboZWvAmAocVYfqRFnVZhrENy91hMlObQn/qyYJhISTJtStbeWcvNgvEWs+I1EOYMCmOBmDB80z3iYZa6QJg7aGdY0NJXw0zYzndl3b21F3UGEEX/sFbhtr0Ipi1gSN8LplxJfIEVNIWW0ByiTf3DXkBraANtoVlYuTgMHzV0g07QBaJN3WGfoQO0h3bQ9aMw4eFeu3hnvABh/AgTdiO0nwAAAP//+PePKAAAAAZJREFUAwCtHPpHGrQtpgAAAABJRU5ErkJggg==',
         'plc-write.png': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAABY0lEQVR4AeyU3U7DMAyF2yEQcAXPwDXv/yBc8wyIG0BMW3eONHdOZadx20zb1CpHcRzH/ur+bJoLulYY72GsnVk743XA81d9Z7qua73Cln8yDAqNDhTcjwUhph+TYfoMCxrXAcP2lt5061w4/2JtwW+ObGciQFZ2gHxbfs+XhfEO1fKPwkS7w3hKgGlTss7NCQwPifQh+vS6lp3A5IrkgLgnkhxYJz88rPshMcO5GIYHmY1zifDydiVxOiYEgwLJ3Uoi+kXiG86yz3m4J+sEhoEiCZCZfrFrzQmMVyQCwlhKctGmZJ2bR2FKE+WKlO5lYc4JQmAXJgLCrywiFrbkwljBtX03A7Pho5wr3e3JnQFE+A+rC1v2ZBgr2VzfEWZumtN5fFUtdA89Q48QbeoO9hP0Cr1B79DD6WTTLA7DxwdtoR/oD6JN7WD/Ql/QJ/QB/VeF0cmj9uKdiQLo+BVGd0PbBwAAAP//lELFSQAAAAZJREFUAwBkHfpHEDPmHQAAAABJRU5ErkJggg==',
+        's7-suite.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCA0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iNCIgZmlsbD0iIzE1NjVDMCIvPjx0ZXh0IHg9IjIwIiB5PSIyOCIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Uzc8L3RleHQ+PC9zdmc+',
 
         'ff-logo.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+PHNjcmlwdCB4bWxucz0iIi8+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNmZmYiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+',
         'ff-logo-red.svg': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMzUiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDkwIDEzNSI+CiA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjAwNzggMCAwIDEuMDA3OCAtNjcuMDA3IC02NS45MTQpIj4KICA8cGF0aCBkPSJtNzcuNzcgOTIuN2MtMy40OTcgMC02LjMxMSAyLjgxNi02LjMxMSA2LjMxMy0wLjAwNTIgMTEuNTUtMC4wMTMxNiAyMy4xMS0wLjAxNDk5IDM0LjY2IDcuNSAwLjA0NDQgMTUuMDEgMC4yMTcgMjIuNDktMC4zMTgzIDEwLjQzLTAuOTUxMSAxOS42MS02LjU1MiAyOS4yMi0xMC4yMyA4Ljc0Mi0zLjY5NyAxOC4xMy01Ljk0MSAyNy42Ni01Ljc0MWwtMWUtMyAtMTguMzhjNGUtMyAtMy40OTgtMi44MTUtNi4zMTMtNi4zMTEtNi4zMTN6bTczLjA1IDM3LjE5Yy0xLjA1NSAwLjAxNjktMi4xMTEgMC4wNDU3LTMuMTY2IDAuMDg4OS0xMS42NC0wLjA0NDgtMjEuOTYgNS45NzQtMzIuNDYgMTAuMTkgOC4xMTUgMy4yODMgMTUuOTUgNy40NTQgMjQuNTUgOS4zODkgMy42NzUgMC41NTc2IDcuMzcyIDAuODI5MiAxMS4wOCAwLjkwODV6bS03MS4xMyAxNi41N2MtMi43NDcgNmUtMyAtNS40OTQgMC4wMzQ2LTguMjM5IDAuMDQ4NiAwLjAwMjQgNi40MTYgMC4wMDcyIDEyLjgzIDAuMDE3NTcgMTkuMjUgMC4wMDM3IDMuNDk4IDIuODE1IDYuMzEzIDYuMzExIDYuMzEzaDY2LjczYzMuNDk3IDAgNi4zMTEtMi44MTYgNi4zMTEtNi4zMTN2LTIuNzc4Yy04LjIwMy0wLjA1MzctMTYuNC0xLjMwNC0yNC4wNC00LjM3NC0xMS44Mi00LjEyNC0yMi44NS0xMS40NS0zNS42OC0xMS45NC0zLjc5OC0wLjE3OTQtNy42MDItMC4yMTQ3LTExLjQxLTAuMjA2MnoiIGZpbGw9IiNEQTNEMEIiLz4KIDwvZz4KPHNjcmlwdCB4bWxucz0iIi8+PC9zdmc+',
@@ -544,6 +552,13 @@ const FlowRenderer = function () {
         's7 in': _hshClr('#3FADB5'),
         's7 out': _hshClr('#3FADB5'),
         's7 control': _hshClr('#3FADB5'),
+
+        // S7 Suite: @flowfuse-certified-nodes/s7 and node-red-contrib-s7-suite
+        's7-read': _hshClr('#4FC3F7'),
+        's7-write': _hshClr('#4FC3F7'),
+        's7-trigger': _hshClr('#4FC3F7'),
+        's7-browse': _hshClr('#4FC3F7'),
+        's7-control': _hshClr('#4FC3F7'),
 
         // FlowFuse specific
         'project link out': _hshClr('#87D8CF'),
