@@ -1,3 +1,13 @@
+# Changelog
+
+## [0.6.0](https://github.com/FlowFuse/flow-renderer/compare/v0.5.1...v0.6.0) (2026-10-06)
+
+
+### Features
+
+* Add flow renderer support for certified nodes ([#121](https://github.com/FlowFuse/flow-renderer/issues/121)) ([d34355b](https://github.com/FlowFuse/flow-renderer/commit/d34355bf494698ce1e456fd6ddb3a26879c71288))
+* add the S7 Suite nodes (@flowfuse-certified-nodes/s7) ([#118](https://github.com/FlowFuse/flow-renderer/issues/118)) ([85fa20b](https://github.com/FlowFuse/flow-renderer/commit/85fa20b9e7890a48a440bf9890e96beccc6a6a63))
+
 #### 0.5.1: Release
 
  - chore: bump version to 0.5.1 (#99)
